@@ -45,14 +45,14 @@ const userService = {
   },
 
   // Mettre à jour un utilisateur
-  updateUser: async (id, updateData) => {
+  updateUser: async (id, updateFields) => {
     try {
       const user = await User.findById(id);
       if (!user) throw new Error("Utilisateur introuvable");
-
-      // Mise à jour des champs fournis
-      Object.assign(user, updateData);
-      return await user.save();
+      return await User.findByIdAndUpdate(id, updateFields, {
+        new: true,
+        runValidators: true,
+      });
     } catch (error) {
       throw new Error("Erreur lors de la mise à jour de l'utilisateur");
     }

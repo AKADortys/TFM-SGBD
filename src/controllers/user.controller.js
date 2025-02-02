@@ -71,14 +71,78 @@ const userController = {
 
   // Modification d'un utilisateur
   updateUser: async (req, res) => {
+    const { name, lastName, phone, mail } = req.body;
+
     try {
-      const updatedUser = await userService.updateUser(req.params.id, req.body);
+      // Récupération de l'utilisateur existant
+      const user = await userService.getUserById(req.params.id);
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur introuvable !" });
+      }
+
+      // Validation des entrées avant mise à jour
+      const updateFields = {};
+
+      if (name) {
+        if (name.length < 2 || name.length > 50) {
+          return res
+            .status(400)
+            .json({
+              message: "Le prénom doit contenir entre 2 et 50 caractères",
+            });
+        }
+        updateFields.name = name.trim();
+      }
+
+      if (lastName) {
+        if (lastName.length < 2 || lastName.length > 50) {
+          return res
+            .status(400)
+            .json({
+              message:
+                "Le nom de famille doit contenir entre 2 et 50 caractères",
+            });
+        }
+        updateFields.lastName = lastName.trim();
+      }
+
+      if (mail) {
+        if (!validator.isEmail(mail)) {
+          return res
+            .status(400)
+            .json({ message: "L'email fourni est invalide" });
+        }
+        updateFields.mail = mail.toLowerCase().trim();
+      }
+
+      if (phone) {
+        if (!validator.isMobilePhone(phone, "fr-FR")) {
+          return res
+            .status(400)
+            .json({ message: "Numéro de téléphone invalide" });
+        }
+        updateFields.phone = phone.trim();
+      }
+
+      // Mise à jour de l'utilisateur
+      const updatedUser = await userService.updateUser(
+        req.params.id,
+        updateFields
+      );
+
+      if (!updatedUser) {
+        return res
+          .status(400)
+          .json({ message: "Échec de la mise à jour de l'utilisateur" });
+      }
+
       res.json({
-        message: "Utilisateur mis à jour avec succès",
+        message: "Utilisateur modifié avec succès !",
         user: updatedUser,
       });
     } catch (error) {
-      res.status(404).json({ message: error.message });
+      console.error("Erreur lors de la mise à jour de l'utilisateur:", error);
+      res.status(500).json({ message: "Erreur serveur" });
     }
   },
 
