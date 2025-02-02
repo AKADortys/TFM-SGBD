@@ -1,30 +1,57 @@
-const User = require("../models/User");
+const userService = require("../services/user.service");
+const validator = require("validator");
 
 const userController = {
   // Récupération de tous les utilisateurs
   getUsers: async (req, res) => {
     try {
-      const users = await User.find({});
+      const users = await userService.getUsers();
       res.json(users);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erreur server" });
+      res.status(500).json({ message: error.message });
     }
   },
 
-  // Création d'un utilisateur
+  // Récupération d'un utilisateur par ID
+  getUserById: async (req, res) => {
+    try {
+      const user = await userService.getUserById(req.params.id);
+      res.json(user);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  },
+
   createUser: async (req, res) => {
     const { name, lastName, phone, mail, password } = req.body;
 
+    // Vérification manuelle des champs
+    if (!name || !lastName || !phone || !mail || !password) {
+      return res.status(400).json({ message: "Tous les champs sont requis" });
+    }
+
+    if (!validator.isEmail(mail)) {
+      return res.status(400).json({ message: "L'email fourni est invalide" });
+    }
+
+    if (!validator.isMobilePhone(phone, "fr-FR")) {
+      return res.status(400).json({ message: "Numéro de téléphone invalide" });
+    }
+
+    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
+      return res.status(400).json({
+        message:
+          "Le mot de passe doit contenir au moins 8 caractères, une lettre et un chiffre",
+      });
+    }
+
     try {
-      // Vérification si l'utilisateur existe déjà
-      const existingUser = await User.findOne({ mail });
+      const existingUser = await userService.getUserByMail(mail);
       if (existingUser) {
         return res.status(400).json({ message: "Email déjà utilisé !" });
       }
 
-      // Création de l'utilisateur
-      const newUser = await User.create({
+      const newUser = await userService.createUser({
         name,
         lastName,
         phone,
@@ -32,70 +59,36 @@ const userController = {
         password,
       });
 
-      res
-        .status(201)
-        .json({ message: "User created successfully", user: newUser });
+      res.status(201).json({
+        message: "Utilisateur créé avec succès",
+        user: newUser,
+      });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Server error" });
-    }
-  },
-
-  // Récupération d'un utilisateur par son ID
-  getUserById: async (req, res) => {
-    try {
-      const user = await User.findById(req.params.id);
-      if (!user) {
-        return res.status(404).json({ message: "Utilisateur introuvable !" });
-      }
-      res.json(user);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erreur server" });
+      res.status(500).json({ message: "Erreur serveur" });
     }
   },
 
   // Modification d'un utilisateur
   updateUser: async (req, res) => {
-    const { name, lastName, phone, mail } = req.body;
-
     try {
-      // Vérifier si l'utilisateur existe
-      const user = await User.findById(req.params.id);
-      if (!user) {
-        return res.status(404).json({ message: "Utilisateur introuvable !" });
-      }
-
-      // Mettre à jour les champs fournis
-      user.name = name || user.name;
-      user.lastName = lastName || user.lastName;
-      user.phone = phone || user.phone;
-      user.mail = mail || user.mail;
-
-      const updatedUser = await user.save();
+      const updatedUser = await userService.updateUser(req.params.id, req.body);
       res.json({
-        message: "Utilisateur modifié avec succès !",
+        message: "Utilisateur mis à jour avec succès",
         user: updatedUser,
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erreur server" });
+      res.status(404).json({ message: error.message });
     }
   },
 
   // Suppression d'un utilisateur
   deleteUser: async (req, res) => {
     try {
-      const user = await User.findById(req.params.id);
-      if (!user) {
-        return res.status(404).json({ message: "Utilisateur introuvable" });
-      }
-
-      await User.deleteOne({ _id: req.params.id });
+      await userService.deleteUser(req.params.id);
       res.json({ message: "Utilisateur supprimé avec succès !" });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erreur server" });
+      res.status(404).json({ message: error.message });
     }
   },
 };
