@@ -13,7 +13,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Routes
-app.use("users", require("./routes/users"));
+app.use("/users", require("./routes/users"));
 
 const PORT = process.env.APP_PORT || 5000;
 
