@@ -1,5 +1,6 @@
 const userService = require("../services/user.service");
 const validator = require("validator");
+const { ObjectId } = require("mongodb");
 
 const userController = {
   // Récupération de tous les utilisateurs
@@ -15,25 +16,51 @@ const userController = {
   // Récupération d'un utilisateur par ID
   getUserById: async (req, res) => {
     try {
-      const user = await userService.getUserById(req.params.id);
+      const id = req.params.id;
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "ID invalide" });
+      }
+      const user = await userService.getUserById(id);
       res.json(user);
     } catch (error) {
       res.status(404).json({ message: error.message });
     }
   },
 
+  // Création d'un utilisateur
   createUser: async (req, res) => {
-    const { name, lastName, phone, mail, password } = req.body;
+    let { name, lastName, phone, mail, password } = req.body;
 
-    // Vérification manuelle des champs
+    // Vérification des champs requis
     if (!name || !lastName || !phone || !mail || !password) {
       return res.status(400).json({ message: "Tous les champs sont requis" });
     }
 
+    // Validation du prénom et du nom de famille
+    if (
+      !validator.isLength(name, { min: 2, max: 50 }) ||
+      !validator.isAlpha(name, "fr-FR", { ignore: " -" })
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Le prénom doit contenir entre 2 et 50 caractères" });
+    }
+    if (
+      !validator.isLength(lastName, { min: 2, max: 50 }) ||
+      !validator.isAlpha(lastName, "fr-FR", { ignore: " -" })
+    ) {
+      return res.status(400).json({
+        message: "Le nom de famille doit contenir entre 2 et 50 caractères",
+      });
+    }
+
+    // Validation de l'email
     if (!validator.isEmail(mail)) {
       return res.status(400).json({ message: "L'email fourni est invalide" });
     }
+    mail = validator.normalizeEmail(mail);
 
+    // Validation du téléphone
     if (!validator.isMobilePhone(phone, "fr-FR")) {
       return res.status(400).json({ message: "Numéro de téléphone invalide" });
     }
@@ -41,7 +68,7 @@ const userController = {
     if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
       return res.status(400).json({
         message:
-          "Le mot de passe doit contenir au moins 8 caractères, une lettre et un chiffre",
+          "Le mot de passe doit contenir au moins 8 caractères, une lettre minuscule et un chiffre",
       });
     }
 
@@ -52,9 +79,9 @@ const userController = {
       }
 
       const newUser = await userService.createUser({
-        name,
-        lastName,
-        phone,
+        name: name.trim(),
+        lastName: lastName.trim(),
+        phone: phone.trim(),
         mail,
         password,
       });
@@ -65,43 +92,51 @@ const userController = {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Erreur serveur" });
+      res.status(500).json({ message: "Erreur serveur " + error.message });
     }
   },
 
   // Modification d'un utilisateur
   updateUser: async (req, res) => {
-    const { name, lastName, phone, mail } = req.body;
+    let { name, lastName, phone, mail, password } = req.body;
+    const id = req.params.id;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "ID invalide" });
+    }
 
     try {
-      // Récupération de l'utilisateur existant
-      const user = await userService.getUserById(req.params.id);
+      // Vérification de l'existence de l'utilisateur
+      const user = await userService.getUserById(id);
       if (!user) {
         return res.status(404).json({ message: "Utilisateur introuvable !" });
       }
 
-      // Validation des entrées avant mise à jour
+      // Validation des champs à mettre à jour
       const updateFields = {};
 
       if (name) {
-        if (name.length < 2 || name.length > 50) {
-          return res
-            .status(400)
-            .json({
-              message: "Le prénom doit contenir entre 2 et 50 caractères",
-            });
+        if (
+          !validator.isLength(name, { min: 2, max: 50 }) ||
+          !validator.isAlpha(name, "fr-FR", { ignore: " -" })
+        ) {
+          return res.status(400).json({
+            message:
+              "Le prénom doit contenir entre 2 et 50 caractères et uniquement des lettres",
+          });
         }
         updateFields.name = name.trim();
       }
 
       if (lastName) {
-        if (lastName.length < 2 || lastName.length > 50) {
-          return res
-            .status(400)
-            .json({
-              message:
-                "Le nom de famille doit contenir entre 2 et 50 caractères",
-            });
+        if (
+          !validator.isLength(lastName, { min: 2, max: 50 }) ||
+          !validator.isAlpha(lastName, "fr-FR", { ignore: " -" })
+        ) {
+          return res.status(400).json({
+            message:
+              "Le nom de famille doit contenir entre 2 et 50 caractères et uniquement des lettres",
+          });
         }
         updateFields.lastName = lastName.trim();
       }
@@ -124,11 +159,25 @@ const userController = {
         updateFields.phone = phone.trim();
       }
 
+      if (password) {
+        if (
+          !validator.isStrongPassword(password, {
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 0,
+          })
+        ) {
+          return res.status(400).json({
+            message:
+              "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre",
+          });
+        }
+      }
+
       // Mise à jour de l'utilisateur
-      const updatedUser = await userService.updateUser(
-        req.params.id,
-        updateFields
-      );
+      const updatedUser = await userService.updateUser(id, updateFields);
 
       if (!updatedUser) {
         return res
@@ -142,14 +191,18 @@ const userController = {
       });
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'utilisateur:", error);
-      res.status(500).json({ message: "Erreur serveur" });
+      res.status(500).json({ message: "Erreur serveur " + error.message });
     }
   },
 
   // Suppression d'un utilisateur
   deleteUser: async (req, res) => {
     try {
-      await userService.deleteUser(req.params.id);
+      const id = req.params.id;
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "ID invalide" });
+      }
+      await userService.deleteUser(id);
       res.json({ message: "Utilisateur supprimé avec succès !" });
     } catch (error) {
       res.status(404).json({ message: error.message });
