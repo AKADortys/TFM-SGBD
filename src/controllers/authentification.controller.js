@@ -37,7 +37,7 @@ const authController = {
       });
 
       // Stockage des tokens dans les cookies sécurisés
-      const isSecure = JSON.parse(process.env.COOKIE_SECRET || "false");
+      const isSecure = process.env.COOKIE_SECRET || "production";
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -58,6 +58,12 @@ const authController = {
       console.error("Erreur lors de la connexion :", error);
       return res.status(500).json({ message: error.message });
     }
+  },
+  logout: async (req, res) => {
+    // Suppression des cookies
+    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken");
+    return res.json({ message: "Déconnexion réussie" });
   },
 };
 

@@ -43,7 +43,13 @@ const userSchema = new mongoose.Schema(
       minlength: [8, "Le mot de passe doit contenir au moins 8 caractères"],
       validate: {
         validator: (value) =>
-          /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/.test(value),
+          validator.isStrongPassword(value, {
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 0,
+          }),
         message:
           "Le mot de passe doit contenir au moins une lettre et un chiffre",
       },
@@ -67,6 +73,21 @@ userSchema.pre("save", async function (next) {
   } catch (error) {
     next(error);
   }
+});
+
+userSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate();
+  if (update.password) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      update.password = await bcrypt.hash(update.password, salt);
+      this.setUpdate(update);
+    } catch (error) {
+      console.error("Erreur lors du hachage du mot de passe:", error);
+      return next(error);
+    }
+  }
+  next();
 });
 
 const User = mongoose.model("User", userSchema);

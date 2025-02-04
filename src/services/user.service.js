@@ -43,18 +43,22 @@ const userService = {
       throw new Error("Erreur lors de la création de l'utilisateur");
     }
   },
-
-  // Mettre à jour un utilisateur
   updateUser: async (id, updateFields) => {
     try {
       const user = await User.findById(id);
       if (!user) throw new Error("Utilisateur introuvable");
-      return await User.findByIdAndUpdate(id, updateFields, {
+
+      const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
         new: true,
         runValidators: true,
       });
+
+      if (!updatedUser) throw new Error("La mise à jour a échoué");
+
+      return updatedUser;
     } catch (error) {
-      throw new Error("Erreur lors de la mise à jour de l'utilisateur");
+      console.error("Erreur lors de la mise à jour de l'utilisateur:", error);
+      throw error; // Rejeter l'erreur réelle
     }
   },
 

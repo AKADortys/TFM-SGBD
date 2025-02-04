@@ -14,7 +14,7 @@ const authService = {
         throw new Error("Email ou mot de passe incorrect");
       }
 
-      const response = { ...user };
+      const response = { ...user._doc };
       delete response.password;
       return response;
     } catch (error) {

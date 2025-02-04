@@ -174,6 +174,7 @@ const userController = {
               "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre",
           });
         }
+        updateFields.password = password;
       }
 
       // Mise à jour de l'utilisateur
