@@ -41,7 +41,7 @@ module.exports = {
   deleteProduct: async (id) => {
     try {
       await Product.findByIdAndDelete(id);
-      return { message: "Produit supprimé avec succès" };
+      return true;
     } catch (error) {
       throw new Error(error.message);
     }

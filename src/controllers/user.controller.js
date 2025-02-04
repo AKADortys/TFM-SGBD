@@ -30,48 +30,65 @@ const userController = {
   // Création d'un utilisateur
   createUser: async (req, res) => {
     let { name, lastName, phone, mail, password } = req.body;
+    let errors = [];
 
     // Vérification des champs requis
     if (!name || !lastName || !phone || !mail || !password) {
       return res.status(400).json({ message: "Tous les champs sont requis" });
     }
 
-    // Validation du prénom et du nom de famille
+    // Normalisation des données
+    mail = validator.normalizeEmail(mail);
+
+    // Validation du prénom
     if (
       !validator.isLength(name, { min: 2, max: 50 }) ||
       !validator.isAlpha(name, "fr-FR", { ignore: " -" })
     ) {
-      return res
-        .status(400)
-        .json({ message: "Le prénom doit contenir entre 2 et 50 caractères" });
+      errors.push(
+        "Le prénom doit contenir entre 2 et 50 caractères et ne doit contenir que des lettres."
+      );
     }
+
+    // Validation du nom de famille
     if (
       !validator.isLength(lastName, { min: 2, max: 50 }) ||
       !validator.isAlpha(lastName, "fr-FR", { ignore: " -" })
     ) {
-      return res.status(400).json({
-        message: "Le nom de famille doit contenir entre 2 et 50 caractères",
-      });
+      errors.push(
+        "Le nom de famille doit contenir entre 2 et 50 caractères et ne doit contenir que des lettres."
+      );
     }
 
     // Validation de l'email
     if (!validator.isEmail(mail)) {
-      return res.status(400).json({ message: "L'email fourni est invalide" });
+      errors.push("L'email fourni est invalide.");
     }
-    mail = validator.normalizeEmail(mail);
 
     // Validation du téléphone
     if (!validator.isMobilePhone(phone, "fr-FR")) {
-      return res.status(400).json({ message: "Numéro de téléphone invalide" });
+      errors.push("Numéro de téléphone invalide.");
     }
 
-    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
-      return res.status(400).json({
-        message:
-          "Le mot de passe doit contenir au moins 8 caractères, une lettre minuscule et un chiffre",
-      });
+    // Validation du mot de passe
+    if (
+      !validator.isStrongPassword(password, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 0,
+      })
+    ) {
+      errors.push(
+        "Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule et un chiffre."
+      );
     }
 
+    // Retourner toutes les erreurs si présentes
+    if (errors.length > 0) {
+      return res.status(400).json({ errors });
+    }
     try {
       const existingUser = await userService.getUserByMail(mail);
       if (existingUser) {
@@ -204,7 +221,8 @@ const userController = {
         return res.status(400).json({ message: "ID invalide" });
       }
       await userService.deleteUser(id);
-      res.json({ message: "Utilisateur supprimé avec succès !" });
+      res.json({ message: "Utilisateur supprimé avec succès !" }).status(200)
+        .json;
     } catch (error) {
       res.status(404).json({ message: error.message });
     }
