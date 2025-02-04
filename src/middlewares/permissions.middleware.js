@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
     }
 
     // Vérifie si l'utilisateur a le rôle admin
-    if (req.user.role !== "admin") {
+    if (req.user.role !== "admin" && req.user.id !== req.params?.id) {
       return res.status(403).json({ message: "Accès non autorisé" });
     }
 
