@@ -3,15 +3,15 @@ const jwtConfig = require("../config/jwt");
 
 module.exports = async (req, res, next) => {
   try {
-    let token = req.cookies.accessToken;
+    const token = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
 
     if (!token && !refreshToken) {
       return res.status(403).json({ message: "Token manquant" });
     }
-
     try {
       const decoded = jwt.verify(token, jwtConfig.secret);
+      // console.log(decoded);
       req.user = decoded;
       return next();
     } catch (error) {
@@ -48,10 +48,11 @@ const refreshTokenFunction = async (refreshToken) => {
 
     // Génération d'un nouvel access token avec les infos de l'utilisateur
     const newAccessToken = jwt.sign(
-      { id: decoded.id }, // Données du user à inclure
+      { id: decoded.id, role: decoded.role }, // Données du user à inclure
       jwtConfig.secret,
       { expiresIn: "1h" }
     );
+    console.log("New access token"); ///////////////////////////////////////////////////////////////////////////////
 
     return newAccessToken;
   } catch (err) {

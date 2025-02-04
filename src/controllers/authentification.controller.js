@@ -29,12 +29,20 @@ const authController = {
       }
 
       // Génération des tokens
-      const accessToken = jwt.sign({ id: user._id }, jwtConfig.secret, {
-        expiresIn: "1h",
-      });
-      const refreshToken = jwt.sign({ id: user._id }, jwtConfig.refreshSecret, {
-        expiresIn: "7d",
-      });
+      const accessToken = jwt.sign(
+        { id: user._id, role: user.role },
+        jwtConfig.secret,
+        {
+          expiresIn: "1h",
+        }
+      );
+      const refreshToken = jwt.sign(
+        { id: user._id, role: user.role },
+        jwtConfig.refreshSecret,
+        {
+          expiresIn: "7d",
+        }
+      );
 
       // Stockage des tokens dans les cookies sécurisés
       const isSecure = process.env.COOKIE_SECRET || "production";

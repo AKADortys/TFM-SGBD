@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user.controller");
 const tokenMdw = require("../middlewares/jwt.middleware");
+const permissionsMdw = require("../middlewares/permissions.middleware");
 
-router.get("/", tokenMdw, userController.getUsers);
+router.get("/", tokenMdw, permissionsMdw, userController.getUsers);
 router.post("/", userController.createUser);
 router.get("/:id", tokenMdw, userController.getUserById);
 router.put("/:id", tokenMdw, userController.updateUser);
