@@ -17,6 +17,7 @@ app.use(bodyParser.json());
 // Routes
 app.use("/users", require("./routes/users"));
 app.use("/auth", require("./routes/authentification"));
+app.use("/products", require("./routes/products"));
 
 const PORT = process.env.APP_PORT || 5000;
 
