@@ -7,7 +7,9 @@ const permissionsMdw = require("../middlewares/permissions.middleware");
 router.use(tokenMdw);
 
 router.get("/", permissionsMdw, orderController.getAllOrders);
-router.get("/:id", permissionsMdw, orderController.getOrderById);
+router.get("/detail", permissionsMdw, orderController.getOrdersWithDetails);
+router.get("/:id", orderController.getOrderById);
+router.get("/user/:id", permissionsMdw, orderController.getUserOrders);
 router.post("/", orderController.createOrder);
 router.put("/:id", orderController.updateOrder);
 router.delete("/:id", orderController.deleteOrder);

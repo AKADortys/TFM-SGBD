@@ -115,7 +115,7 @@ module.exports = {
         id,
         updatedFields
       );
-      res.json(updatedProduct);
+      res.status(201).json(updatedProduct);
     } catch (error) {
       res.status(400).json({ message: error.message });
     }

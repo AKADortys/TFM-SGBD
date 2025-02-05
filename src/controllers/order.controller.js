@@ -27,6 +27,20 @@ module.exports = {
       res.status(500).json({ message: error.message });
     }
   },
+  // Récupération d'une commande par son userId
+  getUserOrders: async (req, res) => {
+    try {
+      const id = req.params.id;
+      if (!id || !ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "ID invalide" });
+      }
+
+      const orders = await orderService.getOrdersByUserId(id);
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
   // Création d'une commande
   createOrder: async (req, res) => {
     try {
@@ -93,6 +107,10 @@ module.exports = {
       await orderService.deleteOrder(req.params.id);
       res.json({ message: "Commande supprimée avec succès" });
     } catch (error) {
+      if (error.message === "Commande introuvable") {
+        res.status(404).json({ message: error.message });
+        return;
+      }
       res.status(500).json({ message: error.message });
     }
   },
@@ -165,30 +183,18 @@ module.exports = {
 
       // Mise à jour de la commande
       const updatedOrder = await orderService.updateOrder(id, req.body);
+      if (!updatedOrder) {
+        return res.status(404).json({ message: "Commande non trouvée" });
+      }
       res.json(updatedOrder);
     } catch (error) {
+      if (error.message === "Commande introuvable") {
+        return res.status(404).json({ message: error.message });
+      }
       console.error("Erreur lors de la mise à jour de la commande:", error);
       res.status(500).json({
-        message: "Une erreur est survenue, veuillez réessayer plus tard.",
+        message: error.message,
       });
-    }
-  },
-  // Récupération des commandes d'un utilisateur
-  getUserOrders: async (req, res) => {
-    try {
-      const orders = await orderService.getOrdersByUserId(req.params.userId);
-      res.json(orders);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  },
-  // Récupération des commandes d'un état donné
-  getOrdersByState: async (req, res) => {
-    try {
-      const orders = await orderService.getOrdersByState(req.params.state);
-      res.json(orders);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
     }
   },
   // Récupération des commandes ayant une date de livraison entre deux dates
@@ -196,6 +202,14 @@ module.exports = {
     try {
       const { startDate, endDate } = req.query;
       const orders = await orderService.getOrdersByDate(startDate, endDate);
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+  getOrdersWithDetails: async (req, res) => {
+    try {
+      const orders = await orderService.getOrdersWithDetails();
       res.json(orders);
     } catch (error) {
       res.status(500).json({ message: error.message });
