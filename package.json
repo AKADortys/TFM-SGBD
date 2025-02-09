@@ -17,6 +17,7 @@
   "scripts": {
     "start": "node src/index.js",
     "start:dev": "node --watch src/index.js",
+    "seed": "node ./src/seeding.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
