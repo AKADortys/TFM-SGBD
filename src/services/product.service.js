@@ -12,7 +12,7 @@ module.exports = {
   getProductById: async (id) => {
     try {
       const product = await Product.findById(id);
-      if (!product) throw new Error("Produit introuvable");
+      if (!product) return null;
       return product;
     } catch (error) {
       throw new Error(error.message);
@@ -32,7 +32,7 @@ module.exports = {
       const product = await Product.findByIdAndUpdate(id, updateData, {
         new: true,
       });
-      if (!product) throw new Error("Produit introuvable");
+      if (!product) return null;
       return product;
     } catch (error) {
       throw new Error(error.message);

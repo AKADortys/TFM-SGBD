@@ -14,7 +14,7 @@ const userService = {
   getUserById: async (id) => {
     try {
       const user = await User.findById(id);
-      if (!user) throw new Error("Utilisateur introuvable");
+      if (!user) return null;
       return user;
     } catch (error) {
       throw new Error("Erreur lors de la récupération de l'utilisateur");
@@ -24,7 +24,9 @@ const userService = {
   // Récupérer un utilisateur par email
   getUserByMail: async (mail) => {
     try {
-      return await User.findOne({ mail });
+      const user = await User.findOne({ mail });
+      if (!user) return null;
+      return user;
     } catch (error) {
       throw new Error("Erreur lors de la récupération de l'utilisateur");
     }
@@ -33,10 +35,6 @@ const userService = {
   // Créer un nouvel utilisateur
   createUser: async ({ name, lastName, phone, mail, password }) => {
     try {
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await User.findOne({ mail });
-      if (existingUser) throw new Error("Email déjà utilisé !");
-
       // Création de l'utilisateur
       return await User.create({ name, lastName, phone, mail, password });
     } catch (error) {
@@ -45,20 +43,17 @@ const userService = {
   },
   updateUser: async (id, updateFields) => {
     try {
-      const user = await User.findById(id);
-      if (!user) throw new Error("Utilisateur introuvable");
-
       const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
         new: true,
         runValidators: true,
       });
 
-      if (!updatedUser) throw new Error("La mise à jour a échoué");
+      if (!updatedUser) return null;
 
       return updatedUser;
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'utilisateur:", error);
-      throw error; // Rejeter l'erreur réelle
+      throw error;
     }
   },
 
@@ -66,7 +61,7 @@ const userService = {
   deleteUser: async (id) => {
     try {
       const user = await User.findById(id);
-      if (!user) throw new Error("Utilisateur introuvable");
+      if (!user) return null;
 
       await User.deleteOne({ _id: id });
       return true;

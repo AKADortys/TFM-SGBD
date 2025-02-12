@@ -71,8 +71,8 @@ module.exports = {
           !product.productId ||
           !ObjectId.isValid(product.productId) ||
           typeof product.quantity !== "number" ||
-          product.quantity <= 0 ||
-          typeof product.price !== "number"
+          typeof product.price !== "number" ||
+          product.quantity <= 0
         ) {
           return res.status(400).json({
             message:
@@ -104,7 +104,11 @@ module.exports = {
   // Suppression d'une commande
   deleteOrder: async (req, res) => {
     try {
-      await orderService.deleteOrder(req.params.id);
+      const id = req.params.id;
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "ID invalide" });
+      }
+      await orderService.deleteOrder(id);
       res.json({ message: "Commande supprimée avec succès" });
     } catch (error) {
       if (error.message === "Commande introuvable") {
@@ -182,7 +186,7 @@ module.exports = {
       };
 
       // Mise à jour de la commande
-      const updatedOrder = await orderService.updateOrder(id, req.body);
+      const updatedOrder = await orderService.updateOrder(id, updatedFields);
       if (!updatedOrder) {
         return res.status(404).json({ message: "Commande non trouvée" });
       }

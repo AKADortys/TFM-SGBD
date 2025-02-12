@@ -1,8 +1,8 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const User = require("./models/user"); // Modèle User
-const Product = require("./models/product"); // Modèle Product
-const Order = require("./models/order"); // Modèle Order
+const User = require("models/user"); // Modèle User
+const Product = require("models/product"); // Modèle Product
+const Order = require("models/order"); // Modèle Order
 
 mongoose
   .connect(process.env.MONGO_URI, {

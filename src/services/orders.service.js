@@ -7,14 +7,14 @@ module.exports = {
       const orders = await Order.find();
       return orders;
     } catch (error) {
-      throw new Error(error.message);
+      return new Error(error.message);
     }
   },
 
   getOrderById: async (id) => {
     try {
       const order = await Order.findById(id);
-      if (!order) throw new Error("Commande introuvable");
+      if (!order) return null;
       return order;
     } catch (error) {
       throw new Error(error.message);
@@ -36,7 +36,7 @@ module.exports = {
       const order = await Order.findByIdAndUpdate(id, updatedOrder, {
         new: true,
       });
-      if (!order) throw new Error("Commande introuvable");
+      if (!order) return null;
       return order;
     } catch (error) {
       throw new Error(error.message);
@@ -71,6 +71,7 @@ module.exports = {
       throw new Error(error.message);
     }
   },
+
   getOrdersWithDetails: async () => {
     try {
       const orders = await Order.aggregate([
@@ -82,12 +83,10 @@ module.exports = {
             as: "user",
           },
         },
-        { $unwind: "$user" }, // Assure que l'utilisateur est un objet unique
+        { $unwind: "$user" },
 
-        // Décompose le tableau "products" en plusieurs documents
         { $unwind: "$products" },
 
-        // Joint les détails du produit associé à chaque produit commandé
         {
           $lookup: {
             from: "products",
@@ -96,7 +95,7 @@ module.exports = {
             as: "productDetails",
           },
         },
-        { $unwind: "$productDetails" }, // Assure que chaque produit est un objet unique
+        { $unwind: "$productDetails" },
 
         // Regrouper les produits de la commande pour recréer le tableau "products"
         {
