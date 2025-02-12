@@ -97,7 +97,7 @@ L'API comprend les fonctionnalités suivantes :
 
 ### Authentification
 
-- `POST /auth/register` - Inscription d'un utilisateur
+- `POST /users` - Inscription d'un utilisateur
 - `POST /auth/login` - Connexion et obtention d'un token JWT
 
 ### Utilisateurs
