@@ -9,7 +9,6 @@ const userService = {
       throw new Error("Erreur lors de la récupération des utilisateurs");
     }
   },
-
   // Récupérer un utilisateur par ID
   getUserById: async (id) => {
     try {
@@ -20,7 +19,6 @@ const userService = {
       throw new Error("Erreur lors de la récupération de l'utilisateur");
     }
   },
-
   // Récupérer un utilisateur par email
   getUserByMail: async (mail) => {
     try {
@@ -28,15 +26,16 @@ const userService = {
       if (!user) return null;
       return user;
     } catch (error) {
+      console.error("Erreur lors de la récupération de user", error);
       throw new Error("Erreur lors de la récupération de l'utilisateur");
     }
   },
-
   // Créer un nouvel utilisateur
-  createUser: async ({ name, lastName, phone, mail, password }) => {
+  createUser: async (value) => {
     try {
-      // Création de l'utilisateur
-      return await User.create({ name, lastName, phone, mail, password });
+      const user = new User(value);
+      await user.save();
+      return user;
     } catch (error) {
       throw new Error("Erreur lors de la création de l'utilisateur");
     }
@@ -52,11 +51,10 @@ const userService = {
 
       return updatedUser;
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'utilisateur:", error);
+      console.error("Erreur lors de la mise à jour de l'utilisateur:");
       throw error;
     }
   },
-
   // Supprimer un utilisateur
   deleteUser: async (id) => {
     try {
@@ -70,5 +68,4 @@ const userService = {
     }
   },
 };
-
 module.exports = userService;

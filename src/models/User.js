@@ -62,7 +62,6 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 // Hashage du mot de passe avant enregistrement
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
@@ -74,7 +73,6 @@ userSchema.pre("save", async function (next) {
     next(error);
   }
 });
-
 userSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate();
   if (update.password) {
@@ -89,7 +87,6 @@ userSchema.pre("findOneAndUpdate", async function (next) {
   }
   next();
 });
-
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

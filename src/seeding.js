@@ -1,8 +1,8 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const User = require("models/user"); // Modèle User
-const Product = require("models/product"); // Modèle Product
-const Order = require("models/order"); // Modèle Order
+const User = require("./models/User"); // Modèle User
+const Product = require("./models/Product"); // Modèle Product
+const Order = require("./models/Order"); // Modèle Order
 
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -25,7 +25,7 @@ mongoose
           phone: "0612345678",
           mail: "john.doe@example.com",
           password: "Password123",
-          role: "admin",
+          role: "admin", //////////////////
         },
         {
           name: "Jane Smith",
@@ -62,7 +62,9 @@ mongoose
     ];
     await Product.create(products);
 
-    console.log("Données de base créées avec succès");
+    console.log(
+      "Données de base créées avec succès\nmail:john.doe@example.com\npassword: Password123\nUtiliser ces identifiant pour le mode admin"
+    );
     mongoose.connection.close();
   })
   .catch((err) => console.error("Erreur de connexion à MongoDB", err));

@@ -28,7 +28,7 @@ const userSchema = Joi.object({
       "any.required": "Le nom de famille est requis.",
     }),
   phone: Joi.string()
-    .regex(/^0[1-9]([-. ]?[0-9]{2}){4}$/)
+    .regex(/^(?:\+33|0)[67]\d{8}$/)
     .required()
     .messages({
       "string.pattern.base": "Numéro de téléphone invalide.",
@@ -49,7 +49,6 @@ const userSchema = Joi.object({
       "any.required": "Le mot de passe est requis.",
     }),
 });
-
 const updateUserSchema = Joi.object({
   name: Joi.string()
     .min(2)
@@ -76,7 +75,7 @@ const updateUserSchema = Joi.object({
         "Le nom de famille ne doit contenir que des lettres, espaces et tirets.",
     }),
   phone: Joi.string()
-    .regex(/^0[1-9]([-. ]?[0-9]{2}){4}$/)
+    .regex(/^(?:\+33|0)[67]\d{8}$/)
     .allow("")
     .messages({
       "string.pattern.base": "Numéro de téléphone invalide.",
@@ -98,7 +97,6 @@ const updateUserSchema = Joi.object({
   .messages({
     "object.min": "Vous devez fournir au moins un champ à mettre à jour.",
   });
-
 module.exports = {
   userSchema,
   updateUserSchema,
