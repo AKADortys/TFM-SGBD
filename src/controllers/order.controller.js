@@ -41,6 +41,23 @@ module.exports = {
       res.status(500).json({ message: error.message });
     }
   },
+  // Suppression d'une commande
+  deleteOrder: async (req, res) => {
+    try {
+      const id = req.params.id;
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "ID invalide" });
+      }
+      await orderService.deleteOrder(id);
+      res.json({ message: "Commande supprimée avec succès" });
+    } catch (error) {
+      if (error.message === "Commande introuvable") {
+        res.status(404).json({ message: error.message });
+        return;
+      }
+      res.status(500).json({ message: error.message });
+    }
+  },
   // Création d'une commande
   createOrder: async (req, res) => {
     try {
@@ -99,23 +116,6 @@ module.exports = {
       res.status(500).json({
         message: "Une erreur est survenue, veuillez réessayer plus tard.",
       });
-    }
-  },
-  // Suppression d'une commande
-  deleteOrder: async (req, res) => {
-    try {
-      const id = req.params.id;
-      if (!ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "ID invalide" });
-      }
-      await orderService.deleteOrder(id);
-      res.json({ message: "Commande supprimée avec succès" });
-    } catch (error) {
-      if (error.message === "Commande introuvable") {
-        res.status(404).json({ message: error.message });
-        return;
-      }
-      res.status(500).json({ message: error.message });
     }
   },
   // Modification d'une commande

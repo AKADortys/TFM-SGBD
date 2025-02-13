@@ -115,6 +115,9 @@ module.exports = {
         id,
         updatedFields
       );
+      if (!updatedProduct) {
+        return res.status(404).json({ message: "Produit non trouvé" });
+      }
       res.status(201).json(updatedProduct);
     } catch (error) {
       res.status(400).json({ message: error.message });
