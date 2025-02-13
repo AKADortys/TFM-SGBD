@@ -16,7 +16,7 @@ const productSchema = Joi.object({
     "number.min": "Le prix doit être supérieur ou égal à 0.",
     "any.required": "Le prix est requis.",
   }),
-  category: Joi.string().min(1).messages({
+  category: Joi.string().min(1).optional().messages({
     "string.base": "La catégorie doit être une chaîne de caractères.",
     "string.min": "La catégorie doit contenir au moins 1 caractère.",
   }),

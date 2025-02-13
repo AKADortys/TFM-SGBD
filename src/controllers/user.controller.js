@@ -96,6 +96,10 @@ const userController = {
       if (!ObjectId.isValid(id)) {
         return res.status(400).json({ message: "ID invalide" });
       }
+      const user = await userService.getUserById(id);
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur introuvable" });
+      }
       await userService.deleteUser(id);
       res.json({ message: "Utilisateur supprimé avec succès !" }).status(200)
         .json;

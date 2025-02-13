@@ -46,7 +46,6 @@ module.exports = {
       res.status(400).json({ message: error.message });
     }
   },
-
   updateProduct: async (req, res) => {
     try {
       const id = req.params.id;
@@ -79,6 +78,10 @@ module.exports = {
       const id = req.params.id;
       if (!ObjectId.isValid(id)) {
         return res.status(400).json({ message: "ID invalide" });
+      }
+      const product = await productService.getProductById(id);
+      if (!product) {
+        return res.status(404).json({ message: "Produit non trouvé" });
       }
       await productService.deleteProduct(id);
       res.json({ message: "Produit supprimé avec succès" });
