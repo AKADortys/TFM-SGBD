@@ -9,7 +9,7 @@ module.exports = {
       const orders = await orderService.getAllOrders();
       res.json(orders);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "Erreur Server" });
     }
   },
   // Récupération d'une commande par son ID
@@ -24,7 +24,7 @@ module.exports = {
         return res.status(404).json({ message: "Commande non trouvée" });
       res.json(order);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "Erreur Server" });
     }
   },
   // Récupération d'une commande par son userId
@@ -38,7 +38,7 @@ module.exports = {
       const orders = await orderService.getOrdersByUserId(id);
       res.json(orders);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "Erreur Server" });
     }
   },
   // Suppression d'une commande
@@ -48,14 +48,14 @@ module.exports = {
       if (!ObjectId.isValid(id)) {
         return res.status(400).json({ message: "ID invalide" });
       }
+      const order = await orderService.getOrderById(id);
+      if (!order) {
+        return res.status(404).json({ message: "Commande introuvable" });
+      }
       await orderService.deleteOrder(id);
       res.json({ message: "Commande supprimée avec succès" });
     } catch (error) {
-      if (error.message === "Commande introuvable") {
-        res.status(404).json({ message: error.message });
-        return;
-      }
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "Erreur server" });
     }
   },
   // Création d'une commande
@@ -80,7 +80,7 @@ module.exports = {
     } catch (error) {
       console.error("Erreur lors de la création de la commande:", error);
       res.status(500).json({
-        message: "Une erreur est survenue, veuillez réessayer plus tard.",
+        message: "Erreur Server",
       });
     }
   },
@@ -124,7 +124,7 @@ module.exports = {
       res.json(updatedOrder);
     } catch (error) {
       console.error("Erreur lors de la mise à jour de la commande:", error);
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "Erreur Server" });
     }
   },
   // Récupération des commandes avec détails (produits)
@@ -133,7 +133,7 @@ module.exports = {
       const orders = await orderService.getOrdersWithDetails();
       res.json(orders);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "Erreur Server" });
     }
   },
 };

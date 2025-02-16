@@ -24,7 +24,7 @@ const userController = {
       }
       res.json(user);
     } catch (error) {
-      res.status(404).json({ message: error.message });
+      res.status(404).json({ message: "Erreur Server" });
     }
   },
   // Création d'un utilisateur
@@ -49,7 +49,7 @@ const userController = {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Erreur serveur " + error.message });
+      res.status(500).json({ message: "Erreur serveur " });
     }
   },
   // Modification d'un utilisateur
@@ -104,7 +104,7 @@ const userController = {
       res.json({ message: "Utilisateur supprimé avec succès !" }).status(200)
         .json;
     } catch (error) {
-      res.status(404).json({ message: error.message });
+      res.status(404).json({ message: "Erreur server" });
     }
   },
 };

@@ -9,7 +9,7 @@ module.exports = {
       const products = await productService.getAllProducts();
       res.json(products);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "Erreur Server" });
     }
   },
   // Récupération d'un produit par ID
@@ -25,7 +25,7 @@ module.exports = {
       }
       res.json(product);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "Erreur Server" });
     }
   },
   // Création d'un nouveau produit
@@ -43,7 +43,11 @@ module.exports = {
       const newProduct = await productService.createProduct(value);
       res.status(201).json(newProduct);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      if (error.message.includes("E11000"))
+        return res
+          .status(500)
+          .json({ message: "Le nom du produit existe déjà !" });
+      res.status(400).json({ message: "Erreur Server" });
     }
   },
   updateProduct: async (req, res) => {
@@ -69,7 +73,7 @@ module.exports = {
       }
       res.status(201).json(updatedProduct);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(400).json({ message: "Erreur Server" });
     }
   },
   // Suppression d'un produit par ID
@@ -86,7 +90,7 @@ module.exports = {
       await productService.deleteProduct(id);
       res.json({ message: "Produit supprimé avec succès" });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "Erreur Server" });
     }
   },
 };
