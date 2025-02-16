@@ -57,7 +57,7 @@ const authController = {
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: isSecure,
-        maxAge: 1000 * 60 * 15, // 15 minutes
+        maxAge: 1000 * 60 * 60, // 60 minutes
         sameSite: "strict",
       });
 
