@@ -84,7 +84,8 @@ L'API comprend les fonctionnalités suivantes :
   "products": [
     {
       "productId": "ObjectId",
-      "quantity": "number"
+      "quantity": "number",
+      "price" : "number"
     }
   ],
   "totalPrice": "number",
