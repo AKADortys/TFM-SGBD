@@ -84,7 +84,8 @@ L'API comprend les fonctionnalités suivantes :
   "products": [
     {
       "productId": "ObjectId",
-      "quantity": "number"
+      "quantity": "number",
+      "price" : "number"
     }
   ],
   "totalPrice": "number",
@@ -132,3 +133,8 @@ L'API comprend les fonctionnalités suivantes :
 ## Fonctionnalités avancées
 
 - **Lookup MongoDB** : Les commandes intègrent des informations détaillées sur les utilisateurs et les produits grâce à une requête d'agrégation avec `$lookup`.
+
+## Déploiement
+
+- **MongoDB Atlas** : Utilisation d'une bdd pour le développement et la démo du server back-end.
+- **Render** : Utilisation d'un server gratuit pour la démo et pour un travail ultérieur  

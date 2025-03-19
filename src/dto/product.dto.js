@@ -20,6 +20,9 @@ const productSchema = Joi.object({
     "string.base": "La catégorie doit être une chaîne de caractères.",
     "string.min": "La catégorie doit contenir au moins 1 caractère.",
   }),
+  available: Joi.boolean().optional().messages({
+    "boolean.base": "La valeur de la disponibilité doit être bool",
+  }),
 });
 
 const updateProductSchema = Joi.object({
@@ -38,6 +41,9 @@ const updateProductSchema = Joi.object({
   category: Joi.string().min(1).allow("").messages({
     "string.base": "La catégorie doit être une chaîne de caractères.",
     "string.min": "La catégorie doit contenir au moins 1 caractère.",
+  }),
+  available: Joi.boolean().optional().messages({
+    "boolean.base": "La valeur de la disponibilité doit être bool",
   }),
 })
   .min(1)

@@ -10,6 +10,7 @@ const productSchema = mongoose.Schema(
       enum: ["Plat principal", "Dessert", "Boisson", "Divers"],
       default: "Divers",
     },
+    available: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

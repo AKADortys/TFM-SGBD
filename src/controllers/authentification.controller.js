@@ -6,7 +6,6 @@ const authService = require("../services/authentification.service");
 const authController = {
   login: async (req, res) => {
     const { email, password } = req.body;
-
     try {
       // Validation de l'email
       if (!validator.isEmail(email)) {

@@ -11,7 +11,12 @@ const app = express();
 connect();
 
 app.use(cookieParser());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // L'origine autorisée
+    credentials: true, // Permet les cookies
+  })
+);
 app.use(bodyParser.json());
 
 // Routes
