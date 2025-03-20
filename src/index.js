@@ -13,7 +13,7 @@ connect();
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:3000", // L'origine autorisée
+    origin: process.env.CORS_ORIGIN || "https://vivo-spa-vue-js.vercel.app/", // L'origine autorisée
     credentials: true, // Permet les cookies
   })
 );
