@@ -70,7 +70,7 @@ const authController = {
     // Suppression des cookies
     res.clearCookie("refreshToken");
     res.clearCookie("accessToken");
-    return res.status.json({ message: "Déconnexion réussie" });
+    return res.status(200).json({ message: "Déconnexion réussie" });
   },
 };
 
