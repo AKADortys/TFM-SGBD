@@ -50,14 +50,14 @@ const authController = {
         httpOnly: true,
         secure: isSecure,
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 jours
-        sameSite: "strict",
+        sameSite: "none",
       });
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: isSecure,
         maxAge: 1000 * 60 * 60, // 60 minutes
-        sameSite: "strict",
+        sameSite: "none",
       });
 
       return res.json({ message: "Connexion réussie", user });
