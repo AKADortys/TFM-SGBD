@@ -43,19 +43,16 @@ const authController = {
         }
       );
 
-      // Stockage des tokens dans les cookies sécurisés
-      const isSecure = process.env.COOKIE_SECRET || "production";
-
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: isSecure,
+        secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 jours
         sameSite: "None",
       });
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: isSecure,
+        secure: true,
         maxAge: 1000 * 60 * 60, // 60 minutes
         sameSite: "None",
       });
