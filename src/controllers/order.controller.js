@@ -41,6 +41,15 @@ module.exports = {
       res.status(500).json({ message: "Erreur Server" });
     }
   },
+  // Récuperation commande par status
+  getOrdersByStatus: async (req, res) => {
+    try {
+      const orders = await orderService.getOrdersByStatus();
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ message: "Erreur Server" });
+    }
+  },
   // Suppression d'une commande
   deleteOrder: async (req, res) => {
     try {

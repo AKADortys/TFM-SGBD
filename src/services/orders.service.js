@@ -63,9 +63,9 @@ module.exports = {
     }
   },
 
-  getOrdersByStatus: async (status) => {
+  getOrdersByStatus: async () => {
     try {
-      const orders = await Order.find({ status });
+      const orders = await Order.find({ status: "En attente" });
       return orders;
     } catch (error) {
       throw new Error(error.message);
