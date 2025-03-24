@@ -56,6 +56,20 @@ const createOrderSchema = Joi.object({
       "L'adresse de livraison doit contenir au moins 10 caractères.",
     "any.required": "L'adresse de livraison est requise.",
   }),
+  status: Joi.string()
+    .valid(
+      "En attente",
+      "Validée",
+      "Confirmée",
+      "Prêt en magasin",
+      "Refusée",
+      "Annulée"
+    )
+    .messages({
+      "string.base": "Le statut doit être une chaîne de caractères valide.",
+      "string.pattern.base":
+        "Le statut doit être 'pending', 'processing', 'shipped' ou 'delivered'.",
+    }),
 });
 
 // Schéma de validation pour la mise à jour d'une commande
@@ -82,6 +96,21 @@ const updateOrderSchema = Joi.object({
     "string.min":
       "L'adresse de livraison doit contenir au moins 10 caractères.",
   }),
+  status: Joi.string()
+    .valid(
+      "En attente",
+      "Validée",
+      "Confirmée",
+      "Prêt en magasin",
+      "Refusée",
+      "Annulée"
+    )
+    .optional()
+    .messages({
+      "string.base": "Le statut doit être une chaîne de caractères valide.",
+      "string.pattern.base":
+        "Le statut doit être 'pending', 'processing', 'shipped' ou 'delivered'.",
+    }),
 })
   .min(1)
   .messages({

@@ -77,13 +77,18 @@ module.exports = {
         return res.status(400).json({ message: error.details[0].message });
       }
 
-      const { userId, products, deliveryAddress } = value;
+      const { userId, products, deliveryAddress, status } = value;
       let totalPrice = products.reduce(
         (sum, product) => sum + product.price * product.quantity,
         0
       );
-
-      const newOrder = { userId, products, deliveryAddress, totalPrice };
+      const newOrder = {
+        userId,
+        products,
+        deliveryAddress,
+        totalPrice,
+        status,
+      };
       const order = await orderService.createOrder(newOrder);
       res.status(201).json(order);
     } catch (error) {
@@ -123,6 +128,7 @@ module.exports = {
         userId: value.userId || existingOrder.userId,
         products: value.products || existingOrder.products,
         deliveryAddress: value.deliveryAddress || existingOrder.deliveryAddress,
+        status: value.status || existingOrder.status,
         totalPrice,
       };
 
