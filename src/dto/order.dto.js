@@ -59,7 +59,7 @@ const createOrderSchema = Joi.object({
   status: Joi.string()
     .valid(
       "En attente",
-      "Validée",
+      "En cours de traitement",
       "Confirmée",
       "Prêt en magasin",
       "Refusée",
@@ -99,7 +99,7 @@ const updateOrderSchema = Joi.object({
   status: Joi.string()
     .valid(
       "En attente",
-      "Validée",
+      "En cours de traitement",
       "Confirmée",
       "Prêt en magasin",
       "Refusée",

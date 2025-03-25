@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: [
         "En attente",
-        "Validée",
+        "En cours de traitement",
         "Confirmée",
         "Prêt en magasin",
         "Refusée",
