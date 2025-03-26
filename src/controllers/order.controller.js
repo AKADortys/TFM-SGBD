@@ -110,6 +110,12 @@ module.exports = {
       if (!existingOrder) {
         return res.status(404).json({ message: "Commande non trouvée" });
       }
+      const modifiableStatuses = ["En attente", "En cours de traitement"];
+      if (!modifiableStatuses.includes(existingOrder.status)) {
+        return res
+          .status(403)
+          .json({ message: "Modification interdite pour cette commande" });
+      }
 
       const { error, value } = updateOrderSchema.validate(req.body);
       if (error) {

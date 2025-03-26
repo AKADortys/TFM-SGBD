@@ -73,7 +73,6 @@ const userController = {
         const errors = error.details.map((d) => d.message);
         return res.status(400).json({ errors });
       }
-      console.log(value);
       // Mise à jour de l'utilisateur
       const updatedUser = await userService.updateUser(id, value);
 
