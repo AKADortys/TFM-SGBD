@@ -16,6 +16,7 @@ const authService = {
 
       const response = { ...user._doc };
       delete response.password;
+      delete response._doc;
       return response;
     } catch (error) {
       console.error(error);

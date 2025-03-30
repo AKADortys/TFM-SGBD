@@ -49,7 +49,10 @@ const userService = {
 
       if (!updatedUser) return null;
 
-      return updatedUser;
+      const response = { ...updatedUser._doc };
+
+      delete response.password;
+      return response;
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'utilisateur:");
       throw error;
