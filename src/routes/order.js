@@ -12,7 +12,7 @@ router.get("/", permissionsMdw, orderController.getAllOrders);
 router.get("/detail", permissionsMdw, orderController.getOrdersWithDetails);
 router.get("/user/:id", permissionsMdw, orderController.getUserOrders);
 router.get("/status", permissionsMdw, orderController.getOrdersByStatus);
-router.get("/:id", permissionsMdw, orderController.getOrderById);
+router.get("/:id", orderController.getOrderById);
 router.post("/", orderController.createOrder);
 router.put("/:id", orderController.updateOrder);
 router.delete("/:id", orderController.deleteOrder);

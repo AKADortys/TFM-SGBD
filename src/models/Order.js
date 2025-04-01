@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
@@ -18,7 +19,7 @@ const orderSchema = new mongoose.Schema(
         price: { type: Number, required: true, min: 0 },
       },
     ],
-    deliveryAddress: { type: String },
+    deliveryAddress: { type: String, required: false },
     status: {
       type: String,
       enum: [

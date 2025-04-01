@@ -50,7 +50,7 @@ const createOrderSchema = Joi.object({
     "any.required": "Le tableau des produits est requis.",
   }),
 
-  deliveryAddress: Joi.string().min(10).required().messages({
+  deliveryAddress: Joi.string().min(10).optional().messages({
     "string.base": "L'adresse de livraison doit être une chaîne de caractères.",
     "string.min":
       "L'adresse de livraison doit contenir au moins 10 caractères.",
