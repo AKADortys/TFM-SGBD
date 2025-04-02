@@ -52,7 +52,6 @@ const authController = {
         secure: true, // Requires HTTPS
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 jours
         sameSite: "None", // Requires secure: true
-        domain: "akadortys.github.io", // Adjust this to your actual domain. Remove the path.
         path: "/", // Ensure the cookie is accessible from all paths.
       });
 
@@ -61,7 +60,6 @@ const authController = {
         secure: true, // Requires HTTPS
         maxAge: 1000 * 60 * 60, // 60 minutes
         sameSite: "None", // Requires secure: true
-        domain: "akadortys.github.io", // Adjust this to your actual domain. Remove the path.
         path: "/", // Ensure the cookie is accessible from all paths.
       });
 
