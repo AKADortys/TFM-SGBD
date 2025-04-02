@@ -43,20 +43,26 @@ const authController = {
         }
       );
 
+      // Set cookies with correct secure and sameSite attributes.
+      // Important to note that domain should be adjusted according to your actual domain.
+      // Also, sameSite: 'None' requires secure: true.
+
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true,
+        secure: true, // Requires HTTPS
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 jours
-        sameSite: "None",
-        domain: "akadortys.github.io",
+        sameSite: "None", // Requires secure: true
+        domain: "akadortys.github.io", // Adjust this to your actual domain. Remove the path.
+        path: "/", // Ensure the cookie is accessible from all paths.
       });
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: true,
+        secure: true, // Requires HTTPS
         maxAge: 1000 * 60 * 60, // 60 minutes
-        sameSite: "None",
-        domain: "akadortys.github.io",
+        sameSite: "None", // Requires secure: true
+        domain: "akadortys.github.io", // Adjust this to your actual domain. Remove the path.
+        path: "/", // Ensure the cookie is accessible from all paths.
       });
 
       return res.json({ message: "Connexion réussie", user });
@@ -67,8 +73,20 @@ const authController = {
   },
   logout: async (req, res) => {
     // Suppression des cookies
-    res.clearCookie("refreshToken");
-    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      domain: "akadortys.github.io",
+      path: "/",
+    });
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      domain: "akadortys.github.io",
+      path: "/",
+    });
     return res.status(200).json({ message: "Déconnexion réussie" });
   },
 };
