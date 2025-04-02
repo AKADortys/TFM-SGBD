@@ -48,7 +48,7 @@ const authController = {
         secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 jours
         sameSite: "None",
-        domain: "vivo-spa-vue-js.vercel.app",
+        domain: "https://akadortys.github.io/Vivo-SPA_VueJS/#/",
       });
 
       res.cookie("accessToken", accessToken, {
@@ -56,7 +56,7 @@ const authController = {
         secure: true,
         maxAge: 1000 * 60 * 60, // 60 minutes
         sameSite: "None",
-        domain: "vivo-spa-vue-js.vercel.app",
+        domain: "https://akadortys.github.io/Vivo-SPA_VueJS/#/",
       });
 
       return res.json({ message: "Connexion réussie", user });
