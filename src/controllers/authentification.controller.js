@@ -43,24 +43,20 @@ const authController = {
         }
       );
 
-      // Set cookies with correct secure and sameSite attributes.
-      // Important to note that domain should be adjusted according to your actual domain.
-      // Also, sameSite: 'None' requires secure: true.
-
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true, // Requires HTTPS
-        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 jours
-        sameSite: "None", // Requires secure: true
-        path: "/", // Ensure the cookie is accessible from all paths.
+        secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        sameSite: "None",
+        path: "/",
       });
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: true, // Requires HTTPS
-        maxAge: 1000 * 60 * 60, // 60 minutes
-        sameSite: "None", // Requires secure: true
-        path: "/", // Ensure the cookie is accessible from all paths.
+        secure: true,
+        maxAge: 1000 * 60 * 60,
+        sameSite: "None",
+        path: "/",
       });
 
       return res.json({ message: "Connexion réussie", user });
