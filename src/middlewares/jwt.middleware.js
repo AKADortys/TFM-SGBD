@@ -5,6 +5,7 @@ module.exports = async (req, res, next) => {
   try {
     const token = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
+    // console.log(`Access token: ${token}\nRefresh token: ${refreshToken}`);
 
     if (!token && !refreshToken) {
       return res.status(403).json({ message: "Token manquant" });
