@@ -6,10 +6,19 @@ module.exports = {
   // Récupération de tous les commandes
   getAllOrders: async (req, res) => {
     try {
-      const orders = await orderService.getAllOrders();
-      res.json(orders);
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 5;
+
+      const result = await orderService.getAllOrders(page, limit);
+
+      return res.status(200).json({
+        data: result.orders,
+        page: result.page,
+        total: result.total,
+        totalPages: result.totalPages,
+      });
     } catch (error) {
-      res.status(500).json({ message: "Erreur Server" });
+      res.status(500).json({ message: "Erreur serveur", error: error.message });
     }
   },
   // Récupération d'une commande par son ID
@@ -30,22 +39,48 @@ module.exports = {
   // Récupération d'une commande par son userId
   getUserOrders: async (req, res) => {
     try {
+      const skip = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 5;
       const id = req.params.id;
       if (!id || !ObjectId.isValid(id)) {
         return res.status(400).json({ message: "ID invalide" });
       }
 
-      const orders = await orderService.getOrdersByUserId(id);
-      res.json(orders);
+      const result = await orderService.getOrdersByUserId(id, skip, limit);
+      return res.status(200).json({
+        data: result.orders,
+        page: result.page,
+        total: result.total,
+        totalPages: result.totalPages,
+      });
     } catch (error) {
       res.status(500).json({ message: "Erreur Server" });
     }
   },
   // Récuperation commande par status
   getOrdersByStatus: async (req, res) => {
+    const skip = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const validStatus = [
+      "En attente",
+      "En cours de traitement",
+      "Confirmée",
+      "Prêt en magasin",
+      "Refusée",
+      "Annulée",
+    ];
+    const status = req.params.status;
+    if (!validStatus.includes(status)) {
+      return res.status(400).json({ message: "Statut invalide" });
+    }
     try {
-      const orders = await orderService.getOrdersByStatus();
-      res.json(orders);
+      const result = await orderService.getOrdersByStatus(status, skip, limit);
+      return res.status(200).json({
+        data: result.orders,
+        page: result.page,
+        total: result.total,
+        totalPages: result.totalPages,
+      });
     } catch (error) {
       res.status(500).json({ message: "Erreur Server" });
     }

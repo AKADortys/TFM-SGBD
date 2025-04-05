@@ -2,9 +2,19 @@ const User = require("../models/User");
 
 const userService = {
   // Récupérer tous les utilisateurs
-  getUsers: async () => {
+  getUsers: async (page, limit) => {
     try {
-      return await User.find({});
+      const skip = (page - 1) * limit;
+      const [users, total] = await Promise.all([
+        User.find().skip(skip).limit(limit),
+        User.countDocuments(),
+      ]);
+      return {
+        users,
+        total,
+        totalPages: Math.ceil(total / limit),
+        page,
+      };
     } catch (error) {
       throw new Error("Erreur lors de la récupération des utilisateurs");
     }

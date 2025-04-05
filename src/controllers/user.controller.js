@@ -5,8 +5,15 @@ const userController = {
   // Récupération de tous les utilisateurs
   getUsers: async (req, res) => {
     try {
-      const users = await userService.getUsers();
-      res.json(users);
+      const skip = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const result = await userService.getUsers(skip, limit);
+      res.status(200).json({
+        data: result.users,
+        page: result.page,
+        total: result.total,
+        totalPages: result.totalPages,
+      });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

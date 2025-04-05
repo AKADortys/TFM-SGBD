@@ -14,7 +14,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN, // L'origine autorisée
-    credentials: true, // Permet les cookies
+    credentials: true,
   })
 );
 app.use(bodyParser.json());

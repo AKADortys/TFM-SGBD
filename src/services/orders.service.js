@@ -2,12 +2,23 @@ const Order = require("../models/Order");
 const mongoose = require("mongoose");
 
 module.exports = {
-  getAllOrders: async () => {
+  getAllOrders: async (page = 1, limit = 5) => {
     try {
-      const orders = await Order.find();
-      return orders;
+      const skip = (page - 1) * limit;
+
+      const [orders, total] = await Promise.all([
+        Order.find().skip(skip).limit(limit),
+        Order.countDocuments(),
+      ]);
+
+      return {
+        orders,
+        total,
+        totalPages: Math.ceil(total / limit),
+        page,
+      };
     } catch (error) {
-      return new Error(error.message);
+      throw new Error(error.message);
     }
   },
 
@@ -52,21 +63,39 @@ module.exports = {
     }
   },
 
-  getOrdersByUserId: async (userId) => {
+  getOrdersByUserId: async (userId, page, limit) => {
     try {
-      const orders = await Order.find({
-        userId: new mongoose.Types.ObjectId(userId),
-      });
-      return orders;
+      const skip = (page - 1) * limit;
+      const [orders, total] = await Promise.all([
+        Order.find({ userId: new mongoose.Types.ObjectId(userId) })
+          .skip(skip)
+          .limit(limit),
+        Order.countDocuments({ userId: new mongoose.Types.ObjectId(userId) }),
+      ]);
+      return {
+        orders,
+        total,
+        totalPages: Math.ceil(total / limit),
+        page,
+      };
     } catch (error) {
       throw new Error(error.message);
     }
   },
 
-  getOrdersByStatus: async () => {
+  getOrdersByStatus: async (statut, page, limit) => {
     try {
-      const orders = await Order.find({ status: "En attente" });
-      return orders;
+      const skip = (page - 1) * limit;
+      const [orders, total] = await Promise.all([
+        Order.find({ status: statut }).skip(skip).limit(limit),
+        Order.countDocuments({ status: statut }),
+      ]);
+      return {
+        orders,
+        total,
+        totalPages: Math.ceil(total / limit),
+        page,
+      };
     } catch (error) {
       throw new Error(error.message);
     }

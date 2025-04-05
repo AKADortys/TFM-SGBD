@@ -5,7 +5,6 @@ module.exports = async (req, res, next) => {
   try {
     const token = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
-    // console.log(`Access token: ${token}\nRefresh token: ${refreshToken}`);
 
     if (!token && !refreshToken) {
       return res.status(403).json({ message: "Token manquant" });
@@ -16,7 +15,7 @@ module.exports = async (req, res, next) => {
       req.user = decoded;
       return next();
     } catch (error) {
-      if (error.name === "TokenExpiredError" && refreshToken) {
+      if (error.name === "JsonWebTokenError" && refreshToken) {
         console.log("Access token expiré, tentative de rafraîchissement...");
 
         const newAccessToken = await refreshTokenFunction(refreshToken);
@@ -34,7 +33,9 @@ module.exports = async (req, res, next) => {
         req.user = jwt.verify(newAccessToken, jwtConfig.secret);
         return next();
       }
-      return res.status(401).json({ message: "Token invalide ou expiré" });
+      return res
+        .status(401)
+        .json({ message: "Token invalide ou expiré", error });
     }
   } catch (error) {
     console.error("Erreur JWT:", error);

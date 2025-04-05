@@ -6,7 +6,7 @@ const Order = require("./models/Order"); // Modèle Order
 
 mongoose
   .connect(process.env.MONGO_URI, {
-    authSource: "admin", // Vérifie si nécessaire
+    authSource: "admin", // nécessaire
   })
   .then(async () => {
     console.log("Connexion à MongoDB réussie");
