@@ -71,14 +71,12 @@ const authController = {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      domain: "akadortys.github.io",
       path: "/",
     });
     res.clearCookie("accessToken", {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      domain: "akadortys.github.io",
       path: "/",
     });
     return res.status(200).json({ message: "Déconnexion réussie" });

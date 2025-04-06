@@ -15,7 +15,11 @@ module.exports = async (req, res, next) => {
       req.user = decoded;
       return next();
     } catch (error) {
-      if (error.name === "JsonWebTokenError" && refreshToken) {
+      if (
+        (error.name === "JsonWebTokenError" ||
+          error.name === "TokenExpiredError") &&
+        refreshToken
+      ) {
         console.log("Access token expiré, tentative de rafraîchissement...");
 
         const newAccessToken = await refreshTokenFunction(refreshToken);
@@ -26,8 +30,10 @@ module.exports = async (req, res, next) => {
         // Sauvegarde le nouveau token dans le cookie
         res.cookie("accessToken", newAccessToken, {
           httpOnly: true,
-          secure: process.env.COOKIE_SECRET || "production",
-          sameSite: "Strict",
+          secure: true,
+          maxAge: 1000 * 60 * 60,
+          sameSite: "None",
+          path: "/",
         });
 
         req.user = jwt.verify(newAccessToken, jwtConfig.secret);
@@ -54,7 +60,6 @@ const refreshTokenFunction = async (refreshToken) => {
       jwtConfig.secret,
       { expiresIn: "1h" }
     );
-    console.log("New access token"); ///////////////////////////////////////////////////////////////////////////////
 
     return newAccessToken;
   } catch (err) {
