@@ -68,6 +68,7 @@ module.exports = {
       const skip = (page - 1) * limit;
       const [orders, total] = await Promise.all([
         Order.find({ userId: new mongoose.Types.ObjectId(userId) })
+          .sort({ createdAt: -1 })
           .skip(skip)
           .limit(limit),
         Order.countDocuments({ userId: new mongoose.Types.ObjectId(userId) }),
