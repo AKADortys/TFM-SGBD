@@ -186,7 +186,11 @@ module.exports = {
   // Récupération des commandes avec détails (produits)
   getOrdersWithDetails: async (req, res) => {
     try {
-      const orders = await orderService.getOrdersWithDetails();
+      const id = req.params.id;
+      if (!id || !ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "ID invalide" });
+      }
+      const orders = await orderService.getOrderWithDetails(id);
       res.json(orders);
     } catch (error) {
       res.status(500).json({ message: "Erreur Server" });

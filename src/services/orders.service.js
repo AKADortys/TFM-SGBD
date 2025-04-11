@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const mongoose = require("mongoose");
+const { ObjectId } = require("mongodb");
 
 module.exports = {
   getAllOrders: async (page = 1, limit = 5) => {
@@ -101,10 +102,12 @@ module.exports = {
       throw new Error(error.message);
     }
   },
-
-  getOrdersWithDetails: async () => {
+  getOrderWithDetails: async (orderId) => {
     try {
       const orders = await Order.aggregate([
+        {
+          $match: { _id: new ObjectId(orderId) },
+        },
         {
           $lookup: {
             from: "users",
@@ -114,9 +117,7 @@ module.exports = {
           },
         },
         { $unwind: "$user" },
-
         { $unwind: "$products" },
-
         {
           $lookup: {
             from: "products",
@@ -126,8 +127,6 @@ module.exports = {
           },
         },
         { $unwind: "$productDetails" },
-
-        // Regrouper les produits de la commande pour recréer le tableau "products"
         {
           $group: {
             _id: "$_id",
@@ -145,8 +144,6 @@ module.exports = {
             },
           },
         },
-
-        // Sélection des champs utiles
         {
           $project: {
             user: { name: 1, lastName: 1, mail: 1, phone: 1 },
@@ -160,8 +157,10 @@ module.exports = {
         },
       ]);
 
-      return orders;
+      return orders[0] || null;
     } catch (error) {
+      console.error(error);
+
       throw new Error(error.message);
     }
   },

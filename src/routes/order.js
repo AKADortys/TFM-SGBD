@@ -9,7 +9,7 @@ router.use(tokenMdw);
 
 // Routes protégées par permissionsMdw
 router.get("/", permissionsMdw, orderController.getAllOrders);
-router.get("/detail", permissionsMdw, orderController.getOrdersWithDetails);
+router.get("/detail/:id", permissionsMdw, orderController.getOrdersWithDetails);
 router.get("/user/:id", permissionsMdw, orderController.getUserOrders);
 router.get(
   "/status/:status",
