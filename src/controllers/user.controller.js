@@ -5,9 +5,12 @@ const userController = {
   // Récupération de tous les utilisateurs
   getUsers: async (req, res) => {
     try {
-      const skip = parseInt(req.query.page) || 1;
+      const search = req.query.search || "";
+      const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
-      const result = await userService.getUsers(skip, limit);
+
+      const result = await userService.getUsers(page, limit, search);
+
       res.status(200).json({
         data: result.users,
         page: result.page,
@@ -18,6 +21,7 @@ const userController = {
       res.status(500).json({ message: error.message });
     }
   },
+
   // Récupération d'un utilisateur par ID
   getUserById: async (req, res) => {
     try {

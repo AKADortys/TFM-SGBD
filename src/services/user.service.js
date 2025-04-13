@@ -2,13 +2,26 @@ const User = require("../models/User");
 
 const userService = {
   // Récupérer tous les utilisateurs
-  getUsers: async (page, limit) => {
+  getUsers: async (page, limit, searchTerm = "") => {
     try {
       const skip = (page - 1) * limit;
+
+      // Construction de la condition de recherche
+      const searchQuery = searchTerm
+        ? {
+            $or: [
+              { name: { $regex: searchTerm, $options: "i" } },
+              { lastName: { $regex: searchTerm, $options: "i" } },
+            ],
+          }
+        : {};
+
+      // Requête avec filtre + pagination
       const [users, total] = await Promise.all([
-        User.find().skip(skip).limit(limit),
-        User.countDocuments(),
+        User.find(searchQuery).skip(skip).limit(limit),
+        User.countDocuments(searchQuery),
       ]);
+
       return {
         users,
         total,
@@ -19,6 +32,7 @@ const userService = {
       throw new Error("Erreur lors de la récupération des utilisateurs");
     }
   },
+
   // Récupérer un utilisateur par ID
   getUserById: async (id) => {
     try {
