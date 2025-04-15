@@ -1,6 +1,7 @@
 const orderService = require("../services/orders.service");
 const { createOrderSchema, updateOrderSchema } = require("../dto/order.dto");
 const { ObjectId } = require("mongodb");
+const { message } = require("statuses");
 
 module.exports = {
   // Récupération de tous les commandes
@@ -191,6 +192,8 @@ module.exports = {
         return res.status(400).json({ message: "ID invalide" });
       }
       const orders = await orderService.getOrderWithDetails(id);
+      if (orders === null)
+        res.status(404).json({ message: "Aucunes commande" });
       res.json(orders);
     } catch (error) {
       res.status(500).json({ message: "Erreur Server" });
