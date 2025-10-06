@@ -1,6 +1,7 @@
 const userService = require("../services/user.service");
 const { ObjectId } = require("mongodb");
 const { userSchema, updateUserSchema } = require("../dto/user.dto");
+const mailService = require("../services/mail.service");
 const userController = {
   // Récupération de tous les utilisateurs
   getUsers: async (req, res) => {
@@ -21,7 +22,6 @@ const userController = {
       res.status(500).json({ message: error.message });
     }
   },
-
   // Récupération d'un utilisateur par ID
   getUserById: async (req, res) => {
     try {
@@ -55,7 +55,7 @@ const userController = {
       const newUser = await userService.createUser(value);
       const response = { ...newUser };
       delete response.password;
-
+      await mailService.welcomeMail(newUser._doc);
       res.status(201).json({
         message: "Utilisateur créé avec succès",
         user: response,

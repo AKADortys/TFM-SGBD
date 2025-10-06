@@ -2,6 +2,9 @@ const jwt = require("jsonwebtoken");
 const jwtConfig = require("../config/jwt");
 const validator = require("validator");
 const authService = require("../services/authentification.service");
+const mailService = require("../services/mail.service");
+const userService = require("../services/user.service");
+const { message } = require("statuses");
 
 const authController = {
   login: async (req, res) => {
@@ -29,14 +32,24 @@ const authController = {
 
       // Génération des tokens
       const accessToken = jwt.sign(
-        { id: user._id, role: user.role },
+        {
+          id: user._id,
+          role: user.role,
+          fullname: user.name + " " + user.lastName,
+          mail: user.mail,
+        },
         jwtConfig.secret,
         {
           expiresIn: "1h",
         }
       );
       const refreshToken = jwt.sign(
-        { id: user._id, role: user.role },
+        {
+          id: user._id,
+          role: user.role,
+          fullname: user.name + " " + user.lastName,
+          mail: user.mail,
+        },
         jwtConfig.refreshSecret,
         {
           expiresIn: "7d",
@@ -80,6 +93,30 @@ const authController = {
       path: "/",
     });
     return res.status(200).json({ message: "Déconnexion réussie" });
+  },
+  // Récupération mot de passe
+  passRecovery: async (req, res) => {
+    try {
+      const { mail } = req.body;
+      // Validation de l'email
+      if (!validator.isEmail(mail)) {
+        return res.status(400).json({ message: "L'email fourni est invalide" });
+      }
+      const user = await userService.getUserByMail(mail);
+      if (!user) {
+        res.status(404).json({ message: "Addresse mail incorrecte" });
+      } else {
+        const ip = req.ip;
+        const ua = req.headers["user-agent"] || "unknown";
+        const token = await authService.createPasswordReset(user._id, ip, ua);
+        await mailService.passReset(user, token);
+        res
+          .status(200)
+          .json({ message: "Votre demande à été traitée avec succès" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Erreur server" });
+    }
   },
 };
 

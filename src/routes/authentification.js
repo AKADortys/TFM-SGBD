@@ -5,5 +5,6 @@ const tokenMdw = require("../middlewares/jwt.middleware");
 
 router.post("/login", authController.login);
 router.post("/logout", tokenMdw, authController.logout);
+router.post("/pass-reset", authController.passRecovery);
 
 module.exports = router;

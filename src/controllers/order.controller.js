@@ -1,7 +1,7 @@
 const orderService = require("../services/orders.service");
 const { createOrderSchema, updateOrderSchema } = require("../dto/order.dto");
 const { ObjectId } = require("mongodb");
-const { message } = require("statuses");
+const mailService = require("../services/mail.service");
 
 module.exports = {
   // Récupération de tous les commandes
@@ -126,6 +126,7 @@ module.exports = {
         status,
       };
       const order = await orderService.createOrder(newOrder);
+      await mailService.newOrder(order, req.user);
       res.status(201).json(order);
     } catch (error) {
       console.error("Erreur lors de la création de la commande:", error);

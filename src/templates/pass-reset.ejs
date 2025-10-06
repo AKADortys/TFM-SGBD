@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <%-include('./layout/head')%>
+
+  <body>
+    <%-include('./layout/header')%>
+    <p>Bonjour <%=user.name + " " + user.lastName%></p>
+    <p>
+      Vous avez demandé à réinitialiser votre mot de passe. Pour définir un
+      nouveau mot de passe, cliquez sur le lien ci-dessous :
+    </p>
+    <a href="<%=token%>"><%=token%></a>
+    <p style="margin-top: 30px; font-size: 12px; color: #888">
+      <strong>Ce lien est valable 1h</strong> . Si vous n’êtes pas à l’origine
+      de cette demande, ignorez simplement ce message.
+    </p>
+    <%-include('./layout/footer')%>
+  </body>
+</html>

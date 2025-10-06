@@ -57,14 +57,7 @@ const createOrderSchema = Joi.object({
     "any.required": "L'adresse de livraison est requise.",
   }),
   status: Joi.string()
-    .valid(
-      "En attente",
-      "En cours de traitement",
-      "Confirmée",
-      "Prêt en magasin",
-      "Refusée",
-      "Annulée"
-    )
+    .valid("En attente", "Confirmée", "Accepté", "Refusée", "Annulée")
     .messages({
       "string.base": "Le statut doit être une chaîne de caractères valide.",
       "string.pattern.base":
@@ -97,14 +90,7 @@ const updateOrderSchema = Joi.object({
       "L'adresse de livraison doit contenir au moins 10 caractères.",
   }),
   status: Joi.string()
-    .valid(
-      "En attente",
-      "En cours de traitement",
-      "Confirmée",
-      "Prêt en magasin",
-      "Refusée",
-      "Annulée"
-    )
+    .valid("En attente", "Confirmée", "Accepté", "Refusée", "Annulée")
     .optional()
     .messages({
       "string.base": "Le statut doit être une chaîne de caractères valide.",
