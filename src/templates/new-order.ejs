@@ -12,6 +12,14 @@
         enregistrée pour notre service de plats à emporter.
       </p>
 
+      <ul>
+        <% order.products.forEach((n)=>{%>
+          <li><%=n.productId.label%> - <%=n.price%> x <%=n.quantity%></li>
+        <%})%>
+      </ul>
+
+      <p><strong>Montant Total:</strong> <%=order.totalPrice%></p>
+
       <p>
         Veuillez noter que la commande doit encore être validée par le gérant
         avant préparation. Vous recevrez un e-mail vous informant de la

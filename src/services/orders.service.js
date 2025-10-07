@@ -37,7 +37,12 @@ module.exports = {
     try {
       const newOrder = new Order(order);
       await newOrder.save();
-      return newOrder;
+
+      const populatedOrder = await newOrder.populate({
+        path: "products.productId",
+        select: "label",
+      });
+      return populatedOrder;
     } catch (error) {
       throw new Error(error.message);
     }

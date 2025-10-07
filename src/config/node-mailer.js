@@ -6,7 +6,7 @@ let transporterPromise = (async () => {
     return nodemailer.createTransport({
       // service: "gmail",
       host: process.env.SMTP_HOST,
-      port: 587,
+      port: process.env.SMTP_PORT,
       secure: false,
       auth: {
         user: process.env.SMTP_USER,
