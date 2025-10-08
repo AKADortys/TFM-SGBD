@@ -2,7 +2,7 @@ const orderService = require("../services/orders.service");
 const mailService = require("../services/mail.service");
 const productService = require("../services/product.service");
 const { createOrderSchema, updateOrderSchema } = require("../dto/order.dto");
-const { ObjectId } = require("mongodb");
+const utils = require("../utils/services.util");
 
 module.exports = {
   // Récupération de tous les commandes
@@ -27,9 +27,9 @@ module.exports = {
   getOrderById: async (req, res) => {
     try {
       const id = req.params.id;
-      if (!id || !ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "ID invalide" });
-      }
+      const idError = utils.isObjectId(id);
+      if (idError) return res.status(400).json({ message: idError });
+
       const order = await orderService.getOrderById(id);
       if (!order)
         return res.status(404).json({ message: "Commande non trouvée" });
@@ -44,9 +44,9 @@ module.exports = {
       const skip = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 5;
       const id = req.params.id;
-      if (!id || !ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "ID invalide" });
-      }
+
+      const idError = utils.isObjectId(id);
+      if (idError) return res.status(400).json({ message: idError });
 
       const result = await orderService.getOrdersByUserId(id, skip, limit);
       return res.status(200).json({
@@ -91,9 +91,8 @@ module.exports = {
   deleteOrder: async (req, res) => {
     try {
       const id = req.params.id;
-      if (!ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "ID invalide" });
-      }
+      const idError = utils.isObjectId(id);
+      if (idError) return res.status(400).json({ message: idError });
       const order = await orderService.getOrderById(id);
       if (!order) {
         return res.status(404).json({ message: "Commande introuvable" });
@@ -150,10 +149,8 @@ module.exports = {
   updateOrder: async (req, res) => {
     try {
       const { id } = req.params;
-      if (!ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "ID de la commande invalide" });
-      }
-
+      const idError = utils.isObjectId(id);
+      if (idError) return res.status(400).json({ message: idError });
       const existingOrder = await orderService.getOrderById(id);
       if (!existingOrder) {
         return res.status(404).json({ message: "Commande non trouvée" });

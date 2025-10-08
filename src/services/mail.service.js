@@ -61,7 +61,7 @@ module.exports = {
   newOrder: async (order, user) => {
     try {
       const transporter = await transporterPromise;
-      const html = await renderHtml(templatePath("new-order.ejs"), {
+      let html = await renderHtml(templatePath("new-order.ejs"), {
         title: "Votre commande est en cour de traitement !",
         order: order,
         user: user,

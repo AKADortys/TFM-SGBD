@@ -6,108 +6,75 @@ const userService = require("../services/user.service");
 const utils = require("../utils/services.util");
 
 const authController = {
+  // Connexion utilisateur
   login: async (req, res) => {
-    const { email, password } = req.body;
     try {
-      const emailError = utils.validateEmail(email);
+      const { mail, password } = req.body;
+      const emailError = utils.validateEmail(mail);
       if (emailError) return res.status(400).json({ message: emailError });
 
       const passwordError = utils.validatePassword(password);
       if (passwordError)
         return res.status(400).json({ message: passwordError });
-      // Vérification des identifiants
-      const user = await authService.login(email, password);
-      if (!user) {
+
+      const user = await authService.login(mail, password);
+      if (!user)
         return res
           .status(401)
           .json({ message: "Email ou mot de passe incorrect" });
-      }
 
-      // Génération des tokens
-      const accessToken = jwt.sign(
-        {
-          id: user._id,
-          role: user.role,
-          fullname: user.name + " " + user.lastName,
-          mail: user.mail,
-        },
-        jwtConfig.secret,
-        {
-          expiresIn: "1h",
-        }
-      );
-      const refreshToken = jwt.sign(
-        {
-          id: user._id,
-          role: user.role,
-          fullname: user.name + " " + user.lastName,
-          mail: user.mail,
-        },
-        jwtConfig.refreshSecret,
-        {
-          expiresIn: "7d",
-        }
-      );
-
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-        sameSite: "None",
-        path: "/",
+      const payload = utils.createTokenPayload(user);
+      const accessToken = jwt.sign(payload, jwtConfig.secret, {
+        expiresIn: "1h",
+      });
+      const refreshToken = jwt.sign(payload, jwtConfig.refreshSecret, {
+        expiresIn: "7d",
       });
 
-      res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 1000 * 60 * 60,
-        sameSite: "None",
-        path: "/",
-      });
+      res
+        .cookie("accessToken", accessToken, utils.cookieOptions(1000 * 60 * 60))
+        .cookie(
+          "refreshToken",
+          refreshToken,
+          utils.cookieOptions(1000 * 60 * 60 * 24 * 7)
+        );
 
-      return res.json({ message: "Connexion réussie", user });
+      res.json({ message: "Connexion réussie", user });
     } catch (error) {
       console.error("Erreur lors de la connexion :", error);
-      return res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "Erreur interne du serveur" });
     }
   },
-  logout: async (req, res) => {
-    // Suppression des cookies
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      path: "/",
-    });
-    res.clearCookie("accessToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      path: "/",
-    });
-    return res.status(200).json({ message: "Déconnexion réussie" });
+
+  // Déconnexion
+  logout: (req, res) => {
+    res.clearCookie("accessToken", utils.cookieOptions(0));
+    res.clearCookie("refreshToken", utils.cookieOptions(0));
+    res.status(200).json({ message: "Déconnexion réussie" });
   },
-  // Récupération mot de passe
+
+  // Réinitialisation du mot de passe
   passRecovery: async (req, res) => {
     try {
       const { mail } = req.body;
-      // Validation de l'email
       const emailError = utils.validateEmail(mail);
       if (emailError) return res.status(400).json({ message: emailError });
+
       const user = await userService.getUserByMail(mail);
-      if (!user) {
-        res.status(404).json({ message: "Addresse mail incorrecte" });
-      } else {
-        const ip = req.ip;
-        const ua = req.headers["user-agent"] || "unknown";
-        const token = await authService.createPasswordReset(user._id, ip, ua);
-        await mailService.passReset(user, token);
-        res
-          .status(200)
-          .json({ message: "Votre demande à été traitée avec succès" });
-      }
+      if (!user)
+        return res
+          .status(404)
+          .json({ message: "Adresse mail fournie incorrecte" });
+
+      const token = await authService.createPasswordReset(
+        user._id,
+        req.ip,
+        req.headers["user-agent"] || "unknown"
+      );
+      await mailService.passReset(user, token);
+      res.status(200).json({ message: "Demande traitée avec succès" });
     } catch (error) {
-      res.status(500).json({ message: "Erreur server" });
+      res.status(500).json({ message: "Erreur serveur" });
     }
   },
 };
