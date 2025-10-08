@@ -1,27 +1,20 @@
 const jwt = require("jsonwebtoken");
 const jwtConfig = require("../config/jwt");
-const validator = require("validator");
 const authService = require("../services/authentification.service");
 const mailService = require("../services/mail.service");
 const userService = require("../services/user.service");
-const { message } = require("statuses");
+const utils = require("../utils/services.util");
 
 const authController = {
   login: async (req, res) => {
     const { email, password } = req.body;
     try {
-      // Validation de l'email
-      if (!validator.isEmail(email)) {
-        return res.status(400).json({ message: "L'email fourni est invalide" });
-      }
+      const emailError = utils.validateEmail(email);
+      if (emailError) return res.status(400).json({ message: emailError });
 
-      // Validation du mot de passe (minimum 8 caractères)
-      if (!validator.isLength(password, { min: 8 })) {
-        return res.status(400).json({
-          message: "Le mot de passe doit faire au moins 8 caractères",
-        });
-      }
-
+      const passwordError = utils.validatePassword(password);
+      if (passwordError)
+        return res.status(400).json({ message: passwordError });
       // Vérification des identifiants
       const user = await authService.login(email, password);
       if (!user) {
@@ -99,9 +92,8 @@ const authController = {
     try {
       const { mail } = req.body;
       // Validation de l'email
-      if (!validator.isEmail(mail)) {
-        return res.status(400).json({ message: "L'email fourni est invalide" });
-      }
+      const emailError = utils.validateEmail(mail);
+      if (emailError) return res.status(400).json({ message: emailError });
       const user = await userService.getUserByMail(mail);
       if (!user) {
         res.status(404).json({ message: "Addresse mail incorrecte" });

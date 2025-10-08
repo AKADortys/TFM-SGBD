@@ -1,7 +1,8 @@
 const orderService = require("../services/orders.service");
+const mailService = require("../services/mail.service");
+const productService = require("../services/product.service");
 const { createOrderSchema, updateOrderSchema } = require("../dto/order.dto");
 const { ObjectId } = require("mongodb");
-const mailService = require("../services/mail.service");
 
 module.exports = {
   // Récupération de tous les commandes
@@ -100,6 +101,7 @@ module.exports = {
       await orderService.deleteOrder(id);
       res.json({ message: "Commande supprimée avec succès" });
     } catch (error) {
+      console.error("erreur lors de la suppresion", error);
       res.status(500).json({ message: "Erreur server" });
     }
   },
@@ -114,6 +116,15 @@ module.exports = {
       }
 
       const { userId, products, deliveryAddress, status } = value;
+      for (const element of products) {
+        const exist = await productService.getProductById(element.productId);
+        if (!exist) {
+          return res
+            .status(400)
+            .json({ message: "Un produit dans la commande n'existe pas" });
+        }
+      }
+
       let totalPrice = products.reduce(
         (sum, product) => sum + product.price * product.quantity,
         0
@@ -127,7 +138,7 @@ module.exports = {
       };
       const order = await orderService.createOrder(newOrder);
       await mailService.newOrder(order, req.user);
-      res.status(201).json(order);
+      return res.status(201).json(order);
     } catch (error) {
       console.error("Erreur lors de la création de la commande:", error);
       res.status(500).json({

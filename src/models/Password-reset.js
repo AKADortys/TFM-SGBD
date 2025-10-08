@@ -33,7 +33,6 @@ const passResetSchema = new mongoose.Schema(
 );
 
 // Index TTL : supprime le document après expiresAt
-// mongoose va traduire { expires: 0 } en expiration à la date indiquée
 passResetSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model("PasswordReset", passResetSchema);
