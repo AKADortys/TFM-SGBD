@@ -2,7 +2,7 @@ const orderService = require("../services/orders.service");
 const mailService = require("../services/mail.service");
 const productService = require("../services/product.service");
 const { createOrderSchema, updateOrderSchema } = require("../dto/order.dto");
-const utils = require("../utils/controller.util");
+const { isObjectId, handleResponse } = require("../utils/controller.util");
 
 module.exports = {
   // Récupération de tous les commandes
@@ -13,24 +13,29 @@ module.exports = {
 
       const result = await orderService.getAllOrders(page, limit);
 
-      return res.status(200).json(result);
+      return handleResponse(res, 200, result);
     } catch (error) {
-      res.status(500).json({ message: "Erreur serveur", error: error.message });
+      console.error("Erreur lors de la récupération des commandes:", error);
+      return handleResponse(res, 500, {
+        message: "Erreur serveur",
+        error: error.message,
+      });
     }
   },
   // Récupération d'une commande par son ID
   getOrderById: async (req, res) => {
     try {
       const id = req.params.id;
-      const idError = utils.isObjectId(id);
-      if (idError) return res.status(400).json({ message: idError });
+      const idError = isObjectId(id);
+      if (idError) return handleResponse(res, 400, { message: idError });
 
       const order = await orderService.getOrderById(id);
       if (!order)
-        return res.status(404).json({ message: "Commande non trouvée" });
-      res.json(order);
+        return handleResponse(res, 404, { message: "Commande non trouvée" });
+      return handleResponse(res, 200, order);
     } catch (error) {
-      res.status(500).json({ message: "Erreur Server" });
+      console.error("Erreur lors de la récupération de la commande:", error);
+      return handleResponse(res, 500, { message: "Erreur Server" });
     }
   },
   // Récupération d'une commande par son userId
@@ -40,13 +45,17 @@ module.exports = {
       const limit = parseInt(req.query.limit) || 5;
       const id = req.params.id;
 
-      const idError = utils.isObjectId(id);
-      if (idError) return res.status(400).json({ message: idError });
+      const idError = isObjectId(id);
+      if (idError) return handleResponse(res, 400, { message: idError });
 
       const result = await orderService.getOrdersByUserId(id, skip, limit);
-      return res.status(200).json(result);
+      return handleResponse(res, 200, result);
     } catch (error) {
-      res.status(500).json({ message: "Erreur Server" });
+      console.error(
+        "Erreur lors de la récupération des commandes par userId:",
+        error
+      );
+      return handleResponse(res, 500, { message: "Erreur Server" });
     }
   },
   // Récuperation commande par status
@@ -63,35 +72,36 @@ module.exports = {
     ];
     const status = req.params.status;
     if (!validStatus.includes(status)) {
-      return res.status(400).json({ message: "Statut invalide" });
+      return handleResponse(res, 400, { message: "Statut invalide" });
     }
     try {
       const result = await orderService.getOrdersByStatus(status, skip, limit);
-      return res.status(200).json({
-        data: result.orders,
-        page: result.page,
-        total: result.total,
-        totalPages: result.totalPages,
-      });
+      return handleResponse(res, 200, result);
     } catch (error) {
-      res.status(500).json({ message: "Erreur Server" });
+      console.error(
+        "Erreur lors de la récupération des commandes par statut:",
+        error
+      );
+      return handleResponse(res, 500, { message: "Erreur Server" });
     }
   },
   // Suppression d'une commande
   deleteOrder: async (req, res) => {
     try {
       const id = req.params.id;
-      const idError = utils.isObjectId(id);
-      if (idError) return res.status(400).json({ message: idError });
+      const idError = isObjectId(id);
+      if (idError) return handleResponse(res, 400, { message: idError });
       const order = await orderService.getOrderById(id);
       if (!order) {
-        return res.status(404).json({ message: "Commande introuvable" });
+        return handleResponse(res, 404, { message: "Commande introuvable" });
       }
       await orderService.deleteOrder(id);
-      res.json({ message: "Commande supprimée avec succès" });
+      return handleResponse(res, 200, {
+        message: "Commande supprimée avec succès",
+      });
     } catch (error) {
       console.error("erreur lors de la suppresion", error);
-      res.status(500).json({ message: "Erreur server" });
+      return handleResponse(res, 500, { message: "Erreur server" });
     }
   },
   // Création d'une commande
@@ -101,17 +111,14 @@ module.exports = {
         abortEarly: false,
       });
       if (error) {
-        return res.status(400).json({ message: error.details[0].message });
+        return handleResponse(res, 400, { message: error.details[0].message });
       }
 
       const { userId, products, deliveryAddress, status } = value;
       for (const element of products) {
         const exist = await productService.getProductById(element.productId);
-        if (!exist) {
-          return res
-            .status(400)
-            .json({ message: "Un produit dans la commande n'existe pas" });
-        }
+        if (!exist)
+          return handleResponse(res, 400, { message: "Produit inexistant" });
       }
 
       let totalPrice = products.reduce(
@@ -127,34 +134,32 @@ module.exports = {
       };
       const order = await orderService.createOrder(newOrder);
       await mailService.newOrder(order, req.user);
-      return res.status(201).json(order);
+      return handleResponse(res, 201, order);
     } catch (error) {
       console.error("Erreur lors de la création de la commande:", error);
-      res.status(500).json({
-        message: "Erreur Server",
-      });
+      return handleResponse(res, 500, { message: "Erreur Server" });
     }
   },
   // Modification d'une commande
   updateOrder: async (req, res) => {
     try {
       const { id } = req.params;
-      const idError = utils.isObjectId(id);
-      if (idError) return res.status(400).json({ message: idError });
+      const idError = isObjectId(id);
+      if (idError) return handleResponse(res, 400, { message: idError });
       const existingOrder = await orderService.getOrderById(id);
       if (!existingOrder) {
-        return res.status(404).json({ message: "Commande non trouvée" });
+        return handleResponse(res, 404, { message: "Commande non trouvée" });
       }
       const modifiableStatuses = ["En attente", "En cours de traitement"];
       if (!modifiableStatuses.includes(existingOrder.status)) {
-        return res
-          .status(403)
-          .json({ message: "Modification interdite pour cette commande" });
+        return handleResponse(res, 400, {
+          message: `La commande ne peut pas être modifiée car son statut est "${existingOrder.status}"`,
+        });
       }
 
       const { error, value } = updateOrderSchema.validate(req.body);
       if (error) {
-        return res.status(400).json({ message: error.details[0].message });
+        return handleResponse(res, 400, { message: error.details[0].message });
       }
 
       let totalPrice = existingOrder.totalPrice;
@@ -177,10 +182,10 @@ module.exports = {
       if (!updatedOrder) {
         return res.status(404).json({ message: "Commande non trouvée" });
       }
-      res.json(updatedOrder);
+      return handleResponse(res, 200, updatedOrder);
     } catch (error) {
       console.error("Erreur lors de la mise à jour de la commande:", error);
-      res.status(500).json({ message: "Erreur Server" });
+      return handleResponse(res, 500, { message: "Erreur Server" });
     }
   },
   // Récupération des commandes avec détails (produits)
