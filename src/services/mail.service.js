@@ -1,19 +1,10 @@
 const transporterPromise = require("../config/node-mailer");
-const ejs = require("ejs");
-const path = require("path");
 
-// Helper pour générer le chemin d’un template
-const templatePath = (file) => path.join(__dirname, "../templates", file);
-
-// Helper générique pour rendre une vue EJS
-const renderHtml = async (view, params) => {
-  try {
-    return await ejs.renderFile(view, params);
-  } catch (error) {
-    console.error(error);
-    throw new Error("Erreur lors du rendu de la vue " + view);
-  }
-};
+const {
+  handleServiceError,
+  renderHtml,
+  templatePath,
+} = require("../utils/service.util");
 
 module.exports = {
   welcomeMail: async (user) => {
@@ -32,8 +23,7 @@ module.exports = {
         html,
       });
     } catch (error) {
-      console.error(error);
-      throw new Error("Erreur lors de l'envoi du mail de bienvenue");
+      handleServiceError(error, "Erreur lors de l'envoi du mail de bienvenue");
     }
   },
 
@@ -53,8 +43,10 @@ module.exports = {
         html,
       });
     } catch (error) {
-      console.error(error);
-      throw new Error("Erreur lors de l'envoi du mail de récupération");
+      handleServiceError(
+        error,
+        "Erreur lors de l'envoi du mail de récupération"
+      );
     }
   },
 
@@ -73,8 +65,8 @@ module.exports = {
         html,
       });
     } catch (error) {
-      console.error(error);
-      throw new Error(
+      handleServiceError(
+        error,
         "Erreur lors de l'envoi du mail de création de la commande"
       );
     }

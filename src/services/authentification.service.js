@@ -1,36 +1,33 @@
 const userService = require("./user.service");
 const PasswordReset = require("../models/Password-reset");
 const bcrypt = require("bcrypt");
-const crypto = require("crypto");
+const {
+  hashToken,
+  generateToken,
+  sanitizeUser,
+  handleServiceError,
+  isExpired,
+} = require("../utils/service.util");
 
 const authService = {
   login: async (email, password) => {
     try {
       const user = await userService.getUserByMail(email);
-      if (!user) {
-        return null;
-      }
-
+      if (!user) return null;
       const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return null;
-      }
-
-      const response = { ...user._doc };
-      delete response.password;
-      return response;
+      if (!isMatch) return null;
+      return sanitizeUser(user);
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      handleServiceError(error, "Erreur lors de la connexion");
     }
   },
+
   createPasswordReset: async (userId, ip, userAgent) => {
     try {
-      const token = crypto.randomBytes(48).toString("hex");
+      const token = generateToken();
+      const tokenHash = hashToken(token);
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
-      const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-
-      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1h
       await PasswordReset.create({
         userId,
         token_hash: tokenHash,
@@ -41,38 +38,29 @@ const authService = {
 
       return token;
     } catch (error) {
-      console.error(error);
-      throw new Error(
-        "Erreur lors de le demande de changement de mot de passe"
+      handleServiceError(
+        error,
+        "Erreur lors de la demande de changement de mot de passe"
       );
     }
   },
+
   verifyPasswordReset: async (token) => {
     try {
-      const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-
+      const tokenHash = hashToken(token);
       const resetDoc = await PasswordReset.findOne({
         token_hash: tokenHash,
         used: false,
       });
+      if (!resetDoc || isExpired(resetDoc.expiresAt)) return null;
 
-      if (!resetDoc) {
-        return null;
-      }
-
-      if (resetDoc.expiresAt < new Date()) {
-        return null;
-      }
-
-      // Marquer comme utilisé
       resetDoc.used = true;
       resetDoc.usedAt = new Date();
       await resetDoc.save();
-
-      return resetDoc.userId; // renvoyer l'utilisateur lié
+      return resetDoc.userId;
     } catch (error) {
-      console.error("Password reset verification error:", error);
-      throw new Error(
+      handleServiceError(
+        error,
         "Erreur lors de la vérification du lien de réinitialisation"
       );
     }

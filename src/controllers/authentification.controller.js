@@ -3,7 +3,7 @@ const jwtConfig = require("../config/jwt");
 const authService = require("../services/authentification.service");
 const mailService = require("../services/mail.service");
 const userService = require("../services/user.service");
-const utils = require("../utils/services.util");
+const utils = require("../utils/controller.util");
 
 const authController = {
   // Connexion utilisateur

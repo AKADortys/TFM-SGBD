@@ -2,7 +2,7 @@ const orderService = require("../services/orders.service");
 const mailService = require("../services/mail.service");
 const productService = require("../services/product.service");
 const { createOrderSchema, updateOrderSchema } = require("../dto/order.dto");
-const utils = require("../utils/services.util");
+const utils = require("../utils/controller.util");
 
 module.exports = {
   // Récupération de tous les commandes
@@ -13,12 +13,7 @@ module.exports = {
 
       const result = await orderService.getAllOrders(page, limit);
 
-      return res.status(200).json({
-        data: result.orders,
-        page: result.page,
-        total: result.total,
-        totalPages: result.totalPages,
-      });
+      return res.status(200).json(result);
     } catch (error) {
       res.status(500).json({ message: "Erreur serveur", error: error.message });
     }
@@ -49,12 +44,7 @@ module.exports = {
       if (idError) return res.status(400).json({ message: idError });
 
       const result = await orderService.getOrdersByUserId(id, skip, limit);
-      return res.status(200).json({
-        data: result.orders,
-        page: result.page,
-        total: result.total,
-        totalPages: result.totalPages,
-      });
+      return res.status(200).json(result);
     } catch (error) {
       res.status(500).json({ message: "Erreur Server" });
     }
