@@ -53,12 +53,10 @@ const userController = {
         return res.status(400).json({ message: "Email déjà utilisé !" });
       }
       const newUser = await userService.createUser(value);
-      const response = { ...newUser };
-      delete response.password;
-      await mailService.welcomeMail(newUser._doc);
+      await mailService.welcomeMail(newUser);
       res.status(201).json({
         message: "Utilisateur créé avec succès",
-        user: response,
+        user: newUser,
       });
     } catch (error) {
       console.error(error);

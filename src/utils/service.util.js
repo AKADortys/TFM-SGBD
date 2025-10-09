@@ -18,11 +18,6 @@ module.exports = {
     return obj;
   },
 
-  handleServiceError: (error, message) => {
-    console.error(error);
-    throw new Error(message || error.message);
-  },
-
   isExpired: (date) => {
     return date < new Date();
   },
@@ -37,7 +32,7 @@ module.exports = {
   },
   templatePath: (file) => path.join(__dirname, "../templates", file),
 
-  //fonction order
+  //fonction globales de service
   paginatedQuery: async (
     model,
     filter = {},
@@ -56,5 +51,9 @@ module.exports = {
       totalPages: Math.ceil(total / limit),
       page,
     };
+  },
+  handleServiceError: (error, message) => {
+    console.error(error);
+    throw new Error(message || error.message);
   },
 };

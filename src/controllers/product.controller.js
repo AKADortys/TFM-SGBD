@@ -6,7 +6,9 @@ module.exports = {
   // Récupération de tous les produits
   getProducts: async (req, res) => {
     try {
-      const products = await productService.getAllProducts();
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 5;
+      const products = await productService.getAllProducts(page, limit);
       res.json(products);
     } catch (error) {
       res.status(500).json({ message: "Erreur Server" });
