@@ -3,27 +3,31 @@ const jwtConfig = require("../config/jwt");
 const authService = require("../services/authentification.service");
 const mailService = require("../services/mail.service");
 const userService = require("../services/user.service");
-const utils = require("../utils/controller.util");
+const {
+  cookieOptions,
+  validateEmail,
+  validatePassword,
+  createTokenPayload,
+  handleResponse,
+} = require("../utils/controller.util");
 
 const authController = {
   // Connexion utilisateur
   login: async (req, res) => {
     try {
       const { mail, password } = req.body;
-      const emailError = utils.validateEmail(mail);
-      if (emailError) return res.status(400).json({ message: emailError });
 
-      const passwordError = utils.validatePassword(password);
-      if (passwordError)
-        return res.status(400).json({ message: passwordError });
+      const emailError = validateEmail(mail || "");
+      if (emailError) return handleResponse(res, 400, emailError);
+
+      const passwordError = validatePassword(password || "");
+      if (passwordError) return handleResponse(res, 400, passwordError);
 
       const user = await authService.login(mail, password);
       if (!user)
-        return res
-          .status(401)
-          .json({ message: "Email ou mot de passe incorrect" });
+        return handleResponse(res, 401, "Email ou mot de passe incorrect");
 
-      const payload = utils.createTokenPayload(user);
+      const payload = createTokenPayload(user);
       const accessToken = jwt.sign(payload, jwtConfig.secret, {
         expiresIn: "1h",
       });
@@ -32,49 +36,50 @@ const authController = {
       });
 
       res
-        .cookie("accessToken", accessToken, utils.cookieOptions(1000 * 60 * 60))
+        .cookie("accessToken", accessToken, cookieOptions(1000 * 60 * 60))
         .cookie(
           "refreshToken",
           refreshToken,
-          utils.cookieOptions(1000 * 60 * 60 * 24 * 7)
+          cookieOptions(1000 * 60 * 60 * 24 * 7)
         );
 
-      res.json({ message: "Connexion réussie", user });
+      return handleResponse(res, 200, "Connexion réussie", { user });
     } catch (error) {
       console.error("Erreur lors de la connexion :", error);
-      res.status(500).json({ message: "Erreur interne du serveur" });
+      return handleResponse(res, 500, "Erreur interne du serveur");
     }
   },
 
   // Déconnexion
   logout: (req, res) => {
-    res.clearCookie("accessToken", utils.cookieOptions(0));
-    res.clearCookie("refreshToken", utils.cookieOptions(0));
-    res.status(200).json({ message: "Déconnexion réussie" });
+    res.clearCookie("accessToken", cookieOptions(0));
+    res.clearCookie("refreshToken", cookieOptions(0));
+    return handleResponse(res, 200, "Déconnexion réussie");
   },
 
   // Réinitialisation du mot de passe
   passRecovery: async (req, res) => {
     try {
       const { mail } = req.body;
-      const emailError = utils.validateEmail(mail);
-      if (emailError) return res.status(400).json({ message: emailError });
+
+      const emailError = validateEmail(mail);
+      if (emailError) return handleResponse(res, 400, emailError);
 
       const user = await userService.getUserByMail(mail);
       if (!user)
-        return res
-          .status(404)
-          .json({ message: "Adresse mail fournie incorrecte" });
+        return handleResponse(res, 404, "Adresse mail fournie incorrecte");
 
       const token = await authService.createPasswordReset(
         user._id,
         req.ip,
         req.headers["user-agent"] || "unknown"
       );
+
       await mailService.passReset(user, token);
-      res.status(200).json({ message: "Demande traitée avec succès" });
+      return handleResponse(res, 200, "Email de réinitialisation envoyé");
     } catch (error) {
-      res.status(500).json({ message: "Erreur serveur" });
+      console.error("Erreur lors de la récupération du mot de passe :", error);
+      return handleResponse(res, 500, "Erreur interne du serveur");
     }
   },
 };

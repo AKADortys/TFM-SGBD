@@ -18,9 +18,6 @@ module.exports = {
     return obj;
   },
 
-  isExpired: (date) => {
-    return date < new Date();
-  },
   //fonction mail
   renderHtml: async (view, params) => {
     try {
@@ -55,5 +52,8 @@ module.exports = {
   handleServiceError: (error, message) => {
     console.error(error);
     throw new Error(message || error.message);
+  },
+  isExpired: (date) => {
+    return date < new Date();
   },
 };
