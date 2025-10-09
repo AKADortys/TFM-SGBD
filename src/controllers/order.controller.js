@@ -26,6 +26,7 @@ module.exports = {
   getOrderById: async (req, res) => {
     try {
       const id = req.params.id;
+      if (!id) return handleResponse(res, 400, { message: "ID manquant" });
       const idError = isObjectId(id);
       if (idError) return handleResponse(res, 400, { message: idError });
 
@@ -44,6 +45,7 @@ module.exports = {
       const skip = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 5;
       const id = req.params.id;
+      if (!id) return handleResponse(res, 400, { message: "ID manquant" });
 
       const idError = isObjectId(id);
       if (idError) return handleResponse(res, 400, { message: idError });
@@ -192,15 +194,16 @@ module.exports = {
   getOrdersWithDetails: async (req, res) => {
     try {
       const id = req.params.id;
-      if (!id || !ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "ID invalide" });
+      if (!id || isObjectId(id)) {
+        return handleResponse(res, 400, { message: "ID invalide" });
       }
       const orders = await orderService.getOrderWithDetails(id);
       if (orders === null)
-        res.status(404).json({ message: "Aucunes commande" });
-      res.json(orders);
+        return handleResponse(res, 404, { message: "Aucunes commande" });
+      return handleResponse(res, 200, orders);
     } catch (error) {
-      res.status(500).json({ message: "Erreur Server" });
+      console.error("Erreur lors de la récupération des commandes:", error);
+      return handleResponse(res, 500, { message: "Erreur Server" });
     }
   },
 };

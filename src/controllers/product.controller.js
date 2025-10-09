@@ -1,6 +1,6 @@
 const productService = require("../services/product.service");
-const { ObjectId } = require("mongodb");
 const { productSchema, updateProductSchema } = require("../dto/product.dto");
+const { handleResponse, isObjectId } = require("../utils/controller.util");
 
 module.exports = {
   // Récupération de tous les produits
@@ -9,25 +9,28 @@ module.exports = {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 5;
       const products = await productService.getAllProducts(page, limit);
-      res.json(products);
+      return handleResponse(res, 200, products);
     } catch (error) {
-      res.status(500).json({ message: "Erreur Server" });
+      console.error("Erreur lors de la récupération des produits:", error);
+      return handleResponse(res, 500, { message: "Erreur Server" });
     }
   },
   // Récupération d'un produit par ID
   getProductById: async (req, res) => {
     try {
       const id = req.params.id;
-      if (!ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "ID invalide" });
+      if (!id) return handleResponse(res, 400, { message: "ID manquant" });
+      if (isObjectId(id)) {
+        return handleResponse(res, 400, { message: "ID invalide" });
       }
       const product = await productService.getProductById(id);
       if (!product) {
-        return res.status(404).json({ message: "Produit non trouvé" });
+        return handleResponse(res, 404, { message: "Produit non trouvé" });
       }
-      res.json(product);
+      return handleResponse(res, 200, product);
     } catch (error) {
-      res.status(500).json({ message: "Erreur Server" });
+      console.error("Erreur lors de la récupération du produit:", error);
+      return handleResponse(res, 500, { message: "Erreur Server" });
     }
   },
   // Création d'un nouveau produit
@@ -39,24 +42,26 @@ module.exports = {
 
       if (error) {
         const errors = error.details.map((d) => d.message);
-        return res.status(400).json({ errors });
+        return handleResponse(res, 400, { errors });
       }
 
       const newProduct = await productService.createProduct(value);
-      res.status(201).json(newProduct);
+      return handleResponse(res, 201, newProduct);
     } catch (error) {
       if (error.message.includes("E11000"))
-        return res
-          .status(500)
-          .json({ message: "Le nom du produit existe déjà !" });
-      res.status(400).json({ message: "Erreur Server" });
+        return handleResponse(res, 500, {
+          message: "Le nom du produit existe déjà !",
+        });
+      console.error("Erreur lors de la création du produit:", error);
+      return handleResponse(res, 400, { message: "Erreur Server" });
     }
   },
   updateProduct: async (req, res) => {
     try {
       const id = req.params.id;
-      if (!ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "ID invalide" });
+      if (!id) return handleResponse(res, 400, { message: "ID manquant" });
+      if (isObjectId(id)) {
+        return handleResponse(res, 400, { message: "ID invalide" });
       }
 
       const { error, value } = updateProductSchema.validate(req.body, {
@@ -65,34 +70,39 @@ module.exports = {
 
       if (error) {
         const errors = error.details.map((d) => d.message);
-        return res.status(400).json({ errors });
+        return handleResponse(res, 400, { errors });
       }
 
       const updatedProduct = await productService.updateProduct(id, value);
 
       if (!updatedProduct) {
-        return res.status(404).json({ message: "Produit non trouvé" });
+        return handleResponse(res, 404, { message: "Produit non trouvé" });
       }
-      res.status(201).json(updatedProduct);
+      return handleResponse(res, 201, updatedProduct);
     } catch (error) {
-      res.status(400).json({ message: "Erreur Server" });
+      console.error("Erreur lors de la mise à jour du produit:", error);
+      return handleResponse(res, 400, { message: "Erreur Server" });
     }
   },
   // Suppression d'un produit par ID
   deleteProduct: async (req, res) => {
     try {
       const id = req.params.id;
-      if (!ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "ID invalide" });
+      if (!id) return handleResponse(res, 400, { message: "ID manquant" });
+      if (isObjectId(id)) {
+        return handleResponse(res, 400, { message: "ID invalide" });
       }
       const product = await productService.getProductById(id);
       if (!product) {
-        return res.status(404).json({ message: "Produit non trouvé" });
+        return handleResponse(res, 404, { message: "Produit non trouvé" });
       }
       await productService.deleteProduct(id);
-      res.json({ message: "Produit supprimé avec succès" });
+      return handleResponse(res, 200, {
+        message: "Produit supprimé avec succès",
+      });
     } catch (error) {
-      res.status(500).json({ message: "Erreur Server" });
+      console.error("Erreur lors de la suppression du produit:", error);
+      return handleResponse(res, 500, { message: "Erreur Server" });
     }
   },
 };
