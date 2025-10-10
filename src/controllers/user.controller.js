@@ -12,10 +12,15 @@ const userController = {
 
       const result = await userService.getUsers(page, limit, search);
 
-      return handleResponse(res, 200, result);
+      return handleResponse(
+        res,
+        200,
+        "utilisateurs récupérés avec succès",
+        result
+      );
     } catch (error) {
       console.error("Erreur lors de la récupération des utilisateurs:", error);
-      return handleResponse(res, 500, { message: error.message });
+      return handleResponse(res, 500, error.message);
     }
   },
   // Récupération d'un utilisateur par ID
@@ -23,19 +28,19 @@ const userController = {
     try {
       const id = req.params.id;
       if (isObjectId(id)) {
-        return handleResponse(res, 400, { message: "ID invalide" });
+        return handleResponse(res, 400, "ID invalide");
       }
       const user = await userService.getUserById(id);
       if (!user) {
-        return handleResponse(res, 404, { message: "Utilisateur non trouvé" });
+        return handleResponse(res, 404, "Utilisateur non trouvé");
       }
-      return handleResponse(res, 200, user);
+      return handleResponse(res, 200, "Utilisateur récupéré avec succès", user);
     } catch (error) {
       console.error("Erreur lors de la récupération de l'utilisateur:", error);
-      return handleResponse(res, 500, { message: "Erreur Server" });
+      return handleResponse(res, 500, "Erreur Server");
     }
   },
-  // Création d'un utilisateurnode
+  // Création d'un nouvel utilisateur
   createUser: async (req, res) => {
     try {
       const { error, value } = userSchema.validate(req.body, {
@@ -43,76 +48,73 @@ const userController = {
       });
       if (error) {
         const errors = error.details.map((d) => d.message);
-        return handleResponse(res, 400, { errors });
+        return handleResponse(res, 400, errors);
       }
       const existingUser = await userService.getUserByMail(value.mail);
       if (existingUser) {
-        return handleResponse(res, 400, { message: "Email déjà utilisé !" });
+        return handleResponse(res, 400, "Email déjà utilisé !");
       }
       const newUser = await userService.createUser(value);
       await mailService.welcomeMail(newUser);
-      return handleResponse(res, 201, {
-        message: "Utilisateur créé avec succès",
-        user: newUser,
-      });
+      return handleResponse(res, 201, "Utilisateur créé avec succès", newUser);
     } catch (error) {
       console.error(error);
-      return handleResponse(res, 500, { message: "Erreur serveur" });
+      return handleResponse(res, 500, "Erreur serveur");
     }
   },
   // Modification d'un utilisateur
   updateUser: async (req, res) => {
     const id = req.params.id;
-    if (!id) return handleResponse(res, 400, { message: "ID manquant" });
+    if (!id) return handleResponse(res, 400, "ID manquant");
     if (isObjectId(id)) {
-      return handleResponse(res, 400, { message: "ID invalide" });
+      return handleResponse(res, 400, "ID invalide");
     }
     try {
       // Vérification de l'existence de l'utilisateur
       const user = await userService.getUserById(id);
       if (!user) {
-        return handleResponse(res, 404, { message: "Utilisateur introuvable" });
+        return handleResponse(res, 404, "Utilisateur introuvable");
       }
       const { error, value } = updateUserSchema.validate(req.body, {
         abortEarly: false,
       });
       if (error) {
         const errors = error.details.map((d) => d.message);
-        return handleResponse(res, 400, { errors });
+        return handleResponse(res, 400, errors);
       }
       // Mise à jour de l'utilisateur
       const updatedUser = await userService.updateUser(id, value);
 
       if (!updatedUser) {
-        return handleResponse(res, 404, { message: "Utilisateur non trouvé" });
+        return handleResponse(res, 404, "Utilisateur non trouvé");
       }
-      return handleResponse(res, 200, {
-        message: "Utilisateur modifié avec succès !",
-        user: updatedUser,
-      });
+      return handleResponse(
+        res,
+        200,
+        "Utilisateur modifié avec succès !",
+        updatedUser
+      );
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'utilisateur:", error);
-      return handleResponse(res, 500, { message: "Erreur serveur" });
+      return handleResponse(res, 500, "Erreur serveur");
     }
   },
   // Suppression d'un utilisateur
   deleteUser: async (req, res) => {
     try {
       const id = req.params.id;
-      if (!id) return handleResponse(res, 400, { message: "ID manquant" });
+      if (!id) return handleResponse(res, 400, "ID manquant");
       if (isObjectId(id)) {
-        return handleResponse(res, 400, { message: "ID invalide" });
+        return handleResponse(res, 400, "ID invalide");
       }
       const user = await userService.getUserById(id);
       if (!user) {
-        return handleResponse(res, 404, { message: "Utilisateur introuvable" });
+        return handleResponse(res, 404, "Utilisateur introuvable");
       }
       await userService.deleteUser(id);
-      return handleResponse(res, 200, {
-        message: "Utilisateur supprimé avec succès !",
-      });
+      return handleResponse(res, 200, "Utilisateur supprimé avec succès !");
     } catch (error) {
-      return handleResponse(res, 500, { message: "Erreur serveur" });
+      return handleResponse(res, 500, "Erreur serveur");
     }
   },
 };

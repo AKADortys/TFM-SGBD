@@ -31,7 +31,7 @@ module.exports = {
       await product.save();
       return product;
     } catch (error) {
-      handleServiceError(error, "Erreur lors de la création du produit");
+      handleServiceError(error, error.message);
     }
   },
 
