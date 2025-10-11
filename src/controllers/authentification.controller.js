@@ -57,8 +57,8 @@ const authController = {
     return handleResponse(res, 200, "Déconnexion réussie");
   },
 
-  // Réinitialisation du mot de passe
-  passRecovery: async (req, res) => {
+  // Réinitialisation du mot de passe (initiation)
+  passwordReset: async (req, res) => {
     try {
       const { mail } = req.body;
 
@@ -79,6 +79,31 @@ const authController = {
       return handleResponse(res, 200, "Email de réinitialisation envoyé");
     } catch (error) {
       console.error("Erreur lors de la récupération du mot de passe :", error);
+      return handleResponse(res, 500, "Erreur interne du serveur");
+    }
+  },
+
+  // Réinitialisation du mot de passe (finalisation)
+  passwordRecovery: async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+
+      const passwordError = validatePassword(newPassword || "");
+      if (passwordError) return handleResponse(res, 400, passwordError);
+      const userId = await authService.verifyPasswordReset(token);
+      if (!userId)
+        return handleResponse(
+          res,
+          400,
+          "Lien de réinitialisation invalide ou expiré"
+        );
+      await userService.updateUserPassword(userId, newPassword);
+      return handleResponse(res, 200, "Mot de passe réinitialisé avec succès");
+    } catch (error) {
+      console.error(
+        "Erreur lors de la réinitialisation du mot de passe :",
+        error
+      );
       return handleResponse(res, 500, "Erreur interne du serveur");
     }
   },

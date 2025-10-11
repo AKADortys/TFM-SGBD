@@ -36,7 +36,7 @@ const userService = {
   getUserById: async (id) => {
     try {
       const user = await User.findById(id);
-      return user || null;
+      return sanitizeUser(user) || null;
     } catch (error) {
       handleServiceError(
         error,
@@ -79,6 +79,21 @@ const userService = {
       handleServiceError(
         error,
         "Erreur lors de la mise à jour de l'utilisateur"
+      );
+    }
+  },
+  updateUserPassword: async (id, newPassword) => {
+    try {
+      const user = await User.findById(id);
+      if (!user) return null;
+
+      user.password = newPassword;
+      await user.save();
+      return sanitizeUser(user);
+    } catch (error) {
+      handleServiceError(
+        error,
+        "Erreur lors de la mise à jour du mot de passe de l'utilisateur"
       );
     }
   },

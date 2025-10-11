@@ -7,17 +7,14 @@ module.exports = {
   hashToken: (token) => {
     return crypto.createHash("sha256").update(token).digest("hex");
   },
-
   generateToken: (size = 48) => {
     return crypto.randomBytes(size).toString("hex");
   },
-
   sanitizeUser: (user) => {
     const obj = { ...user._doc };
     delete obj.password;
     return obj;
   },
-
   //fonction mail
   renderHtml: async (view, params) => {
     try {
@@ -28,7 +25,6 @@ module.exports = {
     }
   },
   templatePath: (file) => path.join(__dirname, "../templates", file),
-
   //fonction globales de service
   paginatedQuery: async (
     model,

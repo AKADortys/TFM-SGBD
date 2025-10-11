@@ -26,6 +26,9 @@ module.exports = {
       if (idError) return handleResponse(res, 400, idError);
       const order = await orderService.getOrderById(id);
       if (!order) return handleResponse(res, 404, "Commande non trouvée");
+      if (req.user.id !== order.userId && req.user.role !== "admin") {
+        return handleResponse(res, 403, "Accès refusé");
+      }
       return handleResponse(res, 200, "Commande récupérée", order);
     } catch (error) {
       console.error("Erreur lors de la récupération de la commande:", error);
