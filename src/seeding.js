@@ -26,6 +26,7 @@ mongoose
           mail: "john.doe@example.com",
           password: "Password123",
           role: "admin", //////////////////
+          isActive: true, /////////////////
         },
         {
           name: "Jane Smith",
@@ -33,6 +34,7 @@ mongoose
           phone: "0798765432",
           mail: "jane.smith@example.com",
           password: "Password456",
+          isActive: true,
         },
       ];
       await User.create(users);

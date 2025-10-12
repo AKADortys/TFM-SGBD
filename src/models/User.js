@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const { t } = require("tar");
 
 const userSchema = new mongoose.Schema(
   {
@@ -58,6 +59,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["admin", "client", "moderateur"],
       default: "client",
+    },
+    isActive: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

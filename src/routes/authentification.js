@@ -7,5 +7,6 @@ router.post("/login", authController.login);
 router.post("/logout", tokenMdw, authController.logout);
 router.post("/password-reset", authController.passwordReset);
 router.post("/password-recovery", authController.passwordRecovery);
+router.patch("/confirm-account", authController.confirmAccount);
 
 module.exports = router;

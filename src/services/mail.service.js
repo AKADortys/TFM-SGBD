@@ -7,13 +7,14 @@ const {
 } = require("../utils/service.util");
 
 module.exports = {
-  welcomeMail: async (user) => {
+  welcomeMail: async (user, token) => {
     try {
       const transporter = await transporterPromise;
       const html = await renderHtml(templatePath("welcome.ejs"), {
         user,
         loginUrl: "https://google.com/",
         title: "Bienvenue Au Ptit Vivo",
+        token,
       });
 
       await transporter.sendMail({

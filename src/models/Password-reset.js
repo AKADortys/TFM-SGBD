@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const passResetSchema = new mongoose.Schema(
+const tokenSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -33,6 +33,6 @@ const passResetSchema = new mongoose.Schema(
 );
 
 // Index TTL : supprime le document après expiresAt
-passResetSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+tokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-module.exports = mongoose.model("PasswordReset", passResetSchema);
+module.exports = mongoose.model("Token", tokenSchema);

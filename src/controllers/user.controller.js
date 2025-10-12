@@ -1,4 +1,5 @@
 const userService = require("../services/user.service");
+const authService = require("../services/authentification.service");
 const { userSchema, updateUserSchema } = require("../dto/user.dto");
 const mailService = require("../services/mail.service");
 const { isObjectId, handleResponse } = require("../utils/controller.util");
@@ -55,7 +56,12 @@ const userController = {
         return handleResponse(res, 400, "Email déjà utilisé !");
       }
       const newUser = await userService.createUser(value);
-      await mailService.welcomeMail(newUser);
+      const token = await authService.createToken(
+        newUser._id,
+        req.ip,
+        req.get("User-Agent")
+      );
+      await mailService.welcomeMail(newUser, token);
       return handleResponse(res, 201, "Utilisateur créé avec succès", newUser);
     } catch (error) {
       console.error(error);

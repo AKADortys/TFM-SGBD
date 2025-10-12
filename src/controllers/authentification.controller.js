@@ -24,6 +24,9 @@ const authController = {
       if (passwordError) return handleResponse(res, 400, passwordError);
 
       const user = await authService.login(mail, password);
+      if (!user.isActive) {
+        return handleResponse(res, 403, "Compte non activé");
+      }
       if (!user)
         return handleResponse(res, 401, "Email ou mot de passe incorrect");
 
@@ -69,7 +72,7 @@ const authController = {
       if (!user)
         return handleResponse(res, 404, "Adresse mail fournie incorrecte");
 
-      const token = await authService.createPasswordReset(
+      const token = await authService.createToken(
         user._id,
         req.ip,
         req.headers["user-agent"] || "unknown"
@@ -90,7 +93,7 @@ const authController = {
 
       const passwordError = validatePassword(newPassword || "");
       if (passwordError) return handleResponse(res, 400, passwordError);
-      const userId = await authService.verifyPasswordReset(token);
+      const userId = await authService.verifyToken(token);
       if (!userId)
         return handleResponse(
           res,
@@ -104,6 +107,26 @@ const authController = {
         "Erreur lors de la réinitialisation du mot de passe :",
         error
       );
+      return handleResponse(res, 500, "Erreur interne du serveur");
+    }
+  },
+
+  // Confirmation du compte utilisateur
+  confirmAccount: async (req, res) => {
+    try {
+      const { token } = req.body;
+      const userId = await authService.verifyToken(token);
+      if (!userId) {
+        return handleResponse(
+          res,
+          400,
+          "Lien de confirmation invalide ou expiré"
+        );
+      }
+      await userService.confirmUserAccount(userId);
+      return handleResponse(res, 200, "Compte confirmé avec succès");
+    } catch (error) {
+      console.error("Erreur lors de la confirmation du compte :", error);
       return handleResponse(res, 500, "Erreur interne du serveur");
     }
   },

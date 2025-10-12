@@ -1,5 +1,5 @@
 const userService = require("./user.service");
-const PasswordReset = require("../models/Password-reset");
+const Token = require("../models/Password-reset");
 const bcrypt = require("bcrypt");
 const {
   hashToken,
@@ -22,13 +22,13 @@ const authService = {
     }
   },
 
-  createPasswordReset: async (userId, ip, userAgent) => {
+  createToken: async (userId, ip, userAgent) => {
     try {
       const token = generateToken();
       const tokenHash = hashToken(token);
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
-      await PasswordReset.create({
+      await Token.create({
         userId,
         token_hash: tokenHash,
         expiresAt,
@@ -45,10 +45,10 @@ const authService = {
     }
   },
 
-  verifyPasswordReset: async (token) => {
+  verifyToken: async (token) => {
     try {
       const tokenHash = hashToken(token);
-      const resetDoc = await PasswordReset.findOne({
+      const resetDoc = await Token.findOne({
         token_hash: tokenHash,
         used: false,
       });

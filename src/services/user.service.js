@@ -112,5 +112,17 @@ const userService = {
       );
     }
   },
+  confirmUserAccount: async (id) => {
+    try {
+      const user = await User.findById(id);
+      if (!user) return null;
+
+      user.isActive = true;
+      await user.save();
+      return sanitizeUser(user);
+    } catch (error) {
+      handleServiceError(error, "Erreur lors de la confirmation du compte");
+    }
+  },
 };
 module.exports = userService;
