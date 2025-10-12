@@ -48,15 +48,21 @@ const authService = {
   verifyToken: async (token) => {
     try {
       const tokenHash = hashToken(token);
-      const resetDoc = await Token.findOne({
-        token_hash: tokenHash,
-        used: false,
-      });
-      if (!resetDoc || isExpired(resetDoc.expiresAt)) return null;
+      const resetDoc = await Token.findOneAndUpdate(
+        {
+          token_hash: tokenHash,
+          used: false,
+        },
+        {
+          $set: {
+            used: true,
+            usedAt: new Date(),
+          },
+        },
+        { new: false }
+      );
 
-      resetDoc.used = true;
-      resetDoc.usedAt = new Date();
-      await resetDoc.save();
+      if (!resetDoc || isExpired(resetDoc.expiresAt)) return null;
       return resetDoc.userId;
     } catch (error) {
       handleServiceError(

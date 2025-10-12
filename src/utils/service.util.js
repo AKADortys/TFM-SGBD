@@ -11,6 +11,7 @@ module.exports = {
     return crypto.randomBytes(size).toString("hex");
   },
   sanitizeUser: (user) => {
+    if (!user) return null;
     const obj = { ...user._doc };
     delete obj.password;
     return obj;

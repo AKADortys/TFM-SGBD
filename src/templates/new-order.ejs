@@ -14,7 +14,7 @@
 
       <ul>
         <% order.products.forEach((n)=>{%>
-          <li><%=n.productId.label%> - <%=n.price%> x <%=n.quantity%></li>
+        <li><%=n.productId.label%> - <%=n.price%> x <%=n.quantity%></li>
         <%})%>
       </ul>
 
@@ -34,7 +34,7 @@
       <p style="margin-top: 16px">
         <a
           class="button btn-primary"
-          href="{{ url_profil }}"
+          href="<%= url_profil %>"
           target="_blank"
           rel="noopener"
           >Accéder à mon profil</a

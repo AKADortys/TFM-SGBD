@@ -24,11 +24,11 @@ const authController = {
       if (passwordError) return handleResponse(res, 400, passwordError);
 
       const user = await authService.login(mail, password);
+      if (!user)
+        return handleResponse(res, 401, "Email ou mot de passe incorrect");
       if (!user.isActive) {
         return handleResponse(res, 403, "Compte non activé");
       }
-      if (!user)
-        return handleResponse(res, 401, "Email ou mot de passe incorrect");
 
       const payload = createTokenPayload(user);
       const accessToken = jwt.sign(payload, jwtConfig.secret, {

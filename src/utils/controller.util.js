@@ -3,14 +3,17 @@ const { ObjectId } = require("mongodb");
 module.exports = {
   // Validation d'email
   validateEmail(email) {
-    if (!validator.isEmail(email)) {
+    if (typeof email !== "string" || !validator.isEmail(email)) {
       return "L'email fourni est invalide";
     }
     return null;
   },
   // Validation de mot de passe
   validatePassword(password) {
-    if (!validator.isLength(password, { min: 8 })) {
+    if (
+      typeof password !== "string" ||
+      !validator.isLength(password, { min: 8 })
+    ) {
       return "Le mot de passe doit faire au moins 8 caractères";
     }
     return null;

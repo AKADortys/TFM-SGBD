@@ -58,6 +58,7 @@ module.exports = {
         title: "Votre commande est en cour de traitement !",
         order: order,
         user: user,
+        url_profil: "https://exemple.com/espace-client/profil",
       });
       await transporter.sendMail({
         from: '"Au Ptit Vivo" <no-reply@example.com>',
