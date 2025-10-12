@@ -26,7 +26,10 @@ module.exports = {
       if (idError) return handleResponse(res, 400, idError);
       const order = await orderService.getOrderById(id);
       if (!order) return handleResponse(res, 404, "Commande non trouvée");
-      if (req.user.id !== order.userId && req.user.role !== "admin") {
+      if (
+        req.user.id !== order.userId.toString() &&
+        req.user.role !== "admin"
+      ) {
         return handleResponse(res, 403, "Accès refusé");
       }
       return handleResponse(res, 200, "Commande récupérée", order);
@@ -78,6 +81,27 @@ module.exports = {
         "Erreur lors de la récupération des commandes par statut:",
         error
       );
+      return handleResponse(res, 500, "Erreur Server");
+    }
+  },
+  // annulation d'une commande
+  cancelOrder: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const idError = isObjectId(id);
+      if (idError) return handleResponse(res, 400, idError);
+      const order = await orderService.getOrderById(id);
+      if (!order) return handleResponse(res, 404, "Commande non trouvée");
+      if (
+        req.user.id !== order.userId.toString() &&
+        req.user.role !== "admin"
+      ) {
+        return handleResponse(res, 403, "Accès refusé");
+      }
+      await orderService.cancelOrder(id);
+      return handleResponse(res, 200, "Commande annulée avec succès");
+    } catch (error) {
+      console.error("Erreur lors de l'annulation de la commande:", error);
       return handleResponse(res, 500, "Erreur Server");
     }
   },

@@ -173,4 +173,12 @@ module.exports = {
       );
     }
   },
+  cancelOrder: async (id) => {
+    try {
+      await Order.findByIdAndUpdate(id, { status: "Annulée" });
+      return true;
+    } catch (error) {
+      handleServiceError(error, "Erreur lors de l'annulation de la commande");
+    }
+  },
 };
