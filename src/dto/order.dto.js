@@ -61,7 +61,7 @@ const createOrderSchema = Joi.object({
     .messages({
       "string.base": "Le statut doit être une chaîne de caractères valide.",
       "string.pattern.base":
-        "Le statut doit être 'pending', 'processing', 'shipped' ou 'delivered'.",
+        "Le statut doit être 'En attente', 'Confirmée', 'Accepté', 'Refusée' ou 'Annulée'.",
     }),
 });
 
@@ -95,7 +95,7 @@ const updateOrderSchema = Joi.object({
     .messages({
       "string.base": "Le statut doit être une chaîne de caractères valide.",
       "string.pattern.base":
-        "Le statut doit être 'pending', 'processing', 'shipped' ou 'delivered'.",
+        "Le statut doit être 'En attente', 'Confirmée', 'Accepté', 'Refusée' ou 'Annulée'.",
     }),
 })
   .min(1)
