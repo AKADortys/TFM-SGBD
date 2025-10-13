@@ -20,6 +20,6 @@ router.get("/:id", orderController.getOrderById);
 router.post("/", orderController.createOrder);
 router.put("/:id", permissionsMdw, orderController.updateOrder);
 router.patch("/:id/cancel", orderController.cancelOrder);
-router.delete("/:id", orderController.deleteOrder);
+router.delete("/:id", permissionsMdw, orderController.deleteOrder);
 
 module.exports = router;

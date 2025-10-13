@@ -24,7 +24,7 @@ const userService = {
         askPage,
         limit
       );
-      return { users: items, total, totalPages, page };
+      return { users: items.map(sanitizeUser), total, totalPages, page };
     } catch (error) {
       handleServiceError(
         error,

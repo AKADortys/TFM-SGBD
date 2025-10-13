@@ -45,24 +45,20 @@ const authService = {
     }
   },
 
-  verifyToken: async (token) => {
+  verifyToken: async (token, expectedType) => {
     try {
       const tokenHash = hashToken(token);
       const resetDoc = await Token.findOneAndUpdate(
         {
           token_hash: tokenHash,
           used: false,
+          type: expectedType,
+          expiresAt: { $gt: new Date() },
         },
-        {
-          $set: {
-            used: true,
-            usedAt: new Date(),
-          },
-        },
+        { $set: { used: true, usedAt: new Date() } },
         { new: false }
       );
-
-      if (!resetDoc || isExpired(resetDoc.expiresAt)) return null;
+      if (!resetDoc) return null;
       return resetDoc.userId;
     } catch (error) {
       handleServiceError(

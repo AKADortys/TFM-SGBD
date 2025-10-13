@@ -47,6 +47,9 @@ module.exports = {
       if (!id) return handleResponse(res, 400, "ID manquant");
       const idError = isObjectId(id);
       if (idError) return handleResponse(res, 400, idError);
+      if (req.user.id !== id && req.user.role !== "admin") {
+        return handleResponse(res, 403, "Accès refusé");
+      }
       const result = await orderService.getOrdersByUserId(id, skip, limit);
       return handleResponse(res, 200, "commandes récupérées", result);
     } catch (error) {
@@ -63,9 +66,8 @@ module.exports = {
     const limit = parseInt(req.query.limit) || 5;
     const validStatus = [
       "En attente",
-      "En cours de traitement",
+      "Accepté",
       "Confirmée",
-      "Prêt en magasin",
       "Refusée",
       "Annulée",
     ];
@@ -167,7 +169,13 @@ module.exports = {
       if (!existingOrder) {
         return handleResponse(res, 404, "Commande non trouvée");
       }
-      const modifiableStatuses = ["En attente", "En cours de traitement"];
+      if (
+        req.user.id !== existingOrder.userId.toString() &&
+        req.user.role !== "admin"
+      ) {
+        return handleResponse(res, 403, "Accès refusé");
+      }
+      const modifiableStatuses = ["En attente", "Confirmée"];
       if (!modifiableStatuses.includes(existingOrder.status)) {
         return handleResponse(
           res,
@@ -181,8 +189,20 @@ module.exports = {
       }
       let totalPrice = existingOrder.totalPrice;
       if (value.products) {
-        totalPrice = value.products.reduce(
-          (sum, product) => sum + product.price * product.quantity,
+        const docs = await Promise.all(
+          value.products.map((p) => productService.getProductById(p.productId))
+        );
+        if (docs.some((d) => !d)) {
+          return handleResponse(res, 400, "Produit inexistant");
+        }
+        const normalized = value.products.map((p, i) => ({
+          productId: p.productId,
+          quantity: p.quantity,
+          price: docs[i].price,
+        }));
+        value.products = normalized;
+        totalPrice = normalized.reduce(
+          (sum, p) => sum + p.price * p.quantity,
           0
         );
       }

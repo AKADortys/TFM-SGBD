@@ -77,6 +77,9 @@ const userController = {
     }
     try {
       // Vérification de l'existence de l'utilisateur
+      if (req.user.id !== id && req.user.role !== "admin") {
+        return handleResponse(res, 403, "Accès refusé");
+      }
       const user = await userService.getUserById(id);
       if (!user) {
         return handleResponse(res, 404, "Utilisateur introuvable");
@@ -108,6 +111,9 @@ const userController = {
   // Suppression d'un utilisateur
   deleteUser: async (req, res) => {
     try {
+      if (req.user.id !== id && req.user.role !== "admin") {
+        return handleResponse(res, 403, "Accès refusé");
+      }
       const id = req.params.id;
       if (!id) return handleResponse(res, 400, "ID manquant");
       if (isObjectId(id)) {

@@ -11,6 +11,7 @@ const tokenSchema = new mongoose.Schema(
       type: String,
       required: true,
       index: true,
+      unique: true,
     },
     used: {
       type: Boolean,
@@ -21,6 +22,7 @@ const tokenSchema = new mongoose.Schema(
     },
     expiresAt: {
       type: Date,
+      required: true,
     },
     requestIp: {
       type: String,

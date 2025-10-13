@@ -1,7 +1,12 @@
 const nodemailer = require("nodemailer");
 
 let transporterPromise = (async () => {
-  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+  if (
+    process.env.SMTP_HOST &&
+    process.env.SMTP_PORT &&
+    process.env.SMTP_USER &&
+    process.env.SMTP_PASS
+  ) {
     // Utilise les variables d'environnement
     return nodemailer.createTransport({
       // service: "gmail",
@@ -24,8 +29,8 @@ let transporterPromise = (async () => {
       port: 587,
       secure: false,
       auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
       },
       tls: {
         rejectUnauthorized: false,

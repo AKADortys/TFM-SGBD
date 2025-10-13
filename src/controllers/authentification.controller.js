@@ -90,10 +90,18 @@ const authController = {
   passwordRecovery: async (req, res) => {
     try {
       const { token, newPassword } = req.body;
+      const trimmedToken = (token || "").trim();
+      if (!trimmedToken) {
+        return handleResponse(
+          res,
+          400,
+          "Lien de réinitialisation invalide ou expiré"
+        );
+      }
 
       const passwordError = validatePassword(newPassword || "");
       if (passwordError) return handleResponse(res, 400, passwordError);
-      const userId = await authService.verifyToken(token);
+      const userId = await authService.verifyToken(trimmedToken);
       if (!userId)
         return handleResponse(
           res,
@@ -115,7 +123,15 @@ const authController = {
   confirmAccount: async (req, res) => {
     try {
       const { token } = req.body;
-      const userId = await authService.verifyToken(token);
+      const trimmedToken = (token || "").trim();
+      if (!trimmedToken) {
+        return handleResponse(
+          res,
+          400,
+          "Lien de réinitialisation invalide ou expiré"
+        );
+      }
+      const userId = await authService.verifyToken(trimmedToken);
       if (!userId) {
         return handleResponse(
           res,
