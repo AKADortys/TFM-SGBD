@@ -6,7 +6,6 @@ const {
   generateToken,
   sanitizeUser,
   handleServiceError,
-  isExpired,
 } = require("../utils/service.util");
 
 const authService = {
@@ -22,7 +21,7 @@ const authService = {
     }
   },
 
-  createToken: async (userId, ip, userAgent) => {
+  createToken: async (userId, ip, userAgent, type = "password_reset") => {
     try {
       const token = generateToken();
       const tokenHash = hashToken(token);
@@ -33,6 +32,7 @@ const authService = {
         token_hash: tokenHash,
         expiresAt,
         requestIp: ip,
+        type,
         userAgent,
       });
 

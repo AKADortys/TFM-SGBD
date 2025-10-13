@@ -13,6 +13,11 @@ const tokenSchema = new mongoose.Schema(
       index: true,
       unique: true,
     },
+    type: {
+      type: String,
+      enum: ["password_reset", "account_confirmation"],
+      required: true,
+    },
     used: {
       type: Boolean,
       default: false,

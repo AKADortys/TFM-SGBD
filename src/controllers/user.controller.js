@@ -59,7 +59,8 @@ const userController = {
       const token = await authService.createToken(
         newUser._id,
         req.ip,
-        req.get("User-Agent")
+        req.get("User-Agent"),
+        "account_confirmation"
       );
       await mailService.welcomeMail(newUser, token);
       return handleResponse(res, 201, "Utilisateur créé avec succès", newUser);
@@ -111,10 +112,10 @@ const userController = {
   // Suppression d'un utilisateur
   deleteUser: async (req, res) => {
     try {
+      const id = req.params.id;
       if (req.user.id !== id && req.user.role !== "admin") {
         return handleResponse(res, 403, "Accès refusé");
       }
-      const id = req.params.id;
       if (!id) return handleResponse(res, 400, "ID manquant");
       if (isObjectId(id)) {
         return handleResponse(res, 400, "ID invalide");

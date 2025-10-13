@@ -17,6 +17,10 @@ const authController = {
     try {
       const { mail, password } = req.body;
 
+      if (!mail || !password) {
+        return handleResponse(res, 400, "Email et mot de passe requis");
+      }
+
       const emailError = validateEmail(mail || "");
       if (emailError) return handleResponse(res, 400, emailError);
 
@@ -128,10 +132,13 @@ const authController = {
         return handleResponse(
           res,
           400,
-          "Lien de réinitialisation invalide ou expiré"
+          "Lien de confirmation invalide ou expiré"
         );
       }
-      const userId = await authService.verifyToken(trimmedToken);
+      const userId = await authService.verifyToken(
+        trimmedToken,
+        "account_confirmation"
+      );
       if (!userId) {
         return handleResponse(
           res,

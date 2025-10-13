@@ -3,6 +3,7 @@ const router = express.Router();
 const orderController = require("../controllers/order.controller");
 const tokenMdw = require("../middlewares/jwt.middleware");
 const permissionsMdw = require("../middlewares/permissions.middleware");
+const rateLimiter = require("../middlewares/rate-limiter.middleware");
 
 // Middleware d'authentification global
 router.use(tokenMdw);
@@ -17,7 +18,7 @@ router.get(
   orderController.getOrdersByStatus
 );
 router.get("/:id", orderController.getOrderById);
-router.post("/", orderController.createOrder);
+router.post("/", rateLimiter, orderController.createOrder);
 router.put("/:id", permissionsMdw, orderController.updateOrder);
 router.patch("/:id/cancel", orderController.cancelOrder);
 router.delete("/:id", permissionsMdw, orderController.deleteOrder);
