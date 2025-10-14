@@ -12,7 +12,13 @@ module.exports = {
   validatePassword(password) {
     if (
       typeof password !== "string" ||
-      !validator.isLength(password, { min: 8 })
+      !validator.isLength(password, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 0,
+      })
     ) {
       return "Le mot de passe doit faire au moins 8 caractères";
     }

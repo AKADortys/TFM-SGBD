@@ -4,10 +4,10 @@ const authController = require("../controllers/authentification.controller");
 const tokenMdw = require("../middlewares/jwt.middleware");
 const rateLimiter = require("../middlewares/rate-limiter.middleware");
 
-router.post("/login", authController.login);
+router.post("/login", rateLimiter, authController.login);
 router.post("/logout", tokenMdw, authController.logout);
 router.post("/password-reset", rateLimiter, authController.passwordReset);
-router.post("/password-recovery", authController.passwordRecovery);
-router.patch("/confirm-account", authController.confirmAccount);
+router.post("/password-recovery", rateLimiter, authController.passwordRecovery);
+router.patch("/confirm-account", rateLimiter, authController.confirmAccount);
 
 module.exports = router;

@@ -74,7 +74,7 @@ const authController = {
 
       const user = await userService.getUserByMail(mail);
       if (!user)
-        return handleResponse(res, 404, "Adresse mail fournie incorrecte");
+        return handleResponse(res, 200, "Email de réinitialisation envoyé");
 
       const token = await authService.createToken(
         user._id,
@@ -105,7 +105,10 @@ const authController = {
 
       const passwordError = validatePassword(newPassword || "");
       if (passwordError) return handleResponse(res, 400, passwordError);
-      const userId = await authService.verifyToken(trimmedToken);
+      const userId = await authService.verifyToken(
+        trimmedToken,
+        "password_reset"
+      );
       if (!userId)
         return handleResponse(
           res,
