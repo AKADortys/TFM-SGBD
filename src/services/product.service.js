@@ -2,11 +2,16 @@ const Product = require("../models/Product");
 const { handleServiceError, paginatedQuery } = require("../utils/service.util");
 
 module.exports = {
-  getAllProducts: async (askPage, limit) => {
+  getAllProducts: async (askPage, limit, search) => {
     try {
       const { items, total, totalPages, page } = await paginatedQuery(
         Product,
-        {},
+        {
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { description: { $regex: search, $options: "i" } },
+          ],
+        },
         askPage,
         limit
       );

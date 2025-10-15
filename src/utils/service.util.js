@@ -32,11 +32,22 @@ module.exports = {
     filter = {},
     page = 1,
     limit = 5,
-    sort = { createdAt: -1 }
+    sort = { createdAt: -1 },
+    populate = null
   ) => {
     const skip = (page - 1) * limit;
+    let query = model.find(filter).sort(sort).skip(skip).limit(limit);
+    if (populate) {
+      if (Array.isArray(populate)) {
+        populate.forEach((pop) => {
+          query = query.populate(pop.path, pop.select);
+        });
+      } else {
+        query = query.populate(populate);
+      }
+    }
     const [items, total] = await Promise.all([
-      model.find(filter).sort(sort).skip(skip).limit(limit),
+      query.exec(),
       model.countDocuments(filter),
     ]);
     return {
@@ -46,6 +57,7 @@ module.exports = {
       page,
     };
   },
+
   handleServiceError: (error, message) => {
     console.error(error);
     throw new Error(message || error.message);

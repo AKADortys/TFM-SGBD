@@ -8,7 +8,12 @@ module.exports = {
         Order,
         {},
         askPage,
-        limit
+        limit,
+        { createdAt: -1 },
+        [
+          { path: "products.productId", select: "label" },
+          { path: "userId", select: "name mail lastName" },
+        ]
       );
       return {
         orders: items,
@@ -74,7 +79,9 @@ module.exports = {
         Order,
         { userId: new mongoose.Types.ObjectId(userId) },
         askPage,
-        limit
+        limit,
+        { createdAt: -1 },
+        { path: "products.productId", select: "label" }
       );
       return {
         orders: items,
@@ -95,7 +102,9 @@ module.exports = {
         Order,
         { status },
         askPage,
-        limit
+        limit,
+        { createdAt: -1 },
+        { path: "products.productId", select: "label" }
       );
       return {
         orders: items,

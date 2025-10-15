@@ -138,6 +138,7 @@ module.exports = {
       for (const element of products) {
         const exist = await productService.getProductById(element.productId);
         if (!exist) return handleResponse(res, 400, "Produit inexistant");
+        element.price = exist.price;
       }
 
       let totalPrice = products.reduce(
