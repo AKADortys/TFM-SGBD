@@ -8,7 +8,7 @@ module.exports = {
         Product,
         {
           $or: [
-            { name: { $regex: search, $options: "i" } },
+            { label: { $regex: search, $options: "i" } },
             { description: { $regex: search, $options: "i" } },
           ],
         },

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <%-include('./layout/head')%>
+  <body>
+    <%-include('./layout/header')%>
+    <div class="container">
+      <p class="muted">Bonjour,</p>
+
+      <p>
+        Une nouvelle commande <strong>#<%= order._id%></strong> a été passée par
+        <strong><%= user.fullname%></strong> pour notre service de plats à
+        emporter.
+      </p>
+
+      <ul>
+        <% order.products.forEach((n)=>{%>
+        <li><%=n.productId.label%> - <%=n.price%> x <%=n.quantity%></li>
+        <%})%>
+      </ul>
+
+      <p><strong>Montant Total:</strong> <%=order.totalPrice%></p>
+
+      <p>
+        Veuillez valider ou refuser cette commande depuis le panneau
+        d’administration.
+      </p>
+
+      <p>
+        Vous pouvez accéder au profil de ce client depuis l’onglet
+        <strong>Dashboard</strong> de votre espace administrateur.
+      </p>
+
+      <p style="margin-top: 16px">
+        <a
+          class="button btn-primary"
+          href="<%= url_admin %>"
+          target="_blank"
+          rel="noopener"
+          >Accéder à dashboard</a
+        >
+      </p>
+    </div>
+    <%-include('./layout/footer')%>
+  </body>
+</html>

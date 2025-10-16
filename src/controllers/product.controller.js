@@ -6,9 +6,10 @@ module.exports = {
   // Récupération de tous les produits
   getProducts: async (req, res) => {
     try {
+      const search = req.query.search || "";
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 5;
-      const products = await productService.getAllProducts(page, limit);
+      const products = await productService.getAllProducts(page, limit, search);
       return handleResponse(
         res,
         200,

@@ -54,17 +54,29 @@ module.exports = {
   newOrder: async (order, user) => {
     try {
       const transporter = await transporterPromise;
-      let html = await renderHtml(templatePath("new-order.ejs"), {
+      const htmlClient = await renderHtml(templatePath("new-order.ejs"), {
         title: "Votre commande est en cours de traitement !",
-        order: order,
-        user: user,
+        order,
+        user,
         url_profil: "https://exemple.com/espace-client/profil",
       });
       await transporter.sendMail({
         from: '"Au Ptit Vivo" <no-reply@example.com>',
         to: user.mail,
         subject: "Confirmation de votre commande - Au Ptit Vivo",
-        html,
+        html: htmlClient,
+      });
+      const htmlAdmin = await renderHtml(templatePath("admin-new-order.ejs"), {
+        title: "Nouvelle commande reçue",
+        order,
+        user,
+        url_admin: "https://exemple.com/admin/commandes",
+      });
+      await transporter.sendMail({
+        from: '"Au Ptit Vivo" <no-reply@example.com>',
+        to: "admin@example.com",
+        subject: `Nouvelle commande de ${user.fullname} - Au Ptit Vivo`,
+        html: htmlAdmin,
       });
     } catch (error) {
       handleServiceError(

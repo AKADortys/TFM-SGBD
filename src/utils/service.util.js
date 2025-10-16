@@ -30,8 +30,8 @@ module.exports = {
   paginatedQuery: async (
     model,
     filter = {},
-    page = 1,
-    limit = 5,
+    page = Math.max(1, parseInt(page) || 1),
+    limit = Math.max(1, Math.min(100, parseInt(limit) || 10)),
     sort = { createdAt: -1 },
     populate = null
   ) => {
