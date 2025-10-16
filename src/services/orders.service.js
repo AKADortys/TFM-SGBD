@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Types;
 const { handleServiceError, paginatedQuery } = require("../utils/service.util");
 module.exports = {
   getAllOrders: async (askPage, limit) => {
@@ -120,7 +121,9 @@ module.exports = {
     try {
       const orders = await Order.aggregate([
         {
-          $match: { _id: new ObjectId(orderId) },
+          $match: {
+            _id: orderId instanceof ObjectId ? orderId : new ObjectId(orderId),
+          },
         },
         {
           $lookup: {
