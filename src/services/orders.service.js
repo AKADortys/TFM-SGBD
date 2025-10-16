@@ -10,10 +10,7 @@ module.exports = {
         askPage,
         limit,
         { createdAt: -1 },
-        [
-          { path: "products.productId", select: "label" },
-          { path: "userId", select: "name mail lastName" },
-        ]
+        { path: "products.productId", select: "label" }
       );
       return {
         orders: items,
