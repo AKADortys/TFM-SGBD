@@ -1,11 +1,14 @@
 const User = require("../models/User");
+const {
+  handleServiceError,
+  paginatedQuery,
+  sanitizeUser,
+} = require("../utils/service.util");
 
 const userService = {
   // Récupérer tous les utilisateurs
-  getUsers: async (page, limit, searchTerm = "") => {
+  getUsers: async (askPage, limit, searchTerm = "") => {
     try {
-      const skip = (page - 1) * limit;
-
       // Construction de la condition de recherche
       const searchQuery = searchTerm
         ? {
@@ -15,43 +18,42 @@ const userService = {
             ],
           }
         : {};
-
-      // Requête avec filtre + pagination
-      const [users, total] = await Promise.all([
-        User.find(searchQuery).skip(skip).limit(limit),
-        User.countDocuments(searchQuery),
-      ]);
-
-      return {
-        users,
-        total,
-        totalPages: Math.ceil(total / limit),
-        page,
-      };
+      const { items, total, totalPages, page } = await paginatedQuery(
+        User,
+        searchQuery,
+        askPage,
+        limit
+      );
+      return { users: items.map(sanitizeUser), total, totalPages, page };
     } catch (error) {
-      throw new Error("Erreur lors de la récupération des utilisateurs");
+      handleServiceError(
+        error,
+        "Erreur lors de la récupération des utilisateurs"
+      );
     }
   },
-
   // Récupérer un utilisateur par ID
   getUserById: async (id) => {
     try {
       const user = await User.findById(id);
-      if (!user) return null;
-      return user;
+      return sanitizeUser(user) || null;
     } catch (error) {
-      throw new Error("Erreur lors de la récupération de l'utilisateur");
+      handleServiceError(
+        error,
+        "Erreur lors de la récupération de l'utilisateur"
+      );
     }
   },
   // Récupérer un utilisateur par email
   getUserByMail: async (mail) => {
     try {
       const user = await User.findOne({ mail });
-      if (!user) return null;
-      return user;
+      return user || null;
     } catch (error) {
-      console.error("Erreur lors de la récupération de user", error);
-      throw new Error("Erreur lors de la récupération de l'utilisateur");
+      handleServiceError(
+        error,
+        "Erreur lors de la récupération de l'utilisateur"
+      );
     }
   },
   // Créer un nouvel utilisateur
@@ -59,9 +61,9 @@ const userService = {
     try {
       const user = new User(value);
       await user.save();
-      return user;
+      return sanitizeUser(user);
     } catch (error) {
-      throw new Error("Erreur lors de la création de l'utilisateur");
+      handleServiceError(error, "Erreur lors de la création de l'utilisateur");
     }
   },
   updateUser: async (id, updateFields) => {
@@ -72,14 +74,27 @@ const userService = {
       });
 
       if (!updatedUser) return null;
-
-      const response = { ...updatedUser._doc };
-
-      delete response.password;
-      return response;
+      return sanitizeUser(updatedUser);
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'utilisateur:");
-      throw error;
+      handleServiceError(
+        error,
+        "Erreur lors de la mise à jour de l'utilisateur"
+      );
+    }
+  },
+  updateUserPassword: async (id, newPassword) => {
+    try {
+      const user = await User.findById(id);
+      if (!user) return null;
+
+      user.password = newPassword;
+      await user.save();
+      return sanitizeUser(user);
+    } catch (error) {
+      handleServiceError(
+        error,
+        "Erreur lors de la mise à jour du mot de passe de l'utilisateur"
+      );
     }
   },
   // Supprimer un utilisateur
@@ -91,7 +106,22 @@ const userService = {
       await User.deleteOne({ _id: id });
       return true;
     } catch (error) {
-      throw new Error("Erreur lors de la suppression de l'utilisateur");
+      handleServiceError(
+        error,
+        "Erreur lors de la suppression de l'utilisateur"
+      );
+    }
+  },
+  confirmUserAccount: async (id) => {
+    try {
+      const user = await User.findById(id);
+      if (!user) return null;
+
+      user.isActive = true;
+      await user.save();
+      return sanitizeUser(user);
+    } catch (error) {
+      handleServiceError(error, "Erreur lors de la confirmation du compte");
     }
   },
 };

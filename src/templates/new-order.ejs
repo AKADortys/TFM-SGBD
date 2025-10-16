@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <%-include('./layout/head')%>
+  <body>
+    <%-include('./layout/header')%>
+
+    <div class="container" role="article" aria-label="Confirmation de commande">
+      <p class="muted">Bonjour <%= user.fullname%>,</p>
+
+      <p>
+        Merci. Votre commande <strong>#<%= order._id%></strong> a bien été
+        enregistrée pour notre service de plats à emporter.
+      </p>
+
+      <ul>
+        <% order.products.forEach((n)=>{%>
+        <li><%=n.productId.label%> - <%=n.price%> x <%=n.quantity%></li>
+        <%})%>
+      </ul>
+
+      <p><strong>Montant Total:</strong> <%=order.totalPrice%></p>
+
+      <p>
+        Veuillez noter que la commande doit encore être validée par le gérant
+        avant préparation. Vous recevrez un e-mail vous informant de la
+        validation ou du refus dès qu’une décision aura été prise.
+      </p>
+
+      <p>
+        Vous pouvez annuler cette commande à tout moment depuis l’onglet
+        <strong>Profil</strong> de votre espace client.
+      </p>
+
+      <p style="margin-top: 16px">
+        <a
+          class="button btn-primary"
+          href="<%= url_profil %>"
+          target="_blank"
+          rel="noopener"
+          >Accéder à mon profil</a
+        >
+      </p>
+      <%-include('./layout/footer')%>
+    </div>
+  </body>
+</html>

@@ -1,48 +1,56 @@
 const Order = require("../models/Order");
 const mongoose = require("mongoose");
-const { ObjectId } = require("mongodb");
-
+const { handleServiceError, paginatedQuery } = require("../utils/service.util");
 module.exports = {
-  getAllOrders: async (page = 1, limit = 5) => {
+  getAllOrders: async (askPage, limit) => {
     try {
-      const skip = (page - 1) * limit;
-
-      const [orders, total] = await Promise.all([
-        Order.find().skip(skip).limit(limit),
-        Order.countDocuments(),
-      ]);
-
+      const { items, total, totalPages, page } = await paginatedQuery(
+        Order,
+        {},
+        askPage,
+        limit,
+        { createdAt: -1 },
+        [
+          { path: "products.productId", select: "label" },
+          { path: "userId", select: "name mail lastName" },
+        ]
+      );
       return {
-        orders,
+        orders: items,
         total,
-        totalPages: Math.ceil(total / limit),
+        totalPages,
         page,
       };
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(error, "Erreur lors de la récupération des commandes");
     }
   },
-
   getOrderById: async (id) => {
     try {
       const order = await Order.findById(id);
       if (!order) return null;
-      return order;
+      return order.populate({ path: "products.productId", select: "label" });
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(
+        error,
+        "Erreur lors de la récupération de la commande"
+      );
     }
   },
-
   createOrder: async (order) => {
     try {
       const newOrder = new Order(order);
       await newOrder.save();
-      return newOrder;
+
+      const populatedOrder = await newOrder.populate({
+        path: "products.productId",
+        select: "label",
+      });
+      return populatedOrder;
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(error, "Erreur lors de la création de la commande");
     }
   },
-
   updateOrder: async (id, updatedOrder) => {
     try {
       const order = await Order.findByIdAndUpdate(id, updatedOrder, {
@@ -51,58 +59,64 @@ module.exports = {
       if (!order) return null;
       return order;
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(
+        error,
+        "Erreur lors de la mise à jour de la commandes"
+      );
     }
   },
-
   deleteOrder: async (id) => {
     try {
       await Order.findByIdAndDelete(id);
       return true;
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(error, "Erreur lors de la suppresion de la commande");
     }
   },
-
-  getOrdersByUserId: async (userId, page, limit) => {
+  getOrdersByUserId: async (userId, askPage, limit) => {
     try {
-      const skip = (page - 1) * limit;
-      const [orders, total] = await Promise.all([
-        Order.find({ userId: new mongoose.Types.ObjectId(userId) })
-          .sort({ createdAt: -1 })
-          .skip(skip)
-          .limit(limit),
-        Order.countDocuments({ userId: new mongoose.Types.ObjectId(userId) }),
-      ]);
+      const { items, page, totalPages, total } = await paginatedQuery(
+        Order,
+        { userId: new mongoose.Types.ObjectId(userId) },
+        askPage,
+        limit,
+        { createdAt: -1 },
+        { path: "products.productId", select: "label" }
+      );
       return {
-        orders,
+        orders: items,
         total,
-        totalPages: Math.ceil(total / limit),
+        totalPages,
         page,
       };
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(
+        error,
+        "Erreur lors de la récupération des commandes utilisateur"
+      );
     }
   },
-
-  getOrdersByStatus: async (statut, page, limit) => {
+  getOrdersByStatus: async (status, askPage, limit) => {
     try {
-      const skip = (page - 1) * limit;
-      const [orders, total] = await Promise.all([
-        Order.find({ status: statut })
-          .sort({ createdAt: -1 })
-          .skip(skip)
-          .limit(limit),
-        Order.countDocuments({ status: statut }),
-      ]);
+      const { items, page, total, totalPages } = await paginatedQuery(
+        Order,
+        { status },
+        askPage,
+        limit,
+        { createdAt: -1 },
+        { path: "products.productId", select: "label" }
+      );
       return {
-        orders,
+        orders: items,
         total,
-        totalPages: Math.ceil(total / limit),
+        totalPages,
         page,
       };
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(
+        error,
+        "Erreur lors de la récupération des commandes par statut"
+      );
     }
   },
   getOrderWithDetails: async (orderId) => {
@@ -162,9 +176,18 @@ module.exports = {
 
       return orders[0] || null;
     } catch (error) {
-      console.error(error);
-
-      throw new Error(error.message);
+      handleServiceError(
+        error,
+        "Erreur lors de la récupération du détail de la commande"
+      );
+    }
+  },
+  cancelOrder: async (id) => {
+    try {
+      await Order.findByIdAndUpdate(id, { status: "Annulée" });
+      return true;
+    } catch (error) {
+      handleServiceError(error, "Erreur lors de l'annulation de la commande");
     }
   },
 };

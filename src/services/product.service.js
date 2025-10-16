@@ -1,49 +1,62 @@
 const Product = require("../models/Product");
+const { handleServiceError, paginatedQuery } = require("../utils/service.util");
 
 module.exports = {
-  getAllProducts: async () => {
+  getAllProducts: async (askPage, limit, search) => {
     try {
-      const products = await Product.find();
-      return products;
+      const { items, total, totalPages, page } = await paginatedQuery(
+        Product,
+        {
+          $or: [
+            { label: { $regex: search, $options: "i" } },
+            { description: { $regex: search, $options: "i" } },
+          ],
+        },
+        askPage,
+        limit
+      );
+      return { products: items, total, totalPages, page };
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(error, "Erreur lors de la récupération des produits");
     }
   },
+
   getProductById: async (id) => {
     try {
       const product = await Product.findById(id);
-      if (!product) return null;
-      return product;
+      return product || null;
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(error, "Erreur lors de la récupération du produit");
     }
   },
+
   createProduct: async (productData) => {
     try {
       const product = new Product(productData);
       await product.save();
       return product;
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(error, error.message);
     }
   },
+
   updateProduct: async (id, updateData) => {
     try {
       const product = await Product.findByIdAndUpdate(id, updateData, {
         new: true,
       });
-      if (!product) return null;
-      return product;
+      return product || null;
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(error, "Erreur lors de la mise à jour du produit");
     }
   },
+
   deleteProduct: async (id) => {
     try {
       await Product.findByIdAndDelete(id);
       return true;
     } catch (error) {
-      throw new Error(error.message);
+      handleServiceError(error, "Erreur lors de la suppression du produit");
     }
   },
 };

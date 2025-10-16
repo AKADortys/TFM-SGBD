@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <%-include('./layout/head')%>
+  <body>
+    <%-include('./layout/header')%>
+    <div class="container">
+      <p>Bonjour <%= user.name + " " + user.lastName %>,</p>
+      <p>Merci de vous être inscrit sur notre site.</p>
+      <p>
+        Vous pouvez dès à présent vous connecter et profiter de nos services.
+      </p>
+      <p style="margin-top: 30px">
+        <a
+          href="<%= loginUrl + token %>"
+          style="
+            display: inline-block;
+            padding: 12px 20px;
+            background: #4caf50;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+          "
+        >
+          Se connecter
+        </a>
+      </p>
+      <p style="margin-top: 30px; font-size: 12px; color: #888">
+        Si vous n’êtes pas à l’origine de cette inscription, ignorez ce message.
+      </p>
+    </div>
+    <%-include('./layout/footer')%>
+  </body>
+</html>
