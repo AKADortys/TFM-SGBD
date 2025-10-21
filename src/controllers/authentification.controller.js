@@ -21,10 +21,10 @@ const authController = {
         return handleResponse(res, 400, "Email et mot de passe requis");
       }
 
-      const emailError = validateEmail(mail || "");
+      const emailError = validateEmail(mail);
       if (emailError) return handleResponse(res, 400, emailError);
 
-      const passwordError = validatePassword(password || "");
+      const passwordError = validatePassword(password);
       if (passwordError) return handleResponse(res, 400, passwordError);
 
       const user = await authService.login(mail, password);

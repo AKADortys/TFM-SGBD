@@ -1,6 +1,15 @@
 const crypto = require("crypto");
 const ejs = require("ejs");
 const path = require("path");
+const ENCRYPTION_KEY = crypto
+  .createHash("sha256")
+  .update(process.env.ENCRYPTION_KEY)
+  .digest(); // 32 bytes pour AES-256
+const ENCRYPTION_IV = crypto
+  .createHash("sha256")
+  .update(process.env.ENCRYPTION_IV)
+  .digest()
+  .slice(0, 16); // 16 bytes pour IV
 
 module.exports = {
   //fonction authentification
@@ -57,7 +66,36 @@ module.exports = {
       page,
     };
   },
-
+  encrypt: (text) => {
+    /**
+     * Chiffre une chaîne de caractères.
+     * @param {string} text - Texte à chiffrer.
+     * @returns {string} - Texte chiffré (hex).
+     */
+    const cipher = crypto.createCipheriv(
+      "aes-256-cbc",
+      ENCRYPTION_KEY,
+      ENCRYPTION_IV
+    );
+    let encrypted = cipher.update(text, "utf8", "hex");
+    encrypted += cipher.final("hex");
+    return encrypted;
+  },
+  decrypt: (encryptedText) => {
+    /**
+     * Déchiffre une chaîne de caractères.
+     * @param {string} encryptedText - Texte chiffré (hex).
+     * @returns {string} - Texte déchiffré.
+     */
+    const decipher = crypto.createDecipheriv(
+      "aes-256-cbc",
+      ENCRYPTION_KEY,
+      ENCRYPTION_IV
+    );
+    let decrypted = decipher.update(encryptedText, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+    return decrypted;
+  },
   handleServiceError: (error, message) => {
     console.error(error);
     throw new Error(message || error.message);
