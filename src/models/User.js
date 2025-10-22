@@ -78,6 +78,7 @@ userSchema.pre("save", async function (next) {
     next(error);
   }
 });
+// Hashage du mot de passe avant mise à jour
 userSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate();
   if (update.password) {
@@ -92,6 +93,7 @@ userSchema.pre("findOneAndUpdate", async function (next) {
   }
   next();
 });
+// Encryption du numéro de téléphone avant enregistrement ou mise à jour
 userSchema.pre("save", function (next) {
   if (this.isModified("phone")) {
     try {
@@ -102,7 +104,6 @@ userSchema.pre("save", function (next) {
   }
   next();
 });
-
 userSchema.pre("findOneAndUpdate", function (next) {
   const update = this.getUpdate();
   if (update.phone) {

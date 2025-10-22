@@ -16,9 +16,11 @@ module.exports = {
   hashToken: (token) => {
     return crypto.createHash("sha256").update(token).digest("hex");
   },
+  //fonction token
   generateToken: (size = 48) => {
     return crypto.randomBytes(size).toString("hex");
   },
+  //fonction user purifié
   sanitizeUser: (user) => {
     if (!user) return null;
     const obj = { ...user._doc };
@@ -34,6 +36,7 @@ module.exports = {
       throw new Error("Erreur lors du rendu de la vue " + view);
     }
   },
+  //fonction pour le chemin des templates
   templatePath: (file) => path.join(__dirname, "../templates", file),
   //fonction globales de service
   paginatedQuery: async (
@@ -66,6 +69,7 @@ module.exports = {
       page,
     };
   },
+  //fonction de chiffrement et déchiffrement
   encrypt: (text) => {
     /**
      * Chiffre une chaîne de caractères.
@@ -96,10 +100,12 @@ module.exports = {
     decrypted += decipher.final("utf8");
     return decrypted;
   },
+  //gestion des erreurs
   handleServiceError: (error, message) => {
     console.error(error);
     throw new Error(message || error.message);
   },
+  //vérification d'expiration
   isExpired: (date) => {
     return date < new Date();
   },

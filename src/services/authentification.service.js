@@ -1,5 +1,5 @@
 const userService = require("./user.service");
-const Token = require("../models/Password-reset");
+const Token = require("../models/Token");
 const bcrypt = require("bcrypt");
 const {
   hashToken,
