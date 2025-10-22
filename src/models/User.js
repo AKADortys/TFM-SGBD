@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const { encrypt } = require("../utils/service.util");
 
 const userSchema = new mongoose.Schema(
   {
@@ -86,6 +87,29 @@ userSchema.pre("findOneAndUpdate", async function (next) {
       this.setUpdate(update);
     } catch (error) {
       console.error("Erreur lors du hachage du mot de passe:", error);
+      return next(error);
+    }
+  }
+  next();
+});
+userSchema.pre("save", function (next) {
+  if (this.isModified("phone")) {
+    try {
+      this.phone = encrypt(this.phone);
+    } catch (error) {
+      return next(error);
+    }
+  }
+  next();
+});
+
+userSchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+  if (update.phone) {
+    try {
+      update.phone = encrypt(update.phone);
+      this.setUpdate(update);
+    } catch (error) {
       return next(error);
     }
   }

@@ -3,6 +3,7 @@ const {
   handleServiceError,
   paginatedQuery,
   sanitizeUser,
+  decrypt,
 } = require("../utils/service.util");
 
 const userService = {
@@ -24,7 +25,14 @@ const userService = {
         askPage,
         limit
       );
-      return { users: items.map(sanitizeUser), total, totalPages, page };
+      const users = items.map((user) => {
+        const cleanUser = sanitizeUser(user);
+        if (cleanUser.phone) {
+          cleanUser.phone = decrypt(cleanUser.phone);
+        }
+        return cleanUser;
+      });
+      return { users, total, totalPages, page };
     } catch (error) {
       handleServiceError(
         error,
@@ -36,6 +44,9 @@ const userService = {
   getUserById: async (id) => {
     try {
       const user = await User.findById(id);
+      if (user && user.phone) {
+        user.phone = decrypt(user.phone);
+      }
       return sanitizeUser(user) || null;
     } catch (error) {
       handleServiceError(
@@ -48,6 +59,9 @@ const userService = {
   getUserByMail: async (mail) => {
     try {
       const user = await User.findOne({ mail });
+      if (user && user.phone) {
+        user.phone = decrypt(user.phone);
+      }
       return user || null;
     } catch (error) {
       handleServiceError(
@@ -61,11 +75,15 @@ const userService = {
     try {
       const user = new User(value);
       await user.save();
+      if (user.phone) {
+        user.phone = decrypt(user.phone);
+      }
       return sanitizeUser(user);
     } catch (error) {
       handleServiceError(error, "Erreur lors de la création de l'utilisateur");
     }
   },
+  // Mettre à jour un utilisateur
   updateUser: async (id, updateFields) => {
     try {
       const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
@@ -74,6 +92,9 @@ const userService = {
       });
 
       if (!updatedUser) return null;
+      if (updatedUser.phone) {
+        updatedUser.phone = decrypt(updatedUser.phone);
+      }
       return sanitizeUser(updatedUser);
     } catch (error) {
       handleServiceError(
@@ -82,6 +103,7 @@ const userService = {
       );
     }
   },
+  // Mettre à jour le mot de passe d'un utilisateur
   updateUserPassword: async (id, newPassword) => {
     try {
       const user = await User.findById(id);
@@ -112,6 +134,7 @@ const userService = {
       );
     }
   },
+  // Confirmer le compte utilisateur
   confirmUserAccount: async (id) => {
     try {
       const user = await User.findById(id);
@@ -119,6 +142,9 @@ const userService = {
 
       user.isActive = true;
       await user.save();
+      if (user.phone) {
+        user.phone = decrypt(user.phone);
+      }
       return sanitizeUser(user);
     } catch (error) {
       handleServiceError(error, "Erreur lors de la confirmation du compte");
