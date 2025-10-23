@@ -26,6 +26,8 @@ module.exports = {
       if (idError) return handleResponse(res, 400, idError);
       const order = await orderService.getOrderById(id);
       if (!order) return handleResponse(res, 404, "Commande non trouvée");
+      console.log("User ID:", req.user.id);
+      console.log("Order User ID:", order.userId.toString());
       if (
         req.user.id !== order.userId.toString() &&
         req.user.role !== "admin"
@@ -134,10 +136,16 @@ module.exports = {
         return handleResponse(res, 400, error.details[0].message);
       }
 
-      const { userId, products, deliveryAddress, status } = value;
+      let { userId, products, deliveryAddress, status } = value;
+      if (!userId) userId = req.user?.id;
       for (const element of products) {
         const exist = await productService.getProductById(element.productId);
-        if (!exist) return handleResponse(res, 400, "Produit inexistant");
+        if (!exist)
+          return handleResponse(
+            res,
+            400,
+            "Produit inexistant" + element.productId
+          );
         element.price = exist.price;
       }
 

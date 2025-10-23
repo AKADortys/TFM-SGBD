@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Types;
 const { handleServiceError, paginatedQuery } = require("../utils/service.util");
 module.exports = {
+  // Récupérer toutes les commandes avec pagination
   getAllOrders: async (askPage, limit) => {
     try {
       const { items, total, totalPages, page } = await paginatedQuery(
@@ -20,9 +21,17 @@ module.exports = {
         page,
       };
     } catch (error) {
-      handleServiceError(error, "Erreur lors de la récupération des commandes");
+      handleServiceError(
+        error,
+        "Erreur lors de la récupération des commandes",
+        {
+          service: "orderService",
+          operation: "getAllOrders",
+        }
+      );
     }
   },
+  // Récupérer une commande par ID
   getOrderById: async (id) => {
     try {
       const order = await Order.findById(id);
@@ -31,10 +40,15 @@ module.exports = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la récupération de la commande"
+        "Erreur lors de la récupération de la commande",
+        {
+          service: "orderService",
+          operation: "getOrderById",
+        }
       );
     }
   },
+  // Créer une nouvelle commande
   createOrder: async (order) => {
     try {
       const newOrder = new Order(order);
@@ -46,9 +60,13 @@ module.exports = {
       });
       return populatedOrder;
     } catch (error) {
-      handleServiceError(error, "Erreur lors de la création de la commande");
+      handleServiceError(error, "Erreur lors de la création de la commande", {
+        service: "orderService",
+        operation: "createOrder",
+      });
     }
   },
+  // Mettre à jour une commande existante
   updateOrder: async (id, updatedOrder) => {
     try {
       const order = await Order.findByIdAndUpdate(id, updatedOrder, {
@@ -59,18 +77,24 @@ module.exports = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la mise à jour de la commandes"
+        "Erreur lors de la mise à jour de la commandes",
+        { service: "orderService", operation: "updateOrder" }
       );
     }
   },
+  // Supprimer une commande
   deleteOrder: async (id) => {
     try {
       await Order.findByIdAndDelete(id);
       return true;
     } catch (error) {
-      handleServiceError(error, "Erreur lors de la suppresion de la commande");
+      handleServiceError(error, "Erreur lors de la suppresion de la commande", {
+        service: "orderService",
+        operation: "deleteOrder",
+      });
     }
   },
+  // Récupérer les commandes d'un utilisateur par ID
   getOrdersByUserId: async (userId, askPage, limit) => {
     try {
       const { items, page, totalPages, total } = await paginatedQuery(
@@ -90,10 +114,15 @@ module.exports = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la récupération des commandes utilisateur"
+        "Erreur lors de la récupération des commandes utilisateur",
+        {
+          service: "orderService",
+          operation: "getOrdersByUserId",
+        }
       );
     }
   },
+  // Récupérer les commandes par statut
   getOrdersByStatus: async (status, askPage, limit) => {
     try {
       const { items, page, total, totalPages } = await paginatedQuery(
@@ -113,10 +142,12 @@ module.exports = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la récupération des commandes par statut"
+        "Erreur lors de la récupération des commandes par statut",
+        { service: "orderService", operation: "getOrdersByStatus" }
       );
     }
   },
+  // Récupérer le détail d'une commande avec les informations utilisateur et produit
   getOrderWithDetails: async (orderId) => {
     try {
       const orders = await Order.aggregate([
@@ -178,16 +209,21 @@ module.exports = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la récupération du détail de la commande"
+        "Erreur lors de la récupération du détail de la commande",
+        { service: "orderService", operation: "getOrderWithDetails" }
       );
     }
   },
+  // Annuler une commande
   cancelOrder: async (id) => {
     try {
       await Order.findByIdAndUpdate(id, { status: "Annulée" });
       return true;
     } catch (error) {
-      handleServiceError(error, "Erreur lors de l'annulation de la commande");
+      handleServiceError(error, "Erreur lors de l'annulation de la commande", {
+        service: "orderService",
+        operation: "cancelOrder",
+      });
     }
   },
 };

@@ -38,7 +38,7 @@ const createOrderSchema = Joi.object({
       }
       return value;
     }, "Validation de l'ObjectId")
-    .required()
+    .optional()
     .messages({
       "any.required": "L'ID de l'utilisateur est requis.",
       "any.invalid": "L'ID de l'utilisateur est invalide.",

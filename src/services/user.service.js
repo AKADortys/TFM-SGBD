@@ -36,7 +36,8 @@ const userService = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la récupération des utilisateurs"
+        "Erreur lors de la récupération des utilisateurs",
+        { service: "userService", operation: "getUsers" }
       );
     }
   },
@@ -51,7 +52,8 @@ const userService = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la récupération de l'utilisateur"
+        "Erreur lors de la récupération de l'utilisateur",
+        { service: "userService", operation: "getUserById" }
       );
     }
   },
@@ -66,7 +68,8 @@ const userService = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la récupération de l'utilisateur"
+        "Erreur lors de la récupération de l'utilisateur",
+        { service: "userService", operation: "getUserByMail" }
       );
     }
   },
@@ -80,18 +83,19 @@ const userService = {
       }
       return sanitizeUser(user);
     } catch (error) {
-      handleServiceError(error, "Erreur lors de la création de l'utilisateur");
+      handleServiceError(error, "Erreur lors de la création de l'utilisateur", {
+        service: "userService",
+        operation: "createUser",
+      });
     }
   },
   // Mettre à jour un utilisateur
   updateUser: async (id, updateFields) => {
     try {
-      const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
-        new: true,
-        runValidators: true,
-      });
-
+      const updatedUser = await User.findById(id);
       if (!updatedUser) return null;
+      Object.assign(updatedUser, updateFields);
+      await updatedUser.save();
       if (updatedUser.phone) {
         updatedUser.phone = decrypt(updatedUser.phone);
       }
@@ -99,7 +103,11 @@ const userService = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la mise à jour de l'utilisateur"
+        "Erreur lors de la mise à jour de l'utilisateur",
+        {
+          service: "userService",
+          operation: "updateUser",
+        }
       );
     }
   },
@@ -115,7 +123,8 @@ const userService = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la mise à jour du mot de passe de l'utilisateur"
+        "Erreur lors de la mise à jour du mot de passe de l'utilisateur",
+        { service: "userService", operation: "updateUserPassword" }
       );
     }
   },
@@ -130,7 +139,8 @@ const userService = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la suppression de l'utilisateur"
+        "Erreur lors de la suppression de l'utilisateur",
+        { service: "userService", operation: "deleteUser" }
       );
     }
   },
@@ -139,15 +149,18 @@ const userService = {
     try {
       const user = await User.findById(id);
       if (!user) return null;
-
-      user.isActive = true;
-      await user.save();
       if (user.phone) {
         user.phone = decrypt(user.phone);
       }
+
+      user.isActive = true;
+      await user.save();
       return sanitizeUser(user);
     } catch (error) {
-      handleServiceError(error, "Erreur lors de la confirmation du compte");
+      handleServiceError(error, "Erreur lors de la confirmation du compte", {
+        service: "userService",
+        operation: "confirmUserAccount",
+      });
     }
   },
 };

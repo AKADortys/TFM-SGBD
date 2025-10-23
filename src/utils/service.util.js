@@ -101,8 +101,16 @@ module.exports = {
     return decrypted;
   },
   //gestion des erreurs
-  handleServiceError: (error, message) => {
-    console.error(error);
+  handleServiceError: (error, message, context = {}) => {
+    const log = {
+      time: new Date().toISOString(),
+      service: context.service || "unknown",
+      operation: context.operation || "unknown",
+      message: message || error.message,
+      name: error.name,
+      stack: error.stack,
+    };
+    console.error(JSON.stringify(log, null, 2));
     throw new Error(message || error.message);
   },
   //vérification d'expiration
