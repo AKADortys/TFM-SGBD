@@ -7,12 +7,13 @@ const {
 } = require("../utils/service.util");
 
 module.exports = {
+  // Fonction d'envoi du mail de bienvenue
   welcomeMail: async (user, token) => {
     try {
       const transporter = await transporterPromise;
       const html = await renderHtml(templatePath("welcome.ejs"), {
         user,
-        loginUrl: "https://google.com/",
+        loginUrl: process.env.FRONT_ACCOUNT_CONFIRM_URL + "?token=",
         title: "Bienvenue Au Ptit Vivo",
         token,
       });
@@ -24,10 +25,13 @@ module.exports = {
         html,
       });
     } catch (error) {
-      handleServiceError(error, "Erreur lors de l'envoi du mail de bienvenue");
+      handleServiceError(error, "Erreur lors de l'envoi du mail de bienvenue", {
+        service: "mailService",
+        operation: "welcomeMail",
+      });
     }
   },
-
+  // Fonction d'envoi du mail de réinitialisation de mot de passe
   passReset: async (user, token) => {
     try {
       const transporter = await transporterPromise;
@@ -35,6 +39,7 @@ module.exports = {
         title: "Récupération de votre mot de passe",
         user,
         token,
+        url: process.env.FRONT_PASSWORD_RESET_URL + "?token=",
       });
 
       await transporter.sendMail({
@@ -46,11 +51,12 @@ module.exports = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de l'envoi du mail de récupération"
+        "Erreur lors de l'envoi du mail de récupération",
+        { service: "mailService", operation: "passReset" }
       );
     }
   },
-
+  // Fonction d'envoi du mail de nouvelle commande
   newOrder: async (order, user) => {
     try {
       const transporter = await transporterPromise;
@@ -58,7 +64,7 @@ module.exports = {
         title: "Votre commande est en cours de traitement !",
         order,
         user,
-        url_profil: "https://exemple.com/espace-client/profil",
+        url_profil: process.env.FRONT_BASE_URL + "/profile",
       });
       await transporter.sendMail({
         from: '"Au Ptit Vivo" <no-reply@example.com>',
@@ -70,18 +76,19 @@ module.exports = {
         title: "Nouvelle commande reçue",
         order,
         user,
-        url_admin: "https://exemple.com/admin/commandes",
+        url_admin: process.env.FRONT_BASE_URL + "/admin",
       });
       await transporter.sendMail({
         from: '"Au Ptit Vivo" <no-reply@example.com>',
-        to: "admin@example.com",
+        to: process.env.ADMIN_MAIL,
         subject: `Nouvelle commande de ${user.fullname} - Au Ptit Vivo`,
         html: htmlAdmin,
       });
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de l'envoi du mail de création de la commande"
+        "Erreur lors de l'envoi du mail de création de la commande",
+        { service: "mailService", operation: "newOrder" }
       );
     }
   },

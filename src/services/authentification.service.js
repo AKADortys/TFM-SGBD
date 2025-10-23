@@ -9,6 +9,7 @@ const {
 } = require("../utils/service.util");
 
 const authService = {
+  // Fonction de connexion
   login: async (email, password) => {
     try {
       const user = await userService.getUserByMail(email);
@@ -17,16 +18,18 @@ const authService = {
       if (!isMatch) return null;
       return sanitizeUser(user);
     } catch (error) {
-      handleServiceError(error, "Erreur lors de la connexion");
+      handleServiceError(error, "Erreur lors de la connexion", {
+        service: "authService",
+        operation: "login",
+      });
     }
   },
-
+  // Fonction de  création de token de réinitialisation
   createToken: async (userId, ip, userAgent, type = "password_reset") => {
     try {
       const token = generateToken();
       const tokenHash = hashToken(token);
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
-
       await Token.create({
         userId,
         token_hash: tokenHash,
@@ -35,16 +38,16 @@ const authService = {
         type,
         userAgent,
       });
-
       return token;
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la demande de changement de mot de passe"
+        "Erreur lors de la demande de changement de mot de passe",
+        { service: "authService", operation: "createToken" }
       );
     }
   },
-
+  // Fonction de vérification du token de réinitialisation
   verifyToken: async (token, expectedType) => {
     try {
       const tokenHash = hashToken(token);
@@ -63,7 +66,8 @@ const authService = {
     } catch (error) {
       handleServiceError(
         error,
-        "Erreur lors de la vérification du lien de réinitialisation"
+        "Erreur lors de la vérification du lien de réinitialisation",
+        { service: "authService", operation: "verifyToken" }
       );
     }
   },

@@ -104,18 +104,7 @@ userSchema.pre("save", function (next) {
   }
   next();
 });
-userSchema.pre("findOneAndUpdate", function (next) {
-  const update = this.getUpdate();
-  if (update.phone) {
-    try {
-      update.phone = encrypt(update.phone);
-      this.setUpdate(update);
-    } catch (error) {
-      return next(error);
-    }
-  }
-  next();
-});
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

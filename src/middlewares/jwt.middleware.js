@@ -52,7 +52,7 @@ module.exports = async (req, res, next) => {
 // Fonction pour générer un nouvel access token à partir du refresh token
 const refreshTokenFunction = async (refreshToken) => {
   try {
-    const decoded = jwt.verify(refreshToken, jwtConfig.refreshSecret);
+    const decoded = jwt.verify(refreshToken, jwtConfig.secretRefresh);
 
     // Génération d'un nouvel access token avec les infos de l'utilisateur
     const newAccessToken = jwt.sign(
@@ -63,7 +63,7 @@ const refreshTokenFunction = async (refreshToken) => {
         mail: decoded.mail,
       }, // Données du user à inclure
       jwtConfig.secret,
-      { expiresIn: "1h" }
+      { expiresIn: jwtConfig.expiresToken }
     );
 
     return newAccessToken;
