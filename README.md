@@ -1,140 +1,51 @@
-# Projet API REST - Gestion des Commandes
+# Au P'tit Vivo - Back-end API
+
+[![Logo Au P'tit Vivo](https://via.placeholder.com/150/000000/FFFFFF?text=Au+P'tit+Vivo)](logo_url)
 
 ## Description
 
-Ce projet est une API REST développée en **Node.js** avec **Express** et interagissant avec **MongoDB** via **Mongoose**. L'API permet de gérer un système de commandes avec des utilisateurs et des produits.
+Ce dépôt contient le **back-end** de la plateforme **Au P'tit Vivo**, une API REST dédiée à la gestion des commandes pour un service traiteur. L'API permet de gérer les utilisateurs, les produits et les commandes, avec une authentification sécurisée et des notifications par email.
 
-L'API comprend les fonctionnalités suivantes :
+---
 
-- Gestion des utilisateurs (CRUD)
-- Gestion des produits (CRUD)
-- Gestion des commandes (CRUD)
-- Authentification via tokens d'accès
-- Jointure des collections avec `lookup`
-- Validation des données avec Mongoose
-- Seeding des données avec `npm run seed`
+## Fonctionnalités
 
-## Technologies utilisées
+### **Authentification & Utilisateurs**
 
-- **Node.js**
-- **Express.js**
-- **MongoDB**
-- **Mongoose**
-- **JSON Web Token (JWT)**
+- Inscription et validation par email.
+- Connexion via JWT (cookies sécurisés).
+- Récupération de mot de passe oublié.
+- Gestion des rôles (admin/client).
 
-## Installation
+### **Gestion des Produits**
 
-1. **Cloner le dépôt**
-   ```bash
-   git clone <URL_DU_REPO>
-   cd <NOM_DU_REPO>
-   ```
-2. **Installer les dépendances**
-   ```bash
-   npm install
-   ```
-3. **Configurer les variables d'environnement**
-   Créez un fichier `.env` et ajoutez les informations fournies dans `.env.example` et ajoutez-y votre configuration
-4. **Démarrer le serveur**
+- CRUD complet sur les produits.
+- Filtrage et gestion de la disponibilité.
 
-   ```bash
-   npm start
-   ```
+### **Gestion des Commandes**
 
-   Le serveur démarre par défaut sur **http://localhost:3000**.
+- CRUD sur les commandes.
+- Filtres par statut (Confirmée, Acceptée, Refusée, Annulée).
+- Calcul automatique du total.
+- Notifications par email (Nodemailer + EJS).
 
-5. **Seeder les données** (facultatif)
-   ```bash
-   npm run seed
-   ```
+---
 
-## Modèles MongoDB
+## Technologies
 
-### Utilisateur (`User`)
+- **Framework** : Node.js + Express.
+- **Base de données** : MongoDB (Mongoose).
+- **Authentification** : JWT.
+- **Validation** : Joi + Mongoose.
+- **Emailing** : Nodemailer + EJS.
+- **Tests** : Postman/Insomnia.
 
-```json
-{
-  "_id": "ObjectId",
-  "name": "string",
-  "lastName": "string",
-  "mail": "string",
-  "password": "string", // minLength: 8, upperCase:1, lowerCase:1
-  "phone": "string", //format FR
-  "role": "string" // facultatif
-}
-```
+---
 
-### Produit (`Product`)
+## Prérequis
 
-```json
-{
-  "_id": "ObjectId",
-  "label": "string",
-  "description": "string",
-  "price": "number"
-}
-```
+- Node.js (v16+).
+- MongoDB (local ou Atlas).
+- Compte SMTP (pour l'envoi d'emails).
 
-### Commande (`Order`)
-
-```json
-{
-  "_id": "ObjectId",
-  "userId": "ObjectId",
-  "products": [
-    {
-      "productId": "ObjectId",
-      "quantity": "number",
-      "price" : "number"
-    }
-  ],
-  "totalPrice": "number",
-  "deliveryAddress": "string",
-  "status": "string" // enum "En attente","Confirmée","Prêt en magasin","Refusée","Annulée",
-}
-```
-
-## Routes API
-
-### Authentification
-
-- `POST /users` - Inscription d'un utilisateur
-- `POST /auth/login` - Connexion et obtention d'un token JWT
-
-### Utilisateurs
-
-- `GET /users` - Récupérer tous les utilisateurs
-- `GET /users/:id` - Récupérer un utilisateur par son ID
-- `PUT /users/:id` - Modifier un utilisateur
-- `DELETE /users/:id` - Supprimer un utilisateur
-
-### Produits
-
-- `GET /products` - Récupérer tous les produits
-- `GET /products/:id` - Récupérer un produit par son ID
-- `POST /products` - Ajouter un produit
-- `PUT /products/:id` - Modifier un produit
-- `DELETE /products/:id` - Supprimer un produit
-
-### Commandes
-
-- `GET /orders` - Récupérer toutes les commandes avec jointure des utilisateurs et des produits
-- `GET /orders/:id` - Récupérer une commande spécifique
-- `POST /orders` - Créer une commande
-- `PUT /orders/:id` - Modifier une commande
-- `DELETE /orders/:id` - Supprimer une commande
-
-## Sécurité et Validation
-
-- **Authentification avec JWT** : Les routes sensibles nécessitent un token d'accès.
-- **Validation des entrées** : Mongoose est utilisé pour valider les schémas des documents.
-- **Middleware d'authentification** : Vérification du token pour les routes protégées.
-
-## Fonctionnalités avancées
-
-- **Lookup MongoDB** : Les commandes intègrent des informations détaillées sur les utilisateurs et les produits grâce à une requête d'agrégation avec `$lookup`.
-
-## Déploiement
-
-- **MongoDB Atlas** : Utilisation d'une bdd pour le développement et la démo du server back-end.
-- **Render** : Utilisation d'un server gratuit pour la démo et pour un travail ultérieur  
+---
