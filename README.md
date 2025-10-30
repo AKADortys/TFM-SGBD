@@ -1,31 +1,4 @@
-**Résumé du serveur Back (Node.js / Express)**
-Le serveur back assure la logique métier de la plateforme “Au P’tit Vivo”.
-
-- **Technos principales** : Node.js, Express, MongoDB (via Mongoose), JWT, Joi, Nodemailer (EJS templates), dotenv, Swagger.
-- **Architecture** :
-
-  - `config/` : paramètres de DB, JWT, etc.
-  - `controllers/` : logique métier liée aux routes.
-  - `dto/` : validation et structuration des données entrantes (via Joi).
-  - `middlewares/` : authentification, autorisation, vérification de rôles, rate limiting.
-  - `models/` : schémas MongoDB (User, Product, Order, Token).
-  - `routes/` : endpoints Express.
-  - `services/` : logique métier réutilisable.
-  - `templates/` : e-mails EJS.
-  - `utils/` : fonctions utilitaires.
-  - `index.js` : point d’entrée serveur.
-  - `seeding.js` : préremplissage base de données.
-
-- **Authentification** : Cookies HTTP + JWT.
-- **Sécurité** : mots de passe hashés (bcrypt), données sensibles chiffrées, validation Joi, index TTL pour tokens.
-- **Emails automatiques** : confirmation de compte, réinitialisation mot de passe, confirmation/acceptation/refus commande.
-- **Hébergement** :
-
-  - Render (Node.js API)
-  - MongoDB Atlas (base de données)
-  - Brevo (SMTP pour mails).
-
-- **Documentation** : Swagger pour les endpoints, Google Docs pour les schémas et fonctions.
+### Au P'tit Vivo Server BACK
 
 ---
 
@@ -82,13 +55,25 @@ npm run dev
 ## 🧾 Variables d’environnement
 
 ```
-PORT=4000
-MONGODB_URI=<your_mongo_uri>
-JWT_SECRET=<secret>
-REFRESH_SECRET=<secret>
-SMTP_USER=<brevo_user>
-SMTP_PASS=<brevo_pass>
-SMTP_HOST=smtp.brevo.com
+APP_PORT = 3000
+MONGO_URI ="mongodb://root:root@localhost:27017/test"
+TOKEN_SECRET = exampleTokenSecret123!@#
+TOKEN_REFRESH_SECRET= exampleTokenRefreshSecret123!@#
+TOKEN_TIMEOUT = "1h"
+TOKEN_REFRESH_TIMEOUT = "7d"
+CORS_ORIGIN = "http://localhost:5174"
+SMTP_HOST="mailServer.example.com"
+SMTP_USER="example@mail.com"
+SMTP_PASS="password123"
+SMTP_PORT=587
+ADMIN_MAIL="mail@example.com"
+ENCRYPTION_IV = "123456"
+ENCRYPTION_KEY = "BADKEYBADKEYBADKEYBADKEYBADKEY12"
+FRONT_BASE_URL="http://localhost:5174"
+FRONT_LOGIN_URL="http://localhost:5174/login"
+FRONT_PASSWORD_RESET_URL="http://localhost:5174/password-reset"
+FRONT_ACCOUNT_CONFIRM_URL="http://localhost:5174/confirm-account"
+
 ```
 
 ## 🧪 Tests
@@ -102,8 +87,4 @@ Swagger accessible via `/api-docs` une fois le serveur lancé.
 
 ---
 
-Développé par **Ancel Thibault (2025–2026)** dans le cadre du TFE “Au P’tit Vivo”.
-
-```
-
-```
+Développé par **Ancel Thibault (2025–2026)** dans le cadre du TFE bachelier informatique.
