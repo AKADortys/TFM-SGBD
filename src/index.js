@@ -41,5 +41,5 @@ app.use("/orders", require("./routes/order"));
 // Démarrage du serveur
 const PORT = process.env.APP_PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  logger.info(`Server running on port ${PORT}`);
 });

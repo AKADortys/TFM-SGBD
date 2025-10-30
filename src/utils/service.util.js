@@ -10,6 +10,7 @@ const ENCRYPTION_IV = crypto
   .update(process.env.ENCRYPTION_IV)
   .digest()
   .slice(0, 16); // 16 bytes pour IV
+const logger = require("./logger.util"); // ajuste le chemin selon ton projet
 
 module.exports = {
   //fonction authentification
@@ -110,7 +111,11 @@ module.exports = {
       name: error.name,
       stack: error.stack,
     };
-    console.error(JSON.stringify(log, null, 2));
+
+    // Envoi dans Winston
+    logger.error(JSON.stringify(log));
+
+    // Relancer l’erreur pour gestion amont
     throw new Error(message || error.message);
   },
   //vérification d'expiration

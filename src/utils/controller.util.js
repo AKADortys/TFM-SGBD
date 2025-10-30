@@ -1,5 +1,6 @@
 const validator = require("validator");
 const { ObjectId } = require("mongodb");
+const logger = require("./logger.util");
 module.exports = {
   // Validation d'email
   validateEmail(email) {
@@ -50,6 +51,7 @@ module.exports = {
   handleResponse: (res, status, message, data = null) => {
     const payload = { message };
     if (data !== null) payload.data = data;
+    logger.info(`Response ${status}: ${message}`);
     return res.status(status).json(payload);
   },
 };
