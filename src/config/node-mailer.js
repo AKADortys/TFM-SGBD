@@ -7,11 +7,10 @@ let transporterPromise = (async () => {
     process.env.SMTP_USER &&
     process.env.SMTP_PASS
   ) {
-    // Utilise les variables d'environnement
+    // Utilise les variables d'environnement (Brevo ou autre SMTP)
     return nodemailer.createTransport({
-      // service: "gmail",
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
+      port: Number(process.env.SMTP_PORT),
       secure: false,
       auth: {
         user: process.env.SMTP_USER,
@@ -20,6 +19,7 @@ let transporterPromise = (async () => {
       tls: {
         rejectUnauthorized: false,
       },
+      connectionTimeout: 10000, // 10s
     });
   } else {
     // Génère automatiquement un compte Ethereal
@@ -29,8 +29,8 @@ let transporterPromise = (async () => {
       port: 587,
       secure: false,
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: testAccount.user,
+        pass: testAccount.pass,
       },
       tls: {
         rejectUnauthorized: false,
