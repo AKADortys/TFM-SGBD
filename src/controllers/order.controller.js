@@ -26,8 +26,6 @@ module.exports = {
       if (idError) return handleResponse(res, 400, idError);
       const order = await orderService.getOrderById(id);
       if (!order) return handleResponse(res, 404, "Commande non trouvée");
-      console.log("User ID:", req.user.id);
-      console.log("Order User ID:", order.userId.toString());
       if (
         req.user.id !== order.userId.toString() &&
         req.user.role !== "admin"

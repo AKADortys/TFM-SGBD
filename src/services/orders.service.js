@@ -1,7 +1,11 @@
 const Order = require("../models/Order");
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Types;
-const { handleServiceError, paginatedQuery } = require("../utils/service.util");
+const {
+  handleServiceError,
+  paginatedQuery,
+  decrypt,
+} = require("../utils/service.util");
 module.exports = {
   // Récupérer toutes les commandes avec pagination
   getAllOrders: async (askPage, limit) => {
@@ -204,7 +208,7 @@ module.exports = {
           },
         },
       ]);
-
+      if (orders[0]) orders[0].user.phone = decrypt(orders[0].user.phone);
       return orders[0] || null;
     } catch (error) {
       handleServiceError(

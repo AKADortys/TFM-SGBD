@@ -118,6 +118,7 @@ const userService = {
       if (!user) return null;
 
       user.password = newPassword;
+      user.phone = decrypt(user.phone);
       await user.save();
       return sanitizeUser(user);
     } catch (error) {

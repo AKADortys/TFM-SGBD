@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["En attente", "Confirmée", "Accepté", "Refusée", "Annulée"],
-      default: "En attente",
+      default: "Confirmée",
     },
     totalPrice: { type: Number, required: true, min: 0 },
   },

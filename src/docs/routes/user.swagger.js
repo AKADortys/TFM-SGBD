@@ -118,11 +118,6 @@
  *           description: Mot de passe (sera haché)
  *           minLength: 8
  *           example: "Motdepasse123"
- *         role:
- *           type: string
- *           enum: [admin, client, moderateur]
- *           default: client
- *           description: Rôle de l'utilisateur
  *     UpdateUserRequest:
  *       type: object
  *       properties:
@@ -152,13 +147,6 @@
  *           description: Nouveau mot de passe (sera haché)
  *           minLength: 8
  *           example: "NouveauMotdepasse123"
- *         role:
- *           type: string
- *           enum: [admin, client, moderateur]
- *           description: Rôle de l'utilisateur
- *         isActive:
- *           type: boolean
- *           description: Indique si le compte est activé
  */
 
 /**

@@ -144,7 +144,7 @@
  *           default: 10
  *         description: Nombre de produits par page
  *       - in: query
- *         name: category
+ *         name: search
  *         schema:
  *           type: string
  *           enum: ["Plat principal", "Dessert", "Boisson", "Divers"]
