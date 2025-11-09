@@ -44,7 +44,7 @@ const authController = {
           cookieOptions(1000 * 60 * 60 * 24 * 7)
         );
 
-      return handleResponse(res, 200, "Connexion réussie", { user });
+      return handleResponse(res, 200, "Connexion réussie", user);
     } catch (error) {
       console.error("Erreur lors de la connexion :", error);
       return handleResponse(res, 500, "Erreur interne du serveur");
