@@ -34,7 +34,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Le numéro de téléphone est requis"],
       validate: {
-        validator: (value) => validator.isMobilePhone(value, "fr-FR"),
+        validator: (value) =>
+          validator.isMobilePhone(value, ["fr-FR", "fr-BE"]),
         message: "Numéro de téléphone invalide",
       },
     },

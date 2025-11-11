@@ -28,7 +28,7 @@ const userSchema = Joi.object({
       "any.required": "Le nom de famille est requis.",
     }),
   phone: Joi.string()
-    .regex(/^(?:\+33|0)[67]\d{8}$/)
+    .regex(/^(?:\+33|0)[67]\d{8}$|^(?:\+32|0)4\d{8}$/)
     .required()
     .messages({
       "string.pattern.base": "Numéro de téléphone invalide.",
@@ -75,8 +75,8 @@ const updateUserSchema = Joi.object({
         "Le nom de famille ne doit contenir que des lettres, espaces et tirets.",
     }),
   phone: Joi.string()
-    .regex(/^(?:\+33|0)[67]\d{8}$/)
-    .allow("")
+    .regex(/^(?:\+33|0)[67]\d{8}$|^(?:\+32|0)4\d{8}$/)
+    .optional()
     .messages({
       "string.pattern.base": "Numéro de téléphone invalide.",
     }),

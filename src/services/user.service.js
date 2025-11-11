@@ -94,6 +94,7 @@ const userService = {
     try {
       const updatedUser = await User.findById(id);
       if (!updatedUser) return null;
+      updatedUser.phone = decrypt(updatedUser.phone);
       Object.assign(updatedUser, updateFields);
       await updatedUser.save();
       if (updatedUser.phone) {
