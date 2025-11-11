@@ -92,6 +92,10 @@ const userController = {
         const errors = error.details.map((d) => d.message);
         return handleResponse(res, 400, errors);
       }
+      const existingUser = await userService.getUserByMail(value.mail);
+      if (existingUser) {
+        return handleResponse(res, 400, "Email déjà utilisé !");
+      }
       // Mise à jour de l'utilisateur
       const updatedUser = await userService.updateUser(id, value);
 
