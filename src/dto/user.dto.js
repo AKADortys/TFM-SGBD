@@ -92,6 +92,7 @@ const updateUserSchema = Joi.object({
       "string.pattern.base":
         "Le mot de passe doit contenir au moins une lettre minuscule, une lettre majuscule et un chiffre.",
     }),
+  isActive: Joi.boolean().optional(),
 })
   .min(1)
   .messages({
