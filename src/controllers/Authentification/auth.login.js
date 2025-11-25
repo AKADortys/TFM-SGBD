@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+const jwtConfig = require("../../config/jwt");
 const {
   cookieOptions,
   validateEmail,
@@ -5,6 +7,9 @@ const {
   createTokenPayload,
   handleResponse,
 } = require("../../utils/controller.util");
+const {
+  login,
+} = require("../../services/Authentification/authentification.service");
 
 // Connexion utilisateur
 module.exports = async (req, res) => {
@@ -17,7 +22,7 @@ module.exports = async (req, res) => {
     if (emailError) return handleResponse(res, 400, emailError);
     const passwordError = validatePassword(password);
     if (passwordError) return handleResponse(res, 400, passwordError);
-    const user = await authService.login(mail, password);
+    const user = await login(mail, password);
     if (!user)
       return handleResponse(res, 401, "Email ou mot de passe incorrect");
     if (!user.isActive) {

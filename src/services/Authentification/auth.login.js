@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const userService = require("../user.service");
+const { getUserByMail } = require("../User/user.service");
 const {
   sanitizeUser,
   handleServiceError,
@@ -7,7 +7,7 @@ const {
 // Fonction de connexion
 module.exports = async (email, password) => {
   try {
-    const user = await userService.getUserByMail(email);
+    const user = await getUserByMail(email);
     if (!user) return null;
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return null;
