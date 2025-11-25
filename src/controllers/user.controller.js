@@ -1,4 +1,4 @@
-const userService = require("../services/user.service");
+const userService = require("../services/User/user.service");
 const authService = require("../services/authentification.service");
 const { userSchema, updateUserSchema } = require("../dto/user.dto");
 const mailService = require("../services/mail.service");
