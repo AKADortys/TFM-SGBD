@@ -60,7 +60,6 @@ const authController = {
   passwordReset: async (req, res) => {
     try {
       const { mail } = req.body;
-
       const emailError = validateEmail(mail);
       if (emailError) return handleResponse(res, 400, emailError);
 

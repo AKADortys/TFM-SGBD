@@ -4,6 +4,7 @@ const {
   renderHtml,
   templatePath,
 } = require("../utils/service.util");
+const logger = require("../utils/logger.util");
 
 module.exports = {
   // Mail de bienvenue
@@ -16,6 +17,10 @@ module.exports = {
         token,
       });
 
+      if (process.env.MAIL_SANDBOX === "true") {
+        logger.info("[MAILBOX] mail simulé :" + token);
+        return;
+      }
       await brevoApi.send({
         sender: { email: process.env.ADMIN_MAIL, name: "Au Ptit Vivo" },
         to: [{ email: user.mail }],
@@ -37,9 +42,14 @@ module.exports = {
         title: "Récupération de votre mot de passe",
         user,
         token,
-        url: process.env.FRONT_PASSWORD_RESET_URL + "?token=",
+        url: `${process.env.FRONT_PASSWORD_RESET_URL}/${token}`,
       });
-
+      if (process.env.MAIL_SANDBOX === "true") {
+        logger.info(
+          `[MAILBOX] mail simulé :\n${process.env.FRONT_PASSWORD_RESET_URL}/${token}`
+        );
+        return;
+      }
       await brevoApi.send({
         sender: { email: process.env.ADMIN_MAIL, name: "Au Ptit Vivo" },
         to: [{ email: user.mail }],
@@ -65,13 +75,16 @@ module.exports = {
         user,
         url_profil: process.env.FRONT_BASE_URL + "/profile",
       });
-
-      await brevoApi.send({
-        sender: { email: process.env.ADMIN_MAIL, name: "Au Ptit Vivo" },
-        to: [{ email: user.mail }],
-        subject: "Confirmation de votre commande - Au Ptit Vivo",
-        htmlContent: htmlClient,
-      });
+      if (process.env.MAIL_SANDBOX === "true") {
+        logger.info("[MAILBOX] mail simulé ! commande client\n" + htmlClient);
+      } else {
+        await brevoApi.send({
+          sender: { email: process.env.ADMIN_MAIL, name: "Au Ptit Vivo" },
+          to: [{ email: user.mail }],
+          subject: "Confirmation de votre commande - Au Ptit Vivo",
+          htmlContent: htmlClient,
+        });
+      }
 
       // Mail pour l’admin
       const htmlAdmin = await renderHtml(templatePath("admin-new-order.ejs"), {
@@ -80,6 +93,10 @@ module.exports = {
         user,
         url_admin: process.env.FRONT_BASE_URL + "/admin",
       });
+      if (process.env.MAIL_SANDBOX === "true") {
+        logger.info("[MAILBOX] mail simulé ! Notif Admin\n" + htmlAdmin);
+        return;
+      }
 
       await brevoApi.send({
         sender: { email: process.env.ADMIN_MAIL, name: "Au Ptit Vivo" },
