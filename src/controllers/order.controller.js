@@ -10,7 +10,9 @@ module.exports = {
     try {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 5;
-      const result = await orderService.getAllOrders(page, limit);
+      const result = await orderService.getAllOrders(page, limit, {
+        ...req.query,
+      });
       return handleResponse(res, 200, "commandes récupérées", result);
     } catch (error) {
       console.error("Erreur lors de la récupération des commandes:", error);

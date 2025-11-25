@@ -5,18 +5,20 @@ const {
   handleServiceError,
   paginatedQuery,
   decrypt,
+  buildOrderFilter,
 } = require("../utils/service.util");
 module.exports = {
   // Récupérer toutes les commandes avec pagination
-  getAllOrders: async (askPage, limit) => {
+  getAllOrders: async (askPage, limit, queryFilters) => {
     try {
+      const filter = buildOrderFilter(queryFilters);
       const { items, total, totalPages, page } = await paginatedQuery(
         Order,
-        {},
+        filter,
         askPage,
         limit,
         { createdAt: -1 },
-        { path: "products.productId", select: "label" }
+        [{ path: "products.productId", select: "label price" }]
       );
       return {
         orders: items,
