@@ -1,12 +1,12 @@
-const userService = require("./user.service");
-const Token = require("../models/Token");
+const userService = require("../user.service");
+const Token = require("../../models/Token");
 const bcrypt = require("bcrypt");
 const {
   hashToken,
   generateToken,
   sanitizeUser,
   handleServiceError,
-} = require("../utils/service.util");
+} = require("../../utils/service.util");
 
 const authService = {
   // Fonction de connexion
