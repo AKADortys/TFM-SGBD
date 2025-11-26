@@ -2,6 +2,7 @@ const {
   cookieOptions,
   handleResponse,
 } = require("../../utils/controller.util");
+
 // Déconnexion
 module.exports = (req, res) => {
   res.clearCookie("accessToken", cookieOptions(0));

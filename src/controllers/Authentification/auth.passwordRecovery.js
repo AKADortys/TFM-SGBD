@@ -6,6 +6,7 @@ const {
   validatePassword,
   handleResponse,
 } = require("../../utils/controller.util");
+
 // Réinitialisation du mot de passe (finalisation)
 module.exports = async (req, res) => {
   try {
@@ -28,7 +29,7 @@ module.exports = async (req, res) => {
         400,
         "Lien de réinitialisation invalide ou expiré"
       );
-    await userService.updateUserPassword(userId, newPassword);
+    await updateUserPassword(userId, newPassword);
     return handleResponse(res, 200, "Mot de passe réinitialisé avec succès");
   } catch (error) {
     console.error(

@@ -7,6 +7,7 @@ const {
   validateEmail,
   handleResponse,
 } = require("../../utils/controller.util");
+
 // Réinitialisation du mot de passe (initiation)
 module.exports = async (req, res) => {
   try {
