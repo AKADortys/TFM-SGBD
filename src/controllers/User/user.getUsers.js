@@ -1,4 +1,4 @@
-const { getUsers } = require("../../services/User/user.service");
+const { getUsers } = require("../../services/user.service");
 const { handleResponse } = require("../../utils/controller.util");
 // Récupération de tous les utilisateurs
 module.exports = async (req, res) => {

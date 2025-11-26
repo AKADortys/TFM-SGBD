@@ -1,4 +1,4 @@
-const { deleteUser } = require("../../services/User/user.service");
+const { deleteUser } = require("../../services/user.service");
 const { isObjectId, handleResponse } = require("../../utils/controller.util");
 // Suppression d'un utilisateur
 module.exports = async (req, res) => {
@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
     if (!user) {
       return handleResponse(res, 404, "Utilisateur introuvable");
     }
-    await userService.deleteUser(id);
+    await deleteUser(id);
     return handleResponse(res, 200, "Utilisateur supprimé avec succès !");
   } catch (error) {
     return handleResponse(res, 500, "Erreur serveur");

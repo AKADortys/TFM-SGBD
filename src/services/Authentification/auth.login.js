@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { getUserByMail } = require("../User/user.service");
+const { getUserByMail } = require("../user.service");
 const {
   sanitizeUser,
   handleServiceError,
