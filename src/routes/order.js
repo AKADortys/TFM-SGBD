@@ -9,18 +9,12 @@ const rateLimiter = require("../middlewares/rate-limiter.middleware");
 router.use(tokenMdw);
 
 // Routes protégées par permissionsMdw
-router.get("/", permissionsMdw, orderController.getAllOrders);
-router.get("/detail/:id", permissionsMdw, orderController.getOrdersWithDetails);
-router.get("/user/:id", permissionsMdw, orderController.getUserOrders);
-router.get(
-  "/status/:status",
-  permissionsMdw,
-  orderController.getOrdersByStatus
-);
-router.get("/:id", orderController.getOrderById);
-router.post("/", rateLimiter, orderController.createOrder);
-router.put("/:id", permissionsMdw, orderController.updateOrder);
-router.patch("/:id/cancel", orderController.cancelOrder);
-router.delete("/:id", permissionsMdw, orderController.deleteOrder);
+router.get("/", permissionsMdw, orderController.getOrders);
+router.get("/detail/:id", permissionsMdw, orderController.detailOrder);
+router.get("/user/:id", permissionsMdw, orderController.getByUser);
+router.get("/:id", orderController.getById);
+router.post("/", rateLimiter, orderController.create);
+router.put("/:id", permissionsMdw, orderController.update);
+router.delete("/:id", permissionsMdw, orderController.remove);
 
 module.exports = router;
