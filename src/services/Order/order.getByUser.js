@@ -1,6 +1,5 @@
 const Order = require("../../models/Order");
 const mongoose = require("mongoose");
-const Order = require("../../models/Order");
 const {
   handleServiceError,
   paginatedQuery,

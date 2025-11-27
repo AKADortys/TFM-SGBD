@@ -4,8 +4,8 @@ const { handleResponse } = require("../../utils/controller.util");
 module.exports = async (req, res) => {
   try {
     const search = req.query.search || "";
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 10));
 
     const result = await getUsers(page, limit, search);
 

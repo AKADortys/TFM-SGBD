@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
       return handleResponse(res, 403, "Accès refusé");
     }
     if (!id) return handleResponse(res, 400, "ID manquant");
-    if (!isObjectId(id)) {
+    if (isObjectId(id)) {
       return handleResponse(res, 400, "ID invalide");
     }
     const user = await getUserById(id);

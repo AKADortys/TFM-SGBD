@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id) return handleResponse(res, 400, "ID manquant");
-    if (!isObjectId(id)) {
+    if (isObjectId(id)) {
       return handleResponse(res, 400, "ID invalide");
     }
 
