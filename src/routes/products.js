@@ -1,19 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const {
-  getById,
-  getProducts,
-  create,
-  update,
-  remove,
-} = require("../controllers/product.controller");
+const controller = require("../controllers/product.index");
 const tokenMdw = require("../middlewares/jwt.middleware");
 const permissionsMdw = require("../middlewares/permissions.middleware");
 
-router.get("/", getProducts);
-router.get("/:id", getById);
-router.post("/", tokenMdw, permissionsMdw, create);
-router.put("/:id", tokenMdw, permissionsMdw, update);
-router.delete("/:id", tokenMdw, permissionsMdw, remove);
+router.get("/", controller.getProducts);
+router.get("/:id", controller.getById);
+router.post("/", tokenMdw, permissionsMdw, controller.create);
+router.put("/:id", tokenMdw, permissionsMdw, controller.update);
+router.delete("/:id", tokenMdw, permissionsMdw, controller.remove);
 
 module.exports = router;

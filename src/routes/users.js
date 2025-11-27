@@ -1,20 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const {
-  create,
-  update,
-  remove,
-  getById,
-  getUsers,
-} = require("../controllers/user.controller");
+const controller = require("../controllers/user.index");
 const tokenMdw = require("../middlewares/jwt.middleware");
 const permissionsMdw = require("../middlewares/permissions.middleware");
 const rateLimiter = require("../middlewares/rate-limiter.middleware");
 
-router.get("/", tokenMdw, permissionsMdw, getUsers);
-router.post("/", rateLimiter, create);
-router.get("/:id", tokenMdw, permissionsMdw, getById);
-router.put("/:id", tokenMdw, permissionsMdw, update);
-router.delete("/:id", tokenMdw, permissionsMdw, remove);
+router.get("/", tokenMdw, permissionsMdw, controller.getUsers);
+router.post("/", rateLimiter, controller.create);
+router.get("/:id", tokenMdw, permissionsMdw, controller.getById);
+router.put("/:id", tokenMdw, permissionsMdw, controller.update);
+router.delete("/:id", tokenMdw, permissionsMdw, controller.remove);
 
 module.exports = router;

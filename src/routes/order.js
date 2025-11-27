@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const orderController = require("../controllers/order.controller");
+const controller = require("../controllers/order.index");
 const tokenMdw = require("../middlewares/jwt.middleware");
 const permissionsMdw = require("../middlewares/permissions.middleware");
 const rateLimiter = require("../middlewares/rate-limiter.middleware");
@@ -9,12 +9,12 @@ const rateLimiter = require("../middlewares/rate-limiter.middleware");
 router.use(tokenMdw);
 
 // Routes protégées par permissionsMdw
-router.get("/", permissionsMdw, orderController.getOrders);
-router.get("/detail/:id", permissionsMdw, orderController.detailOrder);
-router.get("/user/:id", permissionsMdw, orderController.getByUser);
-router.get("/:id", orderController.getById);
-router.post("/", rateLimiter, orderController.create);
-router.put("/:id", permissionsMdw, orderController.update);
-router.delete("/:id", permissionsMdw, orderController.remove);
+router.get("/", permissionsMdw, controller.getOrders);
+router.get("/detail/:id", permissionsMdw, controller.detailOrder);
+router.get("/user/:id", permissionsMdw, controller.getByUser);
+router.get("/:id", controller.getById);
+router.post("/", rateLimiter, controller.create);
+router.put("/:id", permissionsMdw, controller.update);
+router.delete("/:id", permissionsMdw, controller.remove);
 
 module.exports = router;
