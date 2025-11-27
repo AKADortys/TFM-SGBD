@@ -20,10 +20,9 @@ module.exports = async (userId, ip, userAgent, type = "password_reset") => {
     });
     return token;
   } catch (error) {
-    handleServiceError(
-      error,
-      "Erreur lors de la demande de changement de mot de passe",
-      { service: "authService", operation: "createToken" }
-    );
+    handleServiceError(error, "Erreur lors de la création du token", {
+      service: "authService",
+      operation: "createToken",
+    });
   }
 };

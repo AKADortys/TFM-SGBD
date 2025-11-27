@@ -4,9 +4,9 @@ const { handleResponse, isObjectId } = require("../../utils/controller.util");
 // Suppression d'un produit par ID
 module.exports = async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!id) return handleResponse(res, 400, "ID manquant");
-    if (isObjectId(id)) {
+    if (!isObjectId(id)) {
       return handleResponse(res, 400, "ID invalide");
     }
     const product = await getById(id);

@@ -4,7 +4,7 @@ const { isObjectId, handleResponse } = require("../../utils/controller.util");
 // Suppression d'une commande
 module.exports = async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     const idError = isObjectId(id);
     if (idError) return handleResponse(res, 400, idError);
     const order = await getById(id);

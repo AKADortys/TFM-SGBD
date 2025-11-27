@@ -4,7 +4,7 @@ const { isObjectId, handleResponse } = require("../../utils/controller.util");
 // Récupération d'une commande par son ID
 module.exports = async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!id) return handleResponse(res, 400, "ID manquant");
     const idError = isObjectId(id);
     if (idError) return handleResponse(res, 400, idError);

@@ -16,7 +16,10 @@ module.exports = async (req, res) => {
       result
     );
   } catch (error) {
-    console.error("Erreur lors de la récupération des utilisateurs:", error);
+    console.error(
+      "Erreur lors de la récupération des utilisateurs:",
+      error.message
+    );
     return handleResponse(res, 500, error.message);
   }
 };

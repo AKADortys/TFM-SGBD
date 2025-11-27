@@ -3,7 +3,7 @@ const { isObjectId, handleResponse } = require("../../utils/controller.util");
 // Récupération d'un utilisateur par ID
 module.exports = async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (isObjectId(id)) {
       return handleResponse(res, 400, "ID invalide");
     }

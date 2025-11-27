@@ -7,7 +7,7 @@ const { updateUserSchema } = require("../../dto/user.dto");
 const { isObjectId, handleResponse } = require("../../utils/controller.util");
 // Modification d'un utilisateur
 module.exports = async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   if (!id) return handleResponse(res, 400, "ID manquant");
   if (isObjectId(id)) {
     return handleResponse(res, 400, "ID invalide");

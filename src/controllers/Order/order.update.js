@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
     if (error) {
       return handleResponse(res, 400, error.details[0].message);
     }
-    let totalPrice = existingOrder.totalPrice;
+    let { totalPrice } = existingOrder;
     if (value.products) {
       const docs = await Promise.all(
         value.products.map((p) => productService.getById(p.productId))
@@ -48,10 +48,10 @@ module.exports = async (req, res) => {
       totalPrice = normalized.reduce((sum, p) => sum + p.price * p.quantity, 0);
     }
     const updatedFields = {
-      userId: value.userId || existingOrder.userId,
-      products: value.products || existingOrder.products,
-      deliveryAddress: value.deliveryAddress || existingOrder.deliveryAddress,
-      status: value.status || existingOrder.status,
+      userId: value.userId ?? existingOrder.userId,
+      products: value.products ?? existingOrder.products,
+      deliveryAddress: value.deliveryAddress ?? existingOrder.deliveryAddress,
+      status: value.status ?? existingOrder.status,
       totalPrice,
     };
     const updatedOrder = await orderService.update(id, updatedFields);

@@ -4,9 +4,9 @@ const { handleResponse, isObjectId } = require("../../utils/controller.util");
 
 module.exports = async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!id) return handleResponse(res, 400, "ID manquant");
-    if (isObjectId(id)) {
+    if (!isObjectId(id)) {
       return handleResponse(res, 400, "ID invalide");
     }
 
@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
     }
     return handleResponse(
       res,
-      201,
+      200,
       "Produit mis à jour avec succès",
       updatedProduct
     );

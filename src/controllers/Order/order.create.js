@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
         return handleResponse(
           res,
           400,
-          "Produit inexistant" + element.productId
+          "Produit inexistant :" + element.productId
         );
       element.price = exist.price;
     }

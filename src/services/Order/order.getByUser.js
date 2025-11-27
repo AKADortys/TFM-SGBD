@@ -1,4 +1,6 @@
 const Order = require("../../models/Order");
+const mongoose = require("mongoose");
+const Order = require("../../models/Order");
 const {
   handleServiceError,
   paginatedQuery,
@@ -13,7 +15,7 @@ module.exports = async (userId, askPage, limit) => {
       askPage,
       limit,
       { createdAt: -1 },
-      { path: "products.productId", select: "label" }
+      [{ path: "products.productId", select: "label" }]
     );
     return {
       orders: items,

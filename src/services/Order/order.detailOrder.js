@@ -50,7 +50,12 @@ module.exports = async (orderId) => {
       },
       {
         $project: {
-          user: { name: 1, lastName: 1, mail: 1, phone: 1 },
+          user: {
+            name: "$user.name",
+            lastName: "$user.lastName",
+            mail: "$user.mail",
+            phone: "$user.phone",
+          },
           deliveryAddress: 1,
           status: 1,
           totalPrice: 1,
@@ -60,8 +65,11 @@ module.exports = async (orderId) => {
         },
       },
     ]);
-    if (orders[0]) orders[0].user.phone = decrypt(orders[0].user.phone);
-    return orders[0] || null;
+    const order = orders[0] || null;
+    if (order && order.user && order.user.phone) {
+      order.user.phone = decrypt(order.user.phone);
+    }
+    return order;
   } catch (error) {
     handleServiceError(
       error,

@@ -20,7 +20,8 @@ module.exports = async (req, res) => {
     const token = await createToken(
       user._id,
       req.ip,
-      req.headers["user-agent"] || "unknown"
+      req.headers["user-agent"] || "unknown",
+      "password_reset"
     );
 
     await mailService.passReset(user, token);

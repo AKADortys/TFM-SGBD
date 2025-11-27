@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
   try {
     const skip = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
-    const id = req.params.id;
+    const { id } = req.params;
     if (!id) return handleResponse(res, 400, "ID manquant");
     const idError = isObjectId(id);
     if (idError) return handleResponse(res, 400, idError);
