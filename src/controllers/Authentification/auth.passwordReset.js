@@ -1,6 +1,6 @@
-const { createToken } = require("../../services/authentification.service");
+const { createToken } = require("../../services/authentification.index");
 const mailService = require("../../services/mail.service");
-const { getUserByMail } = require("../../services/user.service");
+const { getUserByMail } = require("../../services/user.index");
 const {
   validateEmail,
   handleResponse,

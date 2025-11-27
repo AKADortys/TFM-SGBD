@@ -1,4 +1,4 @@
-const { getUserById } = require("../../services/user.service");
+const { getUserById } = require("../../services/user.index");
 const { isObjectId, handleResponse } = require("../../utils/controller.util");
 // Récupération d'un utilisateur par ID
 module.exports = async (req, res) => {

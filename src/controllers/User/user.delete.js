@@ -1,4 +1,4 @@
-const { deleteUser, getUserById } = require("../../services/user.service");
+const { deleteUser, getUserById } = require("../../services/user.index");
 const { isObjectId, handleResponse } = require("../../utils/controller.util");
 // Suppression d'un utilisateur
 module.exports = async (req, res) => {

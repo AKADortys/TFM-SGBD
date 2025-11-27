@@ -1,5 +1,5 @@
-const orderService = require("../../services/orders.service");
-const productService = require("../../services/product.service");
+const orderService = require("../../services/orders.index");
+const productService = require("../../services/product.index");
 const { updateOrderSchema } = require("../../dto/order.dto");
 const { isObjectId, handleResponse } = require("../../utils/controller.util");
 

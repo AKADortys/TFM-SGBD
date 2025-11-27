@@ -7,7 +7,7 @@ const {
   createTokenPayload,
   handleResponse,
 } = require("../../utils/controller.util");
-const { login } = require("../../services/authentification.service");
+const { login } = require("../../services/authentification.index");
 
 // Connexion utilisateur
 module.exports = async (req, res) => {

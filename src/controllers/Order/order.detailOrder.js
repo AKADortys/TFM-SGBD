@@ -1,4 +1,4 @@
-const { detailOrder } = require("../../services/orders.service");
+const { detailOrder } = require("../../services/orders.index");
 const { isObjectId, handleResponse } = require("../../utils/controller.util");
 
 // Récupération des commandes avec détails (produits)

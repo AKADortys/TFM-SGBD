@@ -2,7 +2,7 @@ const {
   updateUser,
   getUserByMail,
   getUserById,
-} = require("../../services/user.service");
+} = require("../../services/user.index");
 const { updateUserSchema } = require("../../dto/user.dto");
 const { isObjectId, handleResponse } = require("../../utils/controller.util");
 // Modification d'un utilisateur

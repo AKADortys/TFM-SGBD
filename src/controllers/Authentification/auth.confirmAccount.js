@@ -1,5 +1,5 @@
-const { verifyToken } = require("../../services/authentification.service");
-const { confirmUserAccount } = require("../../services/user.service");
+const { verifyToken } = require("../../services/authentification.index");
+const { confirmUserAccount } = require("../../services/user.index");
 const { handleResponse } = require("../../utils/controller.util");
 
 // Confirmation du compte utilisateur

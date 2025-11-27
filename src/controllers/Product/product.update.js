@@ -1,4 +1,4 @@
-const { update } = require("../../services/product.service");
+const { update } = require("../../services/product.index");
 const { updateProductSchema } = require("../../dto/product.dto");
 const { handleResponse, isObjectId } = require("../../utils/controller.util");
 

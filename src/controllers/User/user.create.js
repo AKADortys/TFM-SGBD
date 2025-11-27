@@ -1,5 +1,5 @@
-const { getUserByMail, createUser } = require("../../services/user.service");
-const { createToken } = require("../../services/authentification.service");
+const { getUserByMail, createUser } = require("../../services/user.index");
+const { createToken } = require("../../services/authentification.index");
 const { userSchema } = require("../../dto/user.dto");
 const mailService = require("../../services/mail.service");
 const { handleResponse } = require("../../utils/controller.util");

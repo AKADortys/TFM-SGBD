@@ -1,4 +1,4 @@
-const { remove, getById } = require("../../services/product.service");
+const { remove, getById } = require("../../services/product.index");
 const { handleResponse, isObjectId } = require("../../utils/controller.util");
 
 // Suppression d'un produit par ID

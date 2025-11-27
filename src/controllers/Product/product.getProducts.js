@@ -1,4 +1,4 @@
-const { getProducts } = require("../../services/product.service");
+const { getProducts } = require("../../services/product.index");
 const { handleResponse } = require("../../utils/controller.util");
 
 // Récupération de tous les produits

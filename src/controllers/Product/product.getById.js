@@ -1,4 +1,4 @@
-const { getById } = require("../../services/product.service");
+const { getById } = require("../../services/product.index");
 const { handleResponse, isObjectId } = require("../../utils/controller.util");
 
 // Récupération d'un produit par ID
