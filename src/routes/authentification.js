@@ -6,7 +6,7 @@ const {
   passwordRecovery,
   passwordReset,
   confirmAccount,
-} = require("../controllers/Authentification/authentification.controller");
+} = require("../controllers/authentification.controller");
 const tokenMdw = require("../middlewares/jwt.middleware");
 const rateLimiter = require("../middlewares/rate-limiter.middleware");
 

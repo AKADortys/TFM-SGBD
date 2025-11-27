@@ -6,7 +6,7 @@ const {
   remove,
   getById,
   getUsers,
-} = require("../controllers/User/user.controller");
+} = require("../controllers/user.controller");
 const tokenMdw = require("../middlewares/jwt.middleware");
 const permissionsMdw = require("../middlewares/permissions.middleware");
 const rateLimiter = require("../middlewares/rate-limiter.middleware");
