@@ -1,4 +1,4 @@
-const { create } = require("../../services/product.service");
+const { create } = require("../../services/product.index");
 const { handleResponse } = require("../../utils/controller.util");
 const { productSchema } = require("../../dto/product.dto");
 

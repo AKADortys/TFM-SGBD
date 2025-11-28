@@ -1,4 +1,4 @@
-const { getOrders } = require("../../services/orders.service");
+const { getOrders } = require("../../services/orders.index");
 const { handleResponse } = require("../../utils/controller.util");
 
 // Récupération de tous les commandes

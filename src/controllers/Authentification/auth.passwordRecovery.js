@@ -1,5 +1,5 @@
-const { verifyToken } = require("../../services/authentification.service");
-const { updateUserPassword } = require("../../services/user.service");
+const { verifyToken } = require("../../services/authentification.index");
+const { updateUserPassword } = require("../../services/user.index");
 const {
   validatePassword,
   handleResponse,

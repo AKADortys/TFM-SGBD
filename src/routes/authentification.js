@@ -1,19 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const {
-  login,
-  logout,
-  passwordRecovery,
-  passwordReset,
-  confirmAccount,
-} = require("../controllers/authentification.controller");
+const controller = require("../controllers/authentification.index");
 const tokenMdw = require("../middlewares/jwt.middleware");
 const rateLimiter = require("../middlewares/rate-limiter.middleware");
 
-router.post("/login", rateLimiter, login);
-router.post("/logout", tokenMdw, logout);
-router.post("/password-reset", rateLimiter, passwordReset);
-router.patch("/password-recovery", rateLimiter, passwordRecovery);
-router.patch("/confirm-account", rateLimiter, confirmAccount);
+router.post("/login", rateLimiter, controller.login);
+router.post("/logout", tokenMdw, controller.logout);
+router.post("/password-reset", rateLimiter, controller.passwordReset);
+router.patch("/password-recovery", rateLimiter, controller.passwordRecovery);
+router.patch("/confirm-account", rateLimiter, controller.confirmAccount);
 
 module.exports = router;

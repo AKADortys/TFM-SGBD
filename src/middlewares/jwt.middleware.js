@@ -20,8 +20,6 @@ module.exports = async (req, res, next) => {
           error.name === "TokenExpiredError") &&
         refreshToken
       ) {
-        console.log("Access token expiré, tentative de rafraîchissement...");
-
         const newAccessToken = await refreshTokenFunction(refreshToken);
         if (!newAccessToken) {
           return res.status(401).json({ message: "Refresh token invalide" });

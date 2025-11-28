@@ -1,4 +1,4 @@
-const { getByUser } = require("../../services/orders.service");
+const { getByUser } = require("../../services/orders.index");
 const { isObjectId, handleResponse } = require("../../utils/controller.util");
 
 // Récupération d'une commande par son userId

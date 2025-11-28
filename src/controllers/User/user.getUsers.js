@@ -1,11 +1,11 @@
-const { getUsers } = require("../../services/user.service");
+const { getUsers } = require("../../services/user.index");
 const { handleResponse } = require("../../utils/controller.util");
 // Récupération de tous les utilisateurs
 module.exports = async (req, res) => {
   try {
     const search = req.query.search || "";
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 10));
 
     const result = await getUsers(page, limit, search);
 

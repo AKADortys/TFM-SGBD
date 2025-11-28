@@ -1,4 +1,4 @@
-const { update } = require("../../services/product.service");
+const { update } = require("../../services/product.index");
 const { updateProductSchema } = require("../../dto/product.dto");
 const { handleResponse, isObjectId } = require("../../utils/controller.util");
 
@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id) return handleResponse(res, 400, "ID manquant");
-    if (!isObjectId(id)) {
+    if (isObjectId(id)) {
       return handleResponse(res, 400, "ID invalide");
     }
 

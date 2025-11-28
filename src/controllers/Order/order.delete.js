@@ -1,4 +1,4 @@
-const { getById, remove } = require("../../services/orders.service");
+const { getById, remove } = require("../../services/orders.index");
 const { isObjectId, handleResponse } = require("../../utils/controller.util");
 
 // Suppression d'une commande
