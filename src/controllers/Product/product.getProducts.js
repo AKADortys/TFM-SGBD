@@ -4,10 +4,9 @@ const { handleResponse } = require("../../utils/controller.util");
 // Récupération de tous les produits
 module.exports = async (req, res) => {
   try {
-    const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
-    const products = await getProducts(page, limit, search);
+    const products = await getProducts(page, limit, req.query);
     return handleResponse(res, 200, "Produits récupérés avec succès", products);
   } catch (error) {
     console.error("Erreur lors de la récupération des produits:", error);
