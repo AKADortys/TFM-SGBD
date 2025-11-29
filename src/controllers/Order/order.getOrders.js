@@ -4,8 +4,8 @@ const { handleResponse } = require("../../utils/controller.util");
 // Récupération de tous les commandes
 module.exports = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 10));
     const result = await getOrders(page, limit, {
       ...req.query,
     });

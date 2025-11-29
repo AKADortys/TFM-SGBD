@@ -8,7 +8,6 @@ const {
 module.exports = async (askPage, limit, queryFilter) => {
   try {
     const filter = buildProductFilter(queryFilter);
-    console.log(filter);
     const { items, total, totalPages, page } = await paginatedQuery(
       Product,
       filter,
