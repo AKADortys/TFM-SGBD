@@ -41,7 +41,7 @@ const buildUserFilter = (query = {}) => {
   }
 
   if (query.isActive) {
-    filter.isActive = query.isActive === true;
+    filter.isActive = query.isActive === "true";
   }
 
   if (query.startDate || query.endDate) {
