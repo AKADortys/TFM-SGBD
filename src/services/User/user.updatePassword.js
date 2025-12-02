@@ -11,8 +11,8 @@ module.exports = async (id, newPassword) => {
     if (!user) return null;
 
     user.password = newPassword;
-    await user.save();
     user.phone = decrypt(user.phone);
+    await user.save();
     return sanitizeUser(user);
   } catch (error) {
     handleServiceError(

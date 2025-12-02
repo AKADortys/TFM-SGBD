@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Commande par défaut : lancer seed puis démarrer l'app
-CMD npm run seed && npm run start
+CMD ["npm", "run", "start"]

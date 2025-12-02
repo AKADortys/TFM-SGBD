@@ -14,8 +14,7 @@ mongoose
     // vérifie si les collection contiennent des données
     if (
       (await User.countDocuments().exec()) === 0 ||
-      (await Product.countDocuments().exec()) === 0 ||
-      (await Order.countDocuments().exec()) === 0
+      (await Product.countDocuments().exec()) === 0
     ) {
       // Création des données de base si elles n'existent pas
       const users = [

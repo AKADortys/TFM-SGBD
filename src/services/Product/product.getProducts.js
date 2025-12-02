@@ -42,7 +42,7 @@ const buildProductFilter = (query) => {
 
   // Disponibilité
   if (query.available) {
-    filter.available = query.available === true;
+    filter.available = query.available === "true";
   }
 
   // Fourchette de prix
