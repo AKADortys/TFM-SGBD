@@ -14,7 +14,10 @@ module.exports = async (askPage, limit, queryFilters) => {
       askPage,
       limit,
       { createdAt: -1 },
-      [{ path: "products.productId", select: "label price" }]
+      [
+        { path: "products.productId", select: "label" },
+        { path: "userId", select: "mail" },
+      ]
     );
     return {
       orders: items,

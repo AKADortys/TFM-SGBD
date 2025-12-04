@@ -5,7 +5,10 @@ module.exports = async (id) => {
   try {
     const order = await Order.findById(id);
     if (!order) return null;
-    return order.populate({ path: "products.productId", select: "label" });
+    return order.populate([
+      { path: "products.productId", select: "label" },
+      { path: "userId", select: "mail" },
+    ]);
   } catch (error) {
     handleServiceError(error, "Erreur lors de la récupération de la commande", {
       service: "orderService",

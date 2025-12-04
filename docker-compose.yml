@@ -10,8 +10,6 @@ services:
       - mongo
     environment:
       MONGO_URI: "mongodb://root:root@mongo:27017/test"
-    volumes:
-      - .:/app
 
   mongo:
     image: mongo:7

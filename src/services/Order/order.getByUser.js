@@ -14,7 +14,10 @@ module.exports = async (userId, askPage, limit) => {
       askPage,
       limit,
       { createdAt: -1 },
-      [{ path: "products.productId", select: "label" }]
+      [
+        { path: "products.productId", select: "label" },
+        { path: "userId", select: "mail" },
+      ]
     );
     return {
       orders: items,
