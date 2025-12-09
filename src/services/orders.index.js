@@ -5,6 +5,8 @@ const getById = require("./Order/order.getById");
 const getByUser = require("./Order/order.getByUser");
 const getOrders = require("./Order/order.getOrders");
 const update = require("./Order/order.update");
+const generalStats = require("./Order/order.generalStats");
+const statsByDate = require("./Order/order.statsByDate");
 
 module.exports = {
   create,
@@ -14,4 +16,6 @@ module.exports = {
   getByUser,
   getOrders,
   update,
+  generalStats,
+  statsByDate,
 };
