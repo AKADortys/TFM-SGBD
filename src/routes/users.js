@@ -10,5 +10,6 @@ router.post("/", rateLimiter, controller.create);
 router.get("/:id", tokenMdw, permissionsMdw, controller.getById);
 router.put("/:id", tokenMdw, permissionsMdw, controller.update);
 router.delete("/:id", tokenMdw, permissionsMdw, controller.remove);
+router.get("/stats/general", tokenMdw, permissionsMdw, controller.generalStats);
 
 module.exports = router;

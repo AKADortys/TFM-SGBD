@@ -6,6 +6,7 @@ const updateUser = require("./User/user.update");
 const updateUserPassword = require("./User/user.updatePassword");
 const deleteUser = require("./User/user.delete");
 const confirmUserAccount = require("./User/user.activateAccount");
+const generalStats = require("./User/user.generalStats");
 
 module.exports = {
   getUsers,
@@ -16,4 +17,5 @@ module.exports = {
   updateUserPassword,
   deleteUser,
   confirmUserAccount,
+  generalStats,
 };
