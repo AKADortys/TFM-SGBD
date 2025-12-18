@@ -76,7 +76,7 @@ module.exports = {
         url_profil: process.env.FRONT_BASE_URL + "/profile",
       });
       if (process.env.MAIL_SANDBOX === "true") {
-        logger.info("[MAILBOX] mail simulé ! commande client\n" + htmlClient);
+        logger.info("[MAILBOX] mail simulé ! commande client\n" + order);
       } else {
         await brevoApi.send({
           sender: { email: process.env.ADMIN_MAIL, name: "Au Ptit Vivo" },
@@ -94,7 +94,7 @@ module.exports = {
         url_admin: process.env.FRONT_BASE_URL + "/admin",
       });
       if (process.env.MAIL_SANDBOX === "true") {
-        logger.info("[MAILBOX] mail simulé ! Notif Admin\n" + htmlAdmin);
+        logger.info("[MAILBOX] mail simulé ! Notif Admin\n" + order);
         return;
       }
 
