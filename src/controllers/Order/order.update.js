@@ -19,7 +19,12 @@ module.exports = async (req, res) => {
     ) {
       return handleResponse(res, 403, "Accès refusé");
     }
-    const modifiableStatuses = ["En attente", "Confirmée"];
+    const modifiableStatuses = [
+      "En attente",
+      "Confirmée",
+      "Accepté",
+      "Refusée",
+    ];
     if (!modifiableStatuses.includes(existingOrder.status)) {
       return handleResponse(
         res,

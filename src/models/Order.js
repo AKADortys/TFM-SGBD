@@ -21,7 +21,14 @@ const orderSchema = new mongoose.Schema(
     deliveryAddress: { type: String, required: false },
     status: {
       type: String,
-      enum: ["En attente", "Confirmée", "Accepté", "Refusée", "Annulée"],
+      enum: [
+        "En attente",
+        "Confirmée",
+        "Accepté",
+        "Refusée",
+        "Annulée",
+        "Complétée",
+      ],
       default: "Confirmée",
     },
     totalPrice: { type: Number, required: true, min: 0 },
