@@ -12,6 +12,7 @@ router.use(tokenMdw);
 router.get("/", permissionsMdw, controller.getOrders);
 router.get("/detail/:id", permissionsMdw, controller.detailOrder);
 router.get("/user/:id", permissionsMdw, controller.getByUser);
+router.get("/history", controller.getUserHist);
 router.get("/:id", controller.getById);
 router.post("/", rateLimiter, controller.create);
 router.put("/:id", permissionsMdw, controller.update);

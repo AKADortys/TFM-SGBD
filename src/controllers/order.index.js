@@ -7,6 +7,7 @@ const getOrders = require("./Order/order.getOrders");
 const update = require("./Order/order.update");
 const generalStats = require("./Order/order.generalStats");
 const statsByDate = require("./Order/order.statsByDate");
+const getUserHist = require("./Order/order.getUserHist");
 
 module.exports = {
   create,
@@ -18,4 +19,5 @@ module.exports = {
   update,
   generalStats,
   statsByDate,
+  getUserHist,
 };
