@@ -1,19 +1,19 @@
 const { getByUser } = require("../../services/orders.index");
 const { isObjectId, handleResponse } = require("../../utils/controller.util");
 
-// Récupération d'une commande par son userId
+// Récupération des commandes par son userId
 module.exports = async (req, res) => {
   try {
     const skip = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const { id } = req.user;
-    if (!id) return handleResponse(res, 400, "ID manquant");
+    if (!id) return handleResponse(res, 400, "ID invalide");
     const idError = isObjectId(id);
     if (idError) return handleResponse(res, 400, idError);
     if (req.user.id !== id && req.user.role !== "admin") {
       return handleResponse(res, 403, "Accès refusé");
     }
-    const result = await getByUser(id, skip, limit);
+    const result = await getByUser(id, skip, limit, { ...req.query });
     return handleResponse(
       res,
       200,
