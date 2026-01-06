@@ -10,7 +10,7 @@ module.exports = async (userId, askPage, limit) => {
   try {
     const { items, page, totalPages, total } = await paginatedQuery(
       Order,
-      { userId: new mongoose.Types.ObjectId(userId), status: "Complétée" },
+      { userId: new mongoose.Types.ObjectId(userId) },
       askPage,
       limit,
       { createdAt: -1 },
