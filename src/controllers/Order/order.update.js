@@ -19,17 +19,12 @@ module.exports = async (req, res) => {
     ) {
       return handleResponse(res, 403, "Accès refusé");
     }
-    const modifiableStatuses = [
-      "En attente",
-      "Confirmée",
-      "Accepté",
-      "Refusée",
-    ];
+    const modifiableStatuses = ["En attente", "Confirmée"];
     if (!modifiableStatuses.includes(existingOrder.status)) {
       return handleResponse(
         res,
         400,
-        `La commande ne peut pas être modifiée car son statut est "${existingOrder.status}"`
+        `La commande ne peut pas être modifiée car son statut est "${existingOrder.status}"`,
       );
     }
     const { error, value } = updateOrderSchema.validate(req.body);
@@ -39,7 +34,7 @@ module.exports = async (req, res) => {
     let { totalPrice } = existingOrder;
     if (value.products) {
       const docs = await Promise.all(
-        value.products.map((p) => productService.getById(p.productId))
+        value.products.map((p) => productService.getById(p.productId)),
       );
       if (docs.some((d) => !d)) {
         return handleResponse(res, 400, "Produit inexistant");
@@ -67,7 +62,7 @@ module.exports = async (req, res) => {
       res,
       200,
       "Commande mise à jour avec succès",
-      updatedOrder
+      updatedOrder,
     );
   } catch (error) {
     console.error("Erreur lors de la mise à jour de la commande:", error);

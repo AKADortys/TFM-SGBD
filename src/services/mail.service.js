@@ -46,7 +46,7 @@ module.exports = {
       });
       if (process.env.MAIL_SANDBOX === "true") {
         logger.info(
-          `[MAILBOX] mail simulé :\n${process.env.FRONT_PASSWORD_RESET_URL}/${token}`
+          `[MAILBOX] mail simulé :\n${process.env.FRONT_PASSWORD_RESET_URL}/${token}`,
         );
         return;
       }
@@ -60,7 +60,7 @@ module.exports = {
       handleServiceError(
         error,
         "Erreur lors de l'envoi du mail de récupération",
-        { service: "mailService", operation: "passReset" }
+        { service: "mailService", operation: "passReset" },
       );
     }
   },
@@ -94,7 +94,7 @@ module.exports = {
         url_admin: process.env.FRONT_BASE_URL + "/admin",
       });
       if (process.env.MAIL_SANDBOX === "true") {
-        logger.info("[MAILBOX] mail simulé ! Notif Admin\n" + order);
+        logger.info("[MAILBOX] mail simulé ! Notif Admin\n");
         return;
       }
 
@@ -108,7 +108,7 @@ module.exports = {
       handleServiceError(
         error,
         "Erreur lors de l'envoi du mail de création de la commande",
-        { service: "mailService", operation: "newOrder" }
+        { service: "mailService", operation: "newOrder" },
       );
     }
   },
