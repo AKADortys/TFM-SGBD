@@ -4,6 +4,8 @@ const controller = require("../controllers/user.index");
 const tokenMdw = require("../middlewares/jwt.middleware");
 const permissionsMdw = require("../middlewares/permissions.middleware");
 const rateLimiter = require("../middlewares/rate-limiter.middleware");
+const mongoSanitize = require("express-mongo-sanitize");
+router.use(mongoSanitize());
 
 router.get("/", tokenMdw, permissionsMdw, controller.getUsers);
 router.post("/", rateLimiter, controller.create);

@@ -12,6 +12,7 @@ const { login } = require("../../services/authentification.index");
 // Connexion utilisateur
 module.exports = async (req, res) => {
   try {
+    console.log("Tentative de connexion pour l'email :", req.body);
     const { mail, password } = req.body;
     if (!mail || !password) {
       return handleResponse(res, 400, "Email et mot de passe requis");
@@ -38,7 +39,7 @@ module.exports = async (req, res) => {
       .cookie(
         "refreshToken",
         refreshToken,
-        cookieOptions(1000 * 60 * 60 * 24 * 7)
+        cookieOptions(1000 * 60 * 60 * 24 * 7),
       );
 
     return handleResponse(res, 200, "Connexion réussie", user);
