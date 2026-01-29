@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <%- include('./layout/head') %>
+  <body>
+    <%- include('./layout/header') %>
+
+    <div class="container" role="article" aria-label="Commande refusée">
+      <p class="muted">Bonjour <%= user.fullname %>,</p>
+
+      <p>
+        Nous sommes désolés de vous informer que votre commande
+        <strong>#<%= order._id %></strong> a été <strong>refusée</strong>.
+      </p>
+
+      <p>
+        Cette décision peut être liée à une indisponibilité de produits, à une
+        forte affluence ou à une contrainte exceptionnelle.
+      </p>
+      <!-- 
+      <% if (refusalReason) { %>
+        <p>
+          <strong>Motif :</strong> <%= refusalReason %>
+        </p>
+      <% } %> -->
+
+      <p>
+        Vous pouvez passer une nouvelle commande à tout moment depuis votre
+        espace client.
+      </p>
+
+      <p style="margin-top: 16px">
+        <a
+          class="button btn-secondary"
+          href="<%= url_profil %>"
+          target="_blank"
+          rel="noopener"
+        >
+          Accéder à mon profil
+        </a>
+      </p>
+
+      <%- include('./layout/footer') %>
+    </div>
+  </body>
+</html>

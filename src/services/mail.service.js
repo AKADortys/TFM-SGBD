@@ -112,4 +112,58 @@ module.exports = {
       );
     }
   },
+
+  confirmedOrder: async (order, user) => {
+    console.log(order, user);
+    try {
+      const html = await renderHtml(templatePath("order-confirmed.ejs"), {
+        title: "Votre commande a été confirmée !",
+        order,
+        user,
+        url_profil: process.env.FRONT_BASE_URL + "/profile",
+      });
+      if (process.env.MAIL_SANDBOX === "true") {
+        logger.info("[MAILBOX] mail simulé ! commande acceptée\n" + order);
+        return;
+      }
+      await brevoApi.send({
+        sender: { email: process.env.ADMIN_MAIL, name: "Au Ptit Vivo" },
+        to: [{ email: user.mail }],
+        subject: "Confirmation de votre commande - Au Ptit Vivo",
+        htmlContent: html,
+      });
+    } catch (error) {
+      handleServiceError(
+        error,
+        "Erreur lors de l'envoi du mail de confirmation de la commande",
+        { service: "mailService", operation: "confirmedOrder" },
+      );
+    }
+  },
+  refusedOrder: async (order, user) => {
+    try {
+      const html = await renderHtml(templatePath("order-refused.ejs"), {
+        title: "Votre commande a été refusée !",
+        order,
+        user,
+        url_profil: process.env.FRONT_BASE_URL + "/profile",
+      });
+      if (process.env.MAIL_SANDBOX === "true") {
+        logger.info("[MAILBOX] mail simulé ! commande refusée\n" + order);
+        return;
+      }
+      await brevoApi.send({
+        sender: { email: process.env.ADMIN_MAIL, name: "Au Ptit Vivo" },
+        to: [{ email: user.mail }],
+        subject: "Refus de votre commande - Au Ptit Vivo",
+        htmlContent: html,
+      });
+    } catch (error) {
+      handleServiceError(
+        error,
+        "Erreur lors de l'envoi du mail de refus de la commande",
+        { service: "mailService", operation: "refusedOrder" },
+      );
+    }
+  },
 };
