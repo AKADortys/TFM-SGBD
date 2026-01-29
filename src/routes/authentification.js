@@ -7,7 +7,7 @@ const rateLimiter = require("../middlewares/rate-limiter.middleware");
 router.post("/login", rateLimiter, controller.login);
 router.post("/logout", tokenMdw, controller.logout);
 router.post("/password-reset", rateLimiter, controller.passwordReset);
-router.patch("/password-recovery", rateLimiter, controller.passwordRecovery);
-router.patch("/confirm-account", rateLimiter, controller.confirmAccount);
+router.post("/password-recovery", rateLimiter, controller.passwordRecovery);
+router.post("/confirm-account", rateLimiter, controller.confirmAccount);
 
 module.exports = router;

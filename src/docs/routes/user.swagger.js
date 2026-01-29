@@ -1,169 +1,18 @@
 /**
  * @swagger
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       required:
- *         - _id
- *         - name
- *         - lastName
- *         - mail
- *         - phone
- *         - password
- *         - role
- *         - isActive
- *       properties:
- *         _id:
- *           type: string
- *           description: Identifiant MongoDB
- *           example: "672a0f6a9b8a2f001f7c9f02"
- *         name:
- *           type: string
- *           description: Prénom de l'utilisateur
- *           minLength: 2
- *           maxLength: 50
- *           example: Jean
- *         lastName:
- *           type: string
- *           description: Nom de famille de l'utilisateur
- *           minLength: 2
- *           maxLength: 50
- *           example: Dupont
- *         mail:
- *           type: string
- *           format: email
- *           description: Adresse email unique
- *           example: jean.dupont@example.com
- *         phone:
- *           type: string
- *           description: Numéro de téléphone chiffré
- *           example: "+33612345678"
- *         password:
- *           type: string
- *           description: Mot de passe haché
- *           minLength: 8
- *           example: "$2a$10$N9qo8uLOickgx2ZMRZoMy..."
- *         role:
- *           type: string
- *           enum: [admin, client, moderateur]
- *           default: client
- *           description: Rôle de l'utilisateur
- *         isActive:
- *           type: boolean
- *           default: false
- *           description: Indique si le compte est activé
- *         createdAt:
- *           type: string
- *           format: date-time
- *           description: Date de création
- *         updatedAt:
- *           type: string
- *           format: date-time
- *           description: Dernière mise à jour
- *     PaginatedUsers:
- *       type: object
- *       properties:
- *         data:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/User'
- *         pagination:
- *           type: object
- *           properties:
- *             total:
- *               type: integer
- *               description: Nombre total d'utilisateurs
- *             page:
- *               type: integer
- *               description: Numéro de la page actuelle
- *             limit:
- *               type: integer
- *               description: Nombre d'utilisateurs par page
- *             totalPages:
- *               type: integer
- *               description: Nombre total de pages
- *     CreateUserRequest:
- *       type: object
- *       required:
- *         - name
- *         - lastName
- *         - mail
- *         - phone
- *         - password
- *       properties:
- *         name:
- *           type: string
- *           description: Prénom de l'utilisateur
- *           minLength: 2
- *           maxLength: 50
- *           example: Jean
- *         lastName:
- *           type: string
- *           description: Nom de famille de l'utilisateur
- *           minLength: 2
- *           maxLength: 50
- *           example: Dupont
- *         mail:
- *           type: string
- *           format: email
- *           description: Adresse email unique
- *           example: jean.dupont@example.com
- *         phone:
- *           type: string
- *           description: Numéro de téléphone
- *           example: "+33612345678"
- *         password:
- *           type: string
- *           description: Mot de passe (sera haché)
- *           minLength: 8
- *           example: "Motdepasse123"
- *     UpdateUserRequest:
- *       type: object
- *       properties:
- *         name:
- *           type: string
- *           description: Prénom de l'utilisateur
- *           minLength: 2
- *           maxLength: 50
- *           example: Jean
- *         lastName:
- *           type: string
- *           description: Nom de famille de l'utilisateur
- *           minLength: 2
- *           maxLength: 50
- *           example: Dupont
- *         mail:
- *           type: string
- *           format: email
- *           description: Adresse email unique
- *           example: jean.dupont@example.com
- *         phone:
- *           type: string
- *           description: Numéro de téléphone
- *           example: "+33612345678"
- *         password:
- *           type: string
- *           description: Nouveau mot de passe (sera haché)
- *           minLength: 8
- *           example: "NouveauMotdepasse123"
- */
-
-/**
- * @swagger
  * tags:
- *   name: Users
- *   description: Endpoints pour la gestion des utilisateurs
+ *   name: Utilisateurs
+ *   description: Gestion des utilisateurs
  */
 
 /**
  * @swagger
  * /users:
  *   get:
- *     summary: Récupère la liste des utilisateurs (paginée)
- *     tags: [Users]
+ *     summary: Récupère tous les utilisateurs (avec filtres)
+ *     tags: [Utilisateurs]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - in: query
  *         name: page
@@ -178,27 +27,43 @@
  *           default: 10
  *         description: Nombre d'utilisateurs par page
  *       - in: query
- *         name: role
+ *         name: search
  *         schema:
  *           type: string
- *           enum: [admin, client, moderateur]
- *         description: Filtrer par rôle
+ *         description: Recherche par prénom, nom ou email (insensible à la casse)
  *       - in: query
  *         name: isActive
  *         schema:
  *           type: boolean
- *         description: Filtrer par statut d'activation
+ *         description: Filtrer par statut d'activation (true/false)
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date de début pour filtrer les utilisateurs (format YYYY-MM-DD)
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date de fin pour filtrer les utilisateurs (format YYYY-MM-DD)
  *     responses:
  *       200:
- *         description: Liste paginée des utilisateurs
+ *         description: Liste des utilisateurs récupérée avec succès
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/PaginatedUsers'
- *       401:
- *         description: Non autorisé (token manquant ou invalide)
- *       403:
- *         description: Accès refusé (permissions insuffisantes)
+ *               type: object
+ *               properties:
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *                 total:
+ *                   type: integer
+ *       500:
+ *         description: Erreur serveur
  */
 
 /**
@@ -206,54 +71,51 @@
  * /users:
  *   post:
  *     summary: Crée un nouvel utilisateur
- *     tags: [Users]
+ *     description: Création d'un utilisateur avec les informations fournies et envoie de mail de confirmation.
+ *     tags: [Utilisateurs]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateUserRequest'
+ *             $ref: '#/components/schemas/User'
  *     responses:
  *       201:
  *         description: Utilisateur créé avec succès
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Requête invalide
- *       429:
- *         description: Trop de requêtes (limite dépassée)
+ *         description: Données invalides
+ *       500:
+ *         description: Erreur serveur
  */
+
 /**
  * @swagger
  * /users/{id}:
  *   get:
- *     summary: Récupère un utilisateur par son identifiant
- *     tags: [Users]
+ *     summary: Récupère un utilisateur par ID
+ *     tags: [Utilisateurs]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *           example: "672a0f6a9b8a2f001f7c9f02"
  *         description: ID de l'utilisateur
  *     responses:
  *       200:
- *         description: Détails de l'utilisateur
+ *         description: Utilisateur récupéré avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
- *       401:
- *         description: Non autorisé (token manquant ou invalide)
- *       403:
- *         description: Accès refusé (permissions insuffisantes)
+ *       400:
+ *         description: ID invalide
  *       404:
  *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
  */
 
 /**
@@ -261,38 +123,33 @@
  * /users/{id}:
  *   put:
  *     summary: Met à jour un utilisateur
- *     tags: [Users]
+ *     tags: [Utilisateurs]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *           example: "672a0f6a9b8a2f001f7c9f02"
  *         description: ID de l'utilisateur
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UpdateUserRequest'
+ *             $ref: '#/components/schemas/User'
  *     responses:
  *       200:
  *         description: Utilisateur mis à jour avec succès
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Requête invalide
- *       401:
- *         description: Non autorisé (token manquant ou invalide)
+ *         description: ID invalide ou données incorrectes
  *       403:
- *         description: Accès refusé (permissions insuffisantes)
+ *         description: Accès refusé
  *       404:
  *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
  */
 
 /**
@@ -300,24 +157,62 @@
  * /users/{id}:
  *   delete:
  *     summary: Supprime un utilisateur
- *     tags: [Users]
+ *     tags: [Utilisateurs]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *           example: "672a0f6a9b8a2f001f7c9f02"
  *         description: ID de l'utilisateur
  *     responses:
- *       204:
+ *       200:
  *         description: Utilisateur supprimé avec succès
- *       401:
- *         description: Non autorisé (token manquant ou invalide)
+ *       400:
+ *         description: ID invalide ou manquant
  *       403:
- *         description: Accès refusé (permissions insuffisantes)
+ *         description: Accès refusé
  *       404:
  *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+
+/**
+ * @swagger
+ * /users/stats/general:
+ *   get:
+ *     summary: Récupère les statistiques générales des utilisateurs
+ *     tags: [Utilisateurs]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date de début pour les statistiques
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date de fin pour les statistiques
+ *     responses:
+ *       200:
+ *         description: Statistiques récupérées avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalUsers:
+ *                   type: integer
+ *                 activeUsers:
+ *                   type: integer
+ *       500:
+ *         description: Erreur serveur
  */

@@ -11,21 +11,19 @@
  *       properties:
  *         _id:
  *           type: string
- *           description: ID unique du produit
- *           example: "672a0f6a9b8a2f001f7c9f01"
+ *           description: Identifiant MongoDB
  *         label:
  *           type: string
- *           description: Nom du produit
- *           example: "Burger maison"
+ *           description: Nom unique du produit
+ *           example: "Burger Royal"
  *         description:
  *           type: string
- *           description: Détails du produit
- *           example: "Burger artisanal avec pain brioché et steak frais"
+ *           description: Description du produit
+ *           example: "Un délicieux burger avec fromage et salade."
  *         price:
  *           type: number
- *           format: float
  *           description: Prix du produit
- *           example: 12.5
+ *           example: 12.99
  *         category:
  *           type: string
  *           enum: ["Plat principal", "Dessert", "Boisson", "Divers"]
@@ -34,13 +32,11 @@
  *         available:
  *           type: boolean
  *           default: true
- *           description: Indique si le produit est disponible à la commande
+ *           description: Disponibilité du produit
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: Date de création
  *         updatedAt:
  *           type: string
  *           format: date-time
- *           description: Dernière mise à jour
  */
