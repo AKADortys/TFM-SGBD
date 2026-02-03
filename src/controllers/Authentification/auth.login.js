@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const Token = require("../../models/Token");
 const jwtConfig = require("../../config/jwt");
 const {
   cookieOptions,
@@ -8,6 +9,7 @@ const {
   handleResponse,
 } = require("../../utils/controller.util");
 const { login } = require("../../services/authentification.index");
+const { hashToken } = require("../../utils/service.util");
 
 // Connexion utilisateur
 module.exports = async (req, res) => {
@@ -33,6 +35,13 @@ module.exports = async (req, res) => {
     });
     const refreshToken = jwt.sign(payload, jwtConfig.secretRefresh, {
       expiresIn: jwtConfig.expiresRefreshToken,
+    });
+    await Token.create({
+      userId: user._id,
+      token_hash: hashToken(refreshToken),
+      type: "refresh_token",
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + jwtConfig.expiresRefreshToken),
     });
     res
       .cookie("accessToken", accessToken, cookieOptions(1000 * 60 * 60))

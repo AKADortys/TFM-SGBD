@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const jwtConfig = require("../config/jwt");
+const Token = require("../models/Token");
 
 module.exports = async (req, res, next) => {
   try {
@@ -51,6 +52,15 @@ module.exports = async (req, res, next) => {
 const refreshTokenFunction = async (refreshToken) => {
   try {
     const decoded = jwt.verify(refreshToken, jwtConfig.secretRefresh);
+    const storedToken = await Token.findOne({
+      userId: decoded.id,
+      token_hash: refreshToken,
+      type: "refresh_token",
+      used: false,
+    });
+    if (!storedToken) {
+      return null;
+    }
 
     // Génération d'un nouvel access token avec les infos de l'utilisateur
     const newAccessToken = jwt.sign(
@@ -61,7 +71,7 @@ const refreshTokenFunction = async (refreshToken) => {
         mail: decoded.mail,
       }, // Données du user à inclure
       jwtConfig.secret,
-      { expiresIn: jwtConfig.expiresToken }
+      { expiresIn: jwtConfig.expiresToken },
     );
 
     return newAccessToken;

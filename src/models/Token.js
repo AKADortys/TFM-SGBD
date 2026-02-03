@@ -15,7 +15,12 @@ const tokenSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["password_reset", "account_confirmation"],
+      enum: [
+        "password_reset",
+        "account_confirmation",
+        "access_token",
+        "refresh_token",
+      ],
       required: true,
     },
     used: {
@@ -36,7 +41,7 @@ const tokenSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Index TTL : supprime le document après expiresAt
