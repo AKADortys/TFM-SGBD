@@ -261,7 +261,7 @@
  * @swagger
  * /orders/{id}:
  *   put:
- *     summary: Met à jour une commande
+ *     summary: Met à jour une commande (envoier un email si le statut change à "Confirmée", "Accepté", "Refusée", "Annulée")
  *     tags: [Commandes]
  *     security:
  *       - cookieAuth: []
