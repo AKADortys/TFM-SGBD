@@ -1,90 +1,189 @@
-### Au P'tit Vivo Server BACK
+Voici une proposition de `README.md` entièrement révisée. Elle est professionnelle, structurée et reflète exactement ce qui est implémenté dans ton code (Architecture Service/Controller, Auth par Cookies, Swagger, Docker, etc.).
+
+Tu n'as plus qu'à copier-coller ce contenu dans ton fichier `README.md`.
 
 ---
 
 ````markdown
-# 🥗 Au P’tit Vivo – Backend
+# Au P'tit Vivo - Backend API
 
-Backend Node.js pour la plateforme de commande en ligne du service traiteur **Au P’tit Vivo**.
+API RESTful pour la gestion des commandes et du catalogue du service traiteur "Au P'tit Vivo".
+Ce projet sert de backend pour l'application web, gérant l'authentification, les produits, les commandes et les utilisateurs.
 
-## 🚀 Technologies
+> **Contexte :** Projet de Travail de Fin d'Études (TFE).
 
-- Node.js / Express
-- MongoDB + Mongoose
-- JSON Web Token (JWT)
-- Joi (validation)
-- Nodemailer + EJS (templates mails)
-- dotenv (variables d’environnement)
-- Swagger (documentation API)
+## Fonctionnalités Principales
 
-## 🧠 Fonctionnalités principales
+### Authentification & Sécurité
 
-- Authentification (inscription, connexion, reset mot de passe)
-- Gestion des produits (CRUD + filtrage + disponibilité)
-- Gestion des commandes (CRUD + notifications + calcul total)
-- Gestion des utilisateurs (CRUD + rôles admin/client)
-- Envoi automatique de mails (confirmation, validation, refus)
-- Sécurisation des routes par rôles et tokens
+- **Système complet :** Inscription, Connexion, Déconnexion.
+- **Sécurité des Tokens :** Utilisation de **JWT (Access & Refresh Tokens)** stockés exclusivement dans des **Cookies HTTP-Only** (protection contre XSS).
+- **Gestion de compte :**
+  - Validation de compte par email.
+  - Récupération de mot de passe oublié (lien temporaire par email).
+- **Rate Limiting :** Protection contre les attaques par force brute.
+- **Permissions :** Système de rôles (Admin vs Client).
 
-## 🔐 Sécurité
+### Gestion des Ressources
 
-- Hash des mots de passe (bcrypt)
-- Données sensibles chiffrées
-- Tokens JWT stockés en cookies HTTP-only
-- Index TTL sur les tokens
-- Validation des données par Joi
+- **Utilisateurs :** CRUD complet. Les clients gèrent leurs propres données, les admins ont une vue globale. Chiffrement des données sensibles (ex: téléphone).
+- **Produits :** Gestion du catalogue (Ajout, modification, archivage de plats).
+- **Commandes :**
+  - Prise de commande client.
+  - Suivi des statuts (En attente, Confirmée, Prête, etc.).
+  - Historique des commandes.
 
-## 🌍 Hébergement
+### Notifications
 
-- Render → Serveur Node.js
-- MongoDB Atlas → Base de données
-- Brevo → SMTP (envoi de mails)
-- Swagger → Documentation API
+- Envoi automatique d'emails transactionnels via **Brevo** (Confirmation d'inscription, Reset password, Changement de statut de commande).
 
-## ⚙️ Installation
+### Outils Techniques
 
-```bash
-git clone https://github.com/<username>/vivo-back.git
-cd vivo-back
-npm install
-cp .env.example .env
-npm run dev
-```
-````
-
-## 🧾 Variables d’environnement
-
-```
-APP_PORT = 3000
-MONGO_URI ="mongodb://root:root@localhost:27017/test"
-TOKEN_SECRET = exampleTokenSecret123!@#
-TOKEN_REFRESH_SECRET= exampleTokenRefreshSecret123!@#
-TOKEN_TIMEOUT = "1h"
-TOKEN_REFRESH_TIMEOUT = "7d"
-CORS_ORIGIN = "http://localhost:5174"
-SMTP_HOST="mailServer.example.com"
-SMTP_USER="example@mail.com"
-SMTP_PASS="password123"
-SMTP_PORT=587
-ADMIN_MAIL="mail@example.com"
-ENCRYPTION_IV = "123456"
-ENCRYPTION_KEY = "BADKEYBADKEYBADKEYBADKEYBADKEY12"
-FRONT_BASE_URL="http://localhost:5174"
-FRONT_LOGIN_URL="http://localhost:5174/login"
-FRONT_PASSWORD_RESET_URL="http://localhost:5174/password-reset"
-FRONT_ACCOUNT_CONFIRM_URL="http://localhost:5174/confirm-account"
-
-```
-
-## 🧪 Tests
-
-Scénarios de test API avec Postman / Insomnia.
-Tests de charge possibles via k6 ou Artillery.
-
-## 📄 Documentation
-
-Swagger accessible via `/api-docs` une fois le serveur lancé.
+- **Documentation API :** Swagger UI intégré.
+- **Validation :** Validation stricte des données entrantes avec Joi.
+- **Logging :** Logs structurés avec Winston.
 
 ---
 
-Développé par **Ancel Thibault (2025–2026)** dans le cadre du TFE bachelier informatique.
+## Architecture Technique
+
+Le projet suit une architecture en couches pour assurer la maintenabilité et la testabilité :
+
+1.  **Routes (`/routes`)** : Définition des endpoints.
+2.  **Controllers (`/controllers`)** : Gestion des requêtes HTTP et validation (Joi).
+3.  **Services (`/services`)** : Logique métier pure (Business Logic).
+4.  **Models (`/models`)** : Schémas de données MongoDB (Mongoose).
+
+---
+
+## Prérequis
+
+- **Node.js** (v18 ou supérieur recommandé)
+- **MongoDB** (Local ou Atlas)
+- **Docker** (Optionnel, pour le déploiement)
+
+---
+
+## Installation et Configuration
+
+### 1. Cloner le projet
+
+```bash
+git clone [https://github.com/AKADortys/TFM-SGBD.git](https://github.com/AKADortys/TFM-SGBD.git)
+cd tfm-sgbd
+```
+````
+
+### 2. Installer les dépendances
+
+```bash
+npm install
+
+```
+
+### 3. Configuration des variables d'environnement
+
+Créez un fichier `.env` à la racine du projet en vous basant sur `.env.example`. Remplissez les variables nécessaires :
+
+```env
+PORT=3000
+# Base de données
+MONGO_URI=mongodb+srv://...
+
+# Sécurité & JWT
+JWT_SECRET=votre_secret_tres_long
+JWT_REFRESH_SECRET=votre_secret_refresh
+CORS_ORIGIN=http://localhost:5173
+
+# Emailing (Brevo)
+BREVO_API_KEY=votre_api_key_brevo
+EMAIL_SENDER=no-reply@auptitvivo.com
+
+# Chiffrement DB (Téléphone, etc.)
+ENCRYPTION_KEY=votre_cle_32_caracteres_hex
+IV_LENGTH=16
+
+```
+
+### 4. Peupler la base de données (Seeding)
+
+Pour injecter des données de test (Admin par défaut, produits factices) :
+
+```bash
+npm run seed
+
+```
+
+---
+
+## ▶️ Démarrage
+
+### Mode Développement (avec Hot-Reload)
+
+```bash
+npm run start:dev
+
+```
+
+### Mode Production
+
+```bash
+npm start
+
+```
+
+### Via Docker 🐳
+
+Pour lancer l'API et une instance MongoDB locale sans configuration manuelle :
+
+```bash
+docker-compose up --build -d
+
+```
+
+---
+
+## 📖 Documentation de l'API
+
+Une fois le serveur lancé, la documentation interactive Swagger est accessible à l'adresse suivante :
+
+👉 **http://localhost:3000/api-docs**
+
+Vous pourrez y tester directement les routes (Authentification, Produits, Commandes, etc.).
+
+---
+
+## 🧪 Tests
+
+Le projet utilise **Jest** et **Supertest** pour les tests unitaires et d'intégration.
+
+Lancer les tests :
+
+```bash
+npm test
+
+```
+
+---
+
+## 📂 Structure du projet
+
+```
+src/
+├── config/         # Config DB, Swagger, Brevo
+├── controllers/    # Logique de contrôle (Req/Res)
+├── services/       # Logique métier
+├── models/         # Schémas Mongoose
+├── routes/         # Définitions des URLs
+├── middlewares/    # Auth (JWT), Permissions, Rate-limit
+├── dto/            # Data Transfer Objects (Joi schemas)
+├── templates/      # Templates EJS pour les emails
+├── utils/          # Loggers, Helpers
+├── tests/          # Tests unitaires et d'intégration
+└── index.js          # Point d'entrée de l'application
+
+```
+
+```
+
+```
