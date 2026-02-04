@@ -1,4 +1,3 @@
-````markdown
 # Au P'tit Vivo - Backend API
 
 API RESTful pour la gestion des commandes et du catalogue du service traiteur "Au P'tit Vivo".
@@ -66,7 +65,6 @@ Le projet suit une architecture en couches pour assurer la maintenabilité et la
 git clone [https://github.com/AKADortys/TFM-SGBD.git](https://github.com/AKADortys/TFM-SGBD.git)
 cd tfm-sgbd
 ```
-````
 
 ### 2. Installer les dépendances
 
