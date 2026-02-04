@@ -5,8 +5,6 @@ const connect = require("./config/db");
 const logger = require("./utils/logger.util");
 const app = require("./app"); // Import de l'app configurée
 
-// Variables d'environnement
-
 // Connexion à la base de données
 connect();
 

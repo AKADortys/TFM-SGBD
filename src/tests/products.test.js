@@ -56,7 +56,12 @@ describe("Routes /products", () => {
   // --- POST /products (Création - Protégé) ---
   describe("POST /products", () => {
     it("devrait créer un produit si admin (201)", async () => {
-      const newProduct = { label: "Sushi", price: 15 };
+      const newProduct = {
+        label: "Sushi",
+        price: 15,
+        stock: 50,
+        description: "Delicious sushi rolls",
+      };
       const createdProduct = { ...newProduct, _id: "newId" };
 
       productController.create.mockImplementation((req, res) =>

@@ -23,6 +23,12 @@ const productSchema = Joi.object({
   available: Joi.boolean().optional().messages({
     "boolean.base": "La valeur de la disponibilité doit être bool",
   }),
+  stock: Joi.number().integer().min(0).required().messages({
+    "number.base": "Le stock doit être un nombre.",
+    "number.integer": "Le stock doit être un nombre entier.",
+    "number.min": "Le stock ne peut pas être négatif.",
+    "any.required": "Le stock est requis.",
+  }),
 });
 
 const updateProductSchema = Joi.object({
@@ -43,7 +49,12 @@ const updateProductSchema = Joi.object({
     "string.min": "La catégorie doit contenir au moins 1 caractère.",
   }),
   available: Joi.boolean().optional().messages({
-    "boolean.base": "La valeur de la disponibilité doit être bool",
+    "boolean.base": "La valeur de la disponibilité doit être booléenne.",
+  }),
+  stock: Joi.number().integer().min(0).optional().messages({
+    "number.base": "Le stock doit être un nombre.",
+    "number.integer": "Le stock doit être un nombre entier.",
+    "number.min": "Le stock ne peut pas être négatif.",
   }),
 })
   .min(1)
