@@ -14,7 +14,6 @@ const { hashToken } = require("../../utils/service.util");
 // Connexion utilisateur
 module.exports = async (req, res) => {
   try {
-    console.log("Tentative de connexion pour l'email :", req.body);
     const { mail, password } = req.body;
     if (!mail || !password) {
       return handleResponse(res, 400, "Email et mot de passe requis");
@@ -36,12 +35,14 @@ module.exports = async (req, res) => {
     const refreshToken = jwt.sign(payload, jwtConfig.secretRefresh, {
       expiresIn: jwtConfig.expiresRefreshToken,
     });
+
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
     await Token.create({
       userId: user._id,
       token_hash: hashToken(refreshToken),
       type: "refresh_token",
       createdAt: new Date(),
-      expiresAt: new Date(Date.now() + jwtConfig.expiresRefreshToken),
+      expiresAt: expiresAt,
     });
     res
       .cookie("accessToken", accessToken, cookieOptions(1000 * 60 * 60))
