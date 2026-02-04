@@ -1,43 +1,14 @@
-const express = require("express");
+// src/index.js
 const dotenv = require("dotenv");
-const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const connect = require("./config/db");
-const { swaggerUi, specs } = require("./config/swagger");
-const logger = require("./utils/logger.util");
-
-// variables d'environnement
 dotenv.config();
+const connect = require("./config/db");
+const logger = require("./utils/logger.util");
+const app = require("./app"); // Import de l'app configurée
 
-const app = express();
+// Variables d'environnement
 
 // Connexion à la base de données
 connect();
-
-// config des middlewares
-app.use(cookieParser());
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN, // L'origine autorisée
-    credentials: true,
-  })
-);
-app.use(bodyParser.json());
-app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.url}`);
-  next();
-});
-
-// Swagger
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
-
-// Routes
-app.use("/users", require("./routes/users"));
-app.use("/auth", require("./routes/authentification"));
-app.use("/products", require("./routes/products"));
-app.use("/orders", require("./routes/order"));
-app.set("trust proxy", 1); // obligatoire sur Render
 
 // Démarrage du serveur
 const PORT = process.env.APP_PORT || 5000;

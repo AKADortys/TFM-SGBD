@@ -18,7 +18,17 @@
     "start": "node src/index.js",
     "start:dev": "node --watch src/index.js",
     "seed": "node ./src/seeding.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watchAll --detectOpenHandles"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "verbose": true,
+    "setupFiles": [
+      "dotenv/config"
+    ]
   },
   "dependencies": {
     "@getbrevo/brevo": "^3.0.1",
@@ -39,5 +49,9 @@
     "swagger-ui-express": "^5.0.1",
     "validator": "^13.15.23",
     "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "supertest": "^7.2.2"
   }
 }

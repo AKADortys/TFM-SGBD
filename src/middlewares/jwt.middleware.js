@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const jwtConfig = require("../config/jwt");
 const Token = require("../models/Token");
+const { hashToken } = require("../utils/service.util");
 
 module.exports = async (req, res, next) => {
   try {
@@ -54,7 +55,7 @@ const refreshTokenFunction = async (refreshToken) => {
     const decoded = jwt.verify(refreshToken, jwtConfig.secretRefresh);
     const storedToken = await Token.findOne({
       userId: decoded.id,
-      token_hash: refreshToken,
+      token_hash: hashToken(refreshToken),
       type: "refresh_token",
       used: false,
     });
