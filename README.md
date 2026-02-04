@@ -1,9 +1,3 @@
-Voici une proposition de `README.md` entièrement révisée. Elle est professionnelle, structurée et reflète exactement ce qui est implémenté dans ton code (Architecture Service/Controller, Auth par Cookies, Swagger, Docker, etc.).
-
-Tu n'as plus qu'à copier-coller ce contenu dans ton fichier `README.md`.
-
----
-
 ````markdown
 # Au P'tit Vivo - Backend API
 
