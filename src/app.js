@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { swaggerUi, specs } = require("./config/swagger");
@@ -32,6 +33,11 @@ app.use("/users", require("./routes/users"));
 app.use("/auth", require("./routes/authentification"));
 app.use("/products", require("./routes/products"));
 app.use("/orders", require("./routes/order"));
+
+app.use(express.static(path.join(__dirname, "../front-build/browser")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../front-build/browser/index.html"));
+});
 
 app.set("trust proxy", 1);
 
