@@ -34,6 +34,8 @@ app.use("/auth", require("./routes/authentification"));
 app.use("/products", require("./routes/products"));
 app.use("/orders", require("./routes/order"));
 
+
+// Angular
 app.use(express.static(path.join(__dirname, "../front-build/browser")));
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../front-build/browser/index.html"));

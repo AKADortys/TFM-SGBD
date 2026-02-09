@@ -216,3 +216,26 @@
  *       500:
  *         description: Erreur serveur
  */
+
+/**
+ * @swagger
+ * /users/me:
+ *   get:
+ *     summary: Récupère l'utilisateur connecté
+ *     tags: [Utilisateurs]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Utilisateur récupéré avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Non authentifié
+ *       404:
+ *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
