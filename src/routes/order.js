@@ -8,6 +8,7 @@ const {
   apiLimiter,
   authLimiter,
 } = require("../middlewares/rate-limiter.middleware");
+const checkStoreStatus = require("../middlewares/checkStoreStatus");
 
 // Middleware d'authentification global
 router.use(tokenMdw);
@@ -20,7 +21,7 @@ router.get("/detail/:id", permissionsMdw, controller.detailOrder);
 router.get("/user/:id", permissionsMdw, controller.getByUser);
 router.get("/history", controller.getUserHist);
 router.get("/:id", controller.getById);
-router.post("/", authLimiter, controller.create);
+router.post("/", authLimiter, checkStoreStatus, controller.create);
 router.put("/:id", permissionsMdw, controller.update);
 router.delete("/:id", permissionsMdw, controller.remove);
 router.get("/stats/general", permissionsMdw, controller.generalStats);

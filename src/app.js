@@ -33,6 +33,7 @@ app.use("/users", require("./routes/users"));
 app.use("/auth", require("./routes/authentification"));
 app.use("/products", require("./routes/products"));
 app.use("/orders", require("./routes/order"));
+app.use("/config", require("./routes/config"));
 
 
 // Angular
