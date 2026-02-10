@@ -5,6 +5,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const tokenMdw = require("../middlewares/jwt.middleware");
 const permissionsMdw = require("../middlewares/permissions.middleware");
 const { apiLimiter } = require("../middlewares/rate-limiter.middleware");
+const checkStoreStatus = require("../middlewares/checkStoreStatus");
 
 router.use(mongoSanitize());
 router.use(apiLimiter);
