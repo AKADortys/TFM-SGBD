@@ -7,7 +7,22 @@ module.exports = {
         try {
             let config = await Config.findOne();
             if (!config) {
-                config = await Config.create({});
+                // Initialize with default opening hours (e.g. all open) if creating new
+                const defaultOpeningHours = [];
+                for (let i = 0; i <= 6; i++) {
+                    defaultOpeningHours.push({
+                        dayOfWeek: i,
+                        isOpen: true,
+                        morning: { start: "09:00", end: "12:00" },
+                        afternoon: { start: "14:00", end: "18:00" }
+                    });
+                }
+
+                config = await Config.create({
+                    isStoreOpen: true,
+                    openingHours: defaultOpeningHours,
+                    plannedClosures: []
+                });
             }
             return config;
         } catch (error) {
@@ -30,12 +45,17 @@ module.exports = {
             if (typeof data.isStoreOpen !== "undefined") {
                 config.isStoreOpen = data.isStoreOpen;
             }
-            if (data.closingSchedule) {
-                config.closingSchedule = data.closingSchedule;
+            if (data.openingHours) {
+                // We could merge or replace. Replacing is safer to avoid inconsistencies.
+                config.openingHours = data.openingHours;
             }
-            if (typeof data.reason !== "undefined") {
-                config.reason = data.reason;
+            if (data.plannedClosures) {
+                config.plannedClosures = data.plannedClosures;
             }
+
+            // Legacy fields - kept for now if needed, but primary logic moves to above
+            if (data.reason) { config.reason = data.reason; }
+            if (data.closingSchedule) { config.closingSchedule = data.closingSchedule; }
 
             await config.save();
             return config;
