@@ -9,7 +9,7 @@ const configSchema = new mongoose.Schema(
     openingHours: {
       type: [
         {
-          dayOfWeek: { type: Number, required: true }, // 0 (Sunday) - 6 (Saturday)
+          dayOfWeek: { type: Number, required: true },
           isOpen: { type: Boolean, default: true },
           morning: {
             start: { type: String, default: "09:00" },
@@ -33,13 +33,10 @@ const configSchema = new mongoose.Schema(
       ],
       default: [],
     },
-    // Deprecated but kept for backward compatibility if needed during migration, 
-    // though the implementation plan suggests replacing it. I will keep it but logic will use plannedClosures.
-    // reason: { type: String, default: null }, 
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("Config", configSchema);
