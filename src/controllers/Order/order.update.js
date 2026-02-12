@@ -16,10 +16,9 @@ module.exports = async (req, res) => {
     if (!existingOrder) {
       return handleResponse(res, 404, "Commande non trouvée");
     }
-
     // Vérification des droits d'accès
     if (
-      req.user.id !== existingOrder.userId?.toString() &&
+      req.user.id !== existingOrder.userId?._id?.toString() &&
       req.user.role !== "admin"
     ) {
       return handleResponse(res, 403, "Accès refusé");

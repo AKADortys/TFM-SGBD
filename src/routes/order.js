@@ -22,7 +22,7 @@ router.get("/user/:id", permissionsMdw, controller.getByUser);
 router.get("/history", controller.getUserHist);
 router.get("/:id", controller.getById);
 router.post("/", authLimiter, checkStoreStatus, controller.create);
-router.put("/:id", permissionsMdw, controller.update);
+router.put("/:id", controller.update);
 router.delete("/:id", permissionsMdw, controller.remove);
 router.get("/stats/general", permissionsMdw, controller.generalStats);
 router.get("/stats/by-date", permissionsMdw, controller.statsByDate);

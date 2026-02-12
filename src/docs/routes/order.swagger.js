@@ -105,6 +105,78 @@
  */
 /**
  * @swagger
+ * /orders/detail/{id}:
+ *   get:
+ *     summary: Récupère une commande détaillée par ID
+ *     description: Récupère les détails complets d'une commande, y compris les informations utilisateur et produits peuplées.
+ *     tags: [Commandes]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la commande
+ *     responses:
+ *       200:
+ *         description: Commande détaillée récupérée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     lastName:
+ *                       type: string
+ *                     mail:
+ *                       type: string
+ *                     phone:
+ *                       type: string
+ *                 deliveryAddress:
+ *                   type: object
+ *                   properties:
+ *                     street:
+ *                       type: string
+ *                     city:
+ *                       type: string
+ *                     zipCode:
+ *                       type: string
+ *                 status:
+ *                   type: string
+ *                 totalPrice:
+ *                   type: number
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 products:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       quantity:
+ *                         type: integer
+ *                       productDetails:
+ *                         $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: ID invalide
+ *       404:
+ *         description: Commande non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+/**
+ * @swagger
  * /orders/user/{id}:
  *   get:
  *     summary: Récupère les commandes d'un utilisateur
