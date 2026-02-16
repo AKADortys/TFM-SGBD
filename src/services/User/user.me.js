@@ -1,9 +1,10 @@
 const User = require("../../models/User");
-const { sanitizeUser, handleServiceError } = require("../../utils/service.util");
+const { sanitizeUser, decrypt, handleServiceError } = require("../../utils/service.util");
 
 module.exports = async (id) => {
     try {
         const user = await User.findById(id);
+        user.phone = decrypt(user.phone);
         if (!user) {
             return { message: "Utilisateur non trouvé" };
         }
