@@ -56,6 +56,12 @@ module.exports = {
       if (data.plannedClosures) {
         config.plannedClosures = data.plannedClosures;
       }
+      if (data.siteInfo) {
+        config.siteInfo = { ...config.siteInfo, ...data.siteInfo };
+      }
+      if (data.socials) {
+        config.socials = { ...config.socials, ...data.socials };
+      }
 
       await config.save();
       return config;

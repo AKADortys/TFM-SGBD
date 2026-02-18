@@ -31,6 +31,20 @@ const updateConfigSchema = Joi.object({
     isStoreOpen: Joi.boolean().optional(),
     openingHours: Joi.array().items(openingHoursSchema).unique('dayOfWeek').optional(),
     plannedClosures: Joi.array().items(plannedClosureSchema).optional(),
+    siteInfo: Joi.object({
+        address: Joi.string().allow('').optional(),
+        phone: Joi.string().allow('').optional(),
+        email: Joi.string().email().allow('').optional(),
+        description: Joi.string().allow('').optional(),
+        aboutUsContent: Joi.string().allow('').optional(),
+        _id: Joi.any().strip()
+    }).optional(),
+    socials: Joi.object({
+        facebook: Joi.string().allow('').optional(),
+        instagram: Joi.string().allow('').optional(),
+        twitter: Joi.string().allow('').optional(),
+        _id: Joi.any().strip()
+    }).optional(),
 
     // Allow and strip Mongoose specific fields at root level
     _id: Joi.any().strip(),

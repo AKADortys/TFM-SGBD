@@ -33,6 +33,18 @@ const configSchema = new mongoose.Schema(
       ],
       default: [],
     },
+    siteInfo: {
+      address: { type: String, default: "" },
+      phone: { type: String, default: "" },
+      email: { type: String, default: "" },
+      description: { type: String, default: "" }, // Pour le "À propos" court
+      aboutUsContent: { type: String, default: "" }, // Contenu long (texte ou HTML)
+    },
+    socials: {
+      facebook: { type: String, default: "" },
+      instagram: { type: String, default: "" },
+      twitter: { type: String, default: "" },
+    }
   },
   {
     timestamps: true,
