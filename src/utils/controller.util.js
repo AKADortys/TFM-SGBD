@@ -21,7 +21,7 @@ module.exports = {
         minSymbols: 0,
       })
     ) {
-      return "Le mot de passe doit faire au moins 8 caractères";
+      return "Le mot de passe doit faire au moins 8 caractères et contenir au moins une majuscule, une minuscule et un chiffre";
     }
     return null;
   },
