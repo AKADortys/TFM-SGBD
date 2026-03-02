@@ -14,6 +14,7 @@ module.exports = async (id) => {
     }
 
     user.isActive = true;
+    user.expireAt = undefined;
     await user.save();
     if (user.phone) {
       user.phone = decrypt(user.phone);

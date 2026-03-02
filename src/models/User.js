@@ -65,9 +65,15 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    expireAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 24 * 60 * 60 * 1000),
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
+
+userSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
 // Hashage du mot de passe avant enregistrement
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
