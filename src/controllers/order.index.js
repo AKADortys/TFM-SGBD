@@ -8,6 +8,8 @@ const update = require("./Order/order.update");
 const generalStats = require("./Order/order.generalStats");
 const statsByDate = require("./Order/order.statsByDate");
 const getUserHist = require("./Order/order.getUserHist");
+const createCheckoutSession = require("./Order/order.createCheckoutSession");
+const handleWebhook = require("./Order/order.webhook");
 
 module.exports = {
   create,
@@ -20,4 +22,6 @@ module.exports = {
   generalStats,
   statsByDate,
   getUserHist,
+  createCheckoutSession,
+  handleWebhook,
 };

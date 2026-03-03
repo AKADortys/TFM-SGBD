@@ -21,7 +21,6 @@ module.exports = {
     } catch (err) {
       logger.error("❌ Erreur envoi mail via Brevo API v3");
 
-      // Très important pour ton TFE : l'erreur est maintenant structurée différemment
       if (err.statusCode) {
         console.error(`Erreur API (${err.statusCode}):`, err.body);
       } else {

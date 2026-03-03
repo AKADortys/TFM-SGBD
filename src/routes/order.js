@@ -10,6 +10,9 @@ const {
 } = require("../middlewares/rate-limiter.middleware");
 const checkStoreStatus = require("../middlewares/checkStoreStatus");
 
+// Endpoint Stripe (Doit être avant le middleware d'authentification)
+router.post("/webhook", controller.handleWebhook);
+
 // Middleware d'authentification global
 router.use(tokenMdw);
 router.use(mongoSanitize());
@@ -26,5 +29,6 @@ router.put("/:id", controller.update);
 router.delete("/:id", permissionsMdw, controller.remove);
 router.get("/stats/general", permissionsMdw, controller.generalStats);
 router.get("/stats/by-date", permissionsMdw, controller.statsByDate);
+router.post("/checkout-session", controller.createCheckoutSession);
 
 module.exports = router;

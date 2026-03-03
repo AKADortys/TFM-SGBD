@@ -15,7 +15,7 @@ app.use(
     credentials: true,
   }),
 );
-app.use(bodyParser.json());
+app.use(bodyParser.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
 
 // Logger
 if (process.env.NODE_ENV !== "test") {

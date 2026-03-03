@@ -18,7 +18,7 @@ module.exports = {
       });
 
       if (process.env.MAIL_SANDBOX === "true") {
-        logger.info("[MAILBOX] mail simulé :" + token);
+        logger.info("[MAILBOX] mail simulé :\n" + token);
         return;
       }
       await brevoApi.send({
