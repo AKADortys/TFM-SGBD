@@ -1,5 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const logger = require('../../utils/logger.util');
+const Order = require('../../models/Order');
+const Product = require('../../models/Product');
 
 /**
  * Service pour gérer les Webhooks Stripe (Phase 2)
@@ -33,15 +35,55 @@ const handleWebhook = async (rawBody, signature) => {
 
             const customerEmail = session.customer_details?.email;
             const sessionId = session.id;
+            const orderId = session.metadata?.orderId;
 
             logger.info(`Paiement réussi pour la session ${sessionId}. Email du client: ${customerEmail}`);
 
-            // TODO: Implémenter la logique pour mettre à jour la base de données
-            // Exemple :
-            // await OrderModel.findOneAndUpdate(
-            //   { stripeSessionId: sessionId }, 
-            //   { status: 'Payée' }
-            // );
+            if (orderId) {
+                // Mise à jour du statut de la commande dans la base de données
+                try {
+                    const updatedOrder = await Order.findByIdAndUpdate(
+                        orderId,
+                        { status: 'Confirmée' },
+                        { new: true }
+                    );
+
+                    if (updatedOrder) {
+                        logger.info(`Commande ${orderId} validée avec succès en base de données.`);
+
+                        // --- Mise à jour du stock des produits ---
+                        try {
+                            const stockUpdatePromises = updatedOrder.products.map(async (item) => {
+                                // Décrémenter le stock
+                                const updatedProduct = await Product.findByIdAndUpdate(
+                                    item.productId,
+                                    { $inc: { stock: -item.quantity } },
+                                    { new: true }
+                                );
+
+                                // Si le stock tombe à 0 ou moins, on le rend indisponible (une autre sécurité en plus du hook Mongoose)
+                                if (updatedProduct && updatedProduct.stock <= 0) {
+                                    updatedProduct.available = false;
+                                    await updatedProduct.save();
+                                }
+                            });
+
+                            await Promise.all(stockUpdatePromises);
+                            logger.info(`Stocks mis à jour avec succès pour la commande ${orderId}.`);
+                        } catch (stockError) {
+                            // On loggue l'erreur pour ne pas faire planter Stripe mais alerter l'admin
+                            logger.error(`Erreur lors de la mise à jour des stocks (Commande ${orderId}): ${stockError.message}`);
+                        }
+                    } else {
+                        logger.warn(`Commande ${orderId} introuvable dans la base de données après paiement.`);
+                    }
+                } catch (dbError) {
+                    logger.error(`Erreur lors de la mise à jour de la commande ${orderId}: ${dbError.message}`);
+                    throw new Error(`Erreur DB: ${dbError.message}`);
+                }
+            } else {
+                logger.warn(`Aucun orderId trouvé dans les metadata de la session ${sessionId}`);
+            }
 
             break;
 
