@@ -11,7 +11,11 @@ const {
 const checkStoreStatus = require("../middlewares/checkStoreStatus");
 
 // Endpoint Stripe (Doit être avant le middleware d'authentification)
-router.post("/webhook", controller.handleWebhook);
+router.post(
+  "/webhook",
+  express.raw({ type: 'application/json' }),
+  controller.handleWebhook
+);
 
 // Middleware d'authentification global
 router.use(tokenMdw);

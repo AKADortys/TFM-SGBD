@@ -1,5 +1,5 @@
 const { create } = require("../../services/orders.index");
-const { getById, update } = require("../../services/product.index");
+const { getById, getByIds, update } = require("../../services/product.index");
 const mailService = require("../../services/mail.service");
 const { createOrderSchema } = require("../../dto/order.dto");
 const { handleResponse, isObjectId } = require("../../utils/controller.util");
@@ -16,14 +16,20 @@ module.exports = async (req, res) => {
 
     let { userId, products, deliveryAddress, status } = value;
     if (!userId) userId = req.user?.id;
+
+    // Optimisation N+1 : récupération de tous les produits en une seule requête
+    const productIds = products.map((p) => p.productId);
+    for (const id of productIds) {
+      if (isObjectId(id)) {
+        return handleResponse(res, 400, "ID produit invalide :" + id);
+      }
+    }
+
+    const existingProducts = await getByIds(productIds);
+
     for (const element of products) {
-      if (isObjectId(element.productId))
-        return handleResponse(
-          res,
-          400,
-          "ID produit invalide :" + element.productId,
-        );
-      const exist = await getById(element.productId);
+      const exist = existingProducts.find((p) => p._id.toString() === element.productId);
+
       if (!exist)
         return handleResponse(
           res,

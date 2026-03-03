@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const jwtConfig = require("../config/jwt");
 const Token = require("../models/Token");
+const User = require("../models/User");
 const { hashToken } = require("../utils/service.util");
 
 module.exports = async (req, res, next) => {
@@ -63,14 +64,18 @@ const refreshTokenFunction = async (refreshToken) => {
       return null;
     }
 
-    // Génération d'un nouvel access token avec les infos de l'utilisateur
+    // Récupérer l'utilisateur pour avoir ses données à jour 
+    const userInDb = await User.findById(decoded.id);
+    if (!userInDb) return null;
+
+    // Génération d'un nouvel access token avec les infos à jour de l'utilisateur
     const newAccessToken = jwt.sign(
       {
-        id: decoded.id,
-        role: decoded.role,
-        fullname: decoded.fullname,
-        mail: decoded.mail,
-      }, // Données du user à inclure
+        id: userInDb._id,
+        role: userInDb.role,
+        fullname: userInDb.fullname,
+        mail: userInDb.mail,
+      }, // Données fraiches du user à inclure
       jwtConfig.secret,
       { expiresIn: jwtConfig.expiresToken },
     );

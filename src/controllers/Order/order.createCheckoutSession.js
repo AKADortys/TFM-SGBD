@@ -1,5 +1,5 @@
 const orderServices = require("../../services/orders.index");
-const { getById } = require("../../services/product.index");
+const { getById, getByIds } = require("../../services/product.index");
 const { createOrderSchema } = require("../../dto/order.dto");
 const { handleResponse, isObjectId } = require("../../utils/controller.util");
 
@@ -27,13 +27,20 @@ const createCheckoutSession = async (req, res) => {
       );
     }
 
-    // 2. Vérification des produits et des stocks en Base de données
-    for (const element of products) {
-      if (isObjectId(element.productId)) {
-        return handleResponse(res, 400, "ID produit invalide :" + element.productId);
-      }
+    // 2. Vérification des produits et des stocks en Base de données (Optimisation N+1)
+    const productIds = products.map((p) => p.productId);
 
-      const exist = await getById(element.productId);
+    for (const id of productIds) {
+      if (isObjectId(id)) {
+        return handleResponse(res, 400, "ID produit invalide :" + id);
+      }
+    }
+
+    const existingProducts = await getByIds(productIds);
+
+    for (const element of products) {
+      const exist = existingProducts.find((p) => p._id.toString() === element.productId);
+
       if (!exist) {
         return handleResponse(res, 400, "Produit inexistant :" + element.productId);
       }
