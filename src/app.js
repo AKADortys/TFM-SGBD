@@ -15,7 +15,16 @@ app.use(
     credentials: true,
   }),
 );
-app.use(express.json());
+app.use(
+  express.json({
+    verify: (req, res, buf) => {
+      // On ne stocke le rawBody que si l'URL contient "webhook"
+      if (req.originalUrl.includes("/webhook")) {
+        req.rawBody = buf;
+      }
+    },
+  }),
+);
 
 // Logger
 if (process.env.NODE_ENV !== "test") {
@@ -34,7 +43,6 @@ app.use("/auth", require("./routes/authentification"));
 app.use("/products", require("./routes/products"));
 app.use("/orders", require("./routes/order"));
 app.use("/config", require("./routes/config"));
-
 
 // Angular
 app.use(express.static(path.join(__dirname, "../front-build/browser")));

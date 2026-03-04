@@ -7,13 +7,11 @@ const logger = require("../../utils/logger.util");
  */
 const handleWebhook = async (req, res) => {
   try {
-    const rawBody = req.body;
+    const rawBody = req.rawBody;
     const signature = req.headers["stripe-signature"];
 
     if (!rawBody) {
-      logger.error(
-        "rawBody manquant.",
-      );
+      logger.error("rawBody manquant.");
       return handleResponse(res, 400, "Bad Request: rawBody manquant");
     }
 
