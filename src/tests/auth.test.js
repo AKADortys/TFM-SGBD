@@ -1,5 +1,3 @@
-// src/tests/auth.test.js
-
 process.env.ENCRYPTION_KEY = "test-secret-key-32-bytes-long-required";
 process.env.PHONE_KEY = "test-phone-key";
 

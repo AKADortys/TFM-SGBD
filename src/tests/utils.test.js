@@ -1,4 +1,4 @@
-const serviceUtil = require("../utils/service.util"); // Vérifie le chemin exact
+const serviceUtil = require("../utils/service.util");
 
 describe("Utils: Service Util (Chiffrement)", () => {
   it("devrait chiffrer une chaîne de caractères", () => {

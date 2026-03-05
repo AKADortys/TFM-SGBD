@@ -21,7 +21,6 @@ describe("Routes /users", () => {
   });
 
   // --- INSCRIPTION (Souvent POST /users/register ou POST /users) ---
-  // Vérifie ta route exacte dans routes/users.js. J'assume ici POST /users/register
   describe("POST /userscle  ar", () => {
     it("devrait créer un nouvel utilisateur (201)", async () => {
       const newUser = {
@@ -90,8 +89,6 @@ describe("Routes /users", () => {
   // --- DELETE USER ---
   describe("DELETE /users/:id", () => {
     it("devrait supprimer un utilisateur (200)", async () => {
-      // Attention: Vérifie si ton export s'appelle 'remove' ou 'delete' dans user.index.js
-      // Souvent c'est 'remove' pour éviter le mot réservé 'delete'
       if (userController.remove) {
         userController.remove.mockImplementation((req, res) =>
           res.status(200).json({ message: "Deleted" }),
