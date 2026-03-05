@@ -452,3 +452,74 @@
  *       500:
  *         description: Erreur serveur
  */
+
+/**
+ * @swagger
+ * /orders/checkout-session:
+ *   post:
+ *     summary: Crée une session de paiement Stripe Checkout
+ *     description: Crée une session Checkout sur Stripe pour les produits demandés et renvoie l'URL de paiement.
+ *     tags: [Commandes]
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - products
+ *             properties:
+ *               deliveryAddress:
+ *                 type: string
+ *                 description: L'adresse de livraison de la commande
+ *               products:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - productId
+ *                     - quantity
+ *                   properties:
+ *                     productId:
+ *                       type: string
+ *                       description: ID MongoDB du produit
+ *                     quantity:
+ *                       type: integer
+ *                       description: Quantité commandée
+ *     responses:
+ *       200:
+ *         description: URL de redirection Stripe créée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     url:
+ *                       type: string
+ *                       description: L'URL Stripe Checkout vers laquelle rediriger le client
+ *       400:
+ *         description: Panier vide, produit introuvable ou stock insuffisant
+ *       500:
+ *         description: Erreur serveur
+ */
+
+/**
+ * @swagger
+ * /orders/webhook:
+ *   post:
+ *     summary: Réceptionne des événements Stripe (Webhook)
+ *     description: Endpoint asynchrone pour Stripe. Ne nécessite pas de JWT. Accepte le payload brut (rawBody) pour valider la signature cryptographique.
+ *     tags: [Commandes]
+ *     responses:
+ *       200:
+ *         description: Webhook reçu et traité avec succès
+ *       400:
+ *         description: Signature invalide ou données manquantes
+ */
