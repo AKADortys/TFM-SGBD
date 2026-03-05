@@ -18,7 +18,8 @@
     "start": "node src/index.js",
     "start:dev": "node --watch src/index.js",
     "seed": "node ./src/seeding.js",
-    "test": "jest --watchAll --detectOpenHandles"
+    "test": "jest --watchAll --detectOpenHandles",
+    "test:ci": "jest --ci --detectOpenHandles"
   },
   "jest": {
     "testEnvironment": "node",
