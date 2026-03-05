@@ -1,4 +1,3 @@
-// src/index.js
 const dotenv = require("dotenv");
 dotenv.config();
 const connect = require("./config/db");
