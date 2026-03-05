@@ -15,6 +15,10 @@ jest.mock("../middlewares/permissions.middleware", () => (req, res, next) => {
   next();
 });
 
+jest.mock("../middlewares/checkStoreStatus", () => (req, res, next) => {
+  next();
+});
+
 jest.mock("../controllers/order.index");
 
 describe("Routes /orders", () => {
@@ -73,6 +77,44 @@ describe("Routes /orders", () => {
 
       expect(res.statusCode).toBe(200);
       expect(orderController.remove).toHaveBeenCalled();
+    });
+  });
+
+  // --- POST /orders/checkout-session (Stripe Checkout) ---
+  describe("POST /orders/checkout-session", () => {
+    it("devrait créer une session Stripe Checkout et retourner l'URL (200)", async () => {
+      const mockPayload = {
+        products: [{ productId: "p1", quantity: 2, price: 10, name: "Product 1" }],
+        deliveryAddress: "123 Test Street",
+      };
+
+      orderController.createCheckoutSession.mockImplementation((req, res) =>
+        res.status(200).json({ message: "Session de paiement créée", data: { url: "https://checkout.stripe.com/test-url" } }),
+      );
+
+      const res = await request(app).post("/orders/checkout-session").send(mockPayload);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.data.url).toBe("https://checkout.stripe.com/test-url");
+      expect(orderController.createCheckoutSession).toHaveBeenCalled();
+    });
+  });
+
+  // --- POST /orders/webhook (Stripe Webhook) ---
+  describe("POST /orders/webhook", () => {
+    it("devrait traiter le webhook Stripe avec succès (200)", async () => {
+      orderController.handleWebhook.mockImplementation((req, res) =>
+        res.status(200).json({ message: "Webhook received" }),
+      );
+
+      // On simule une requête brute de webhook Stripe
+      const res = await request(app)
+        .post("/orders/webhook")
+        .set("stripe-signature", "t=123,v1=abc")
+        .send(Buffer.from(JSON.stringify({ type: "checkout.session.completed", data: {} })));
+
+      expect(res.statusCode).toBe(200);
+      expect(orderController.handleWebhook).toHaveBeenCalled();
     });
   });
 });
