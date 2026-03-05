@@ -35,3 +35,4 @@ jobs:
           ENCRYPTION_KEY: "une-clef-secrete-bidon-de-32-caracteres"
           ENCRYPTION_IV: "un-iv-secret-bidon-16-car"
           PHONE_KEY: "clef-phone-bidon"
+          STRIPE_SECRET_KEY: "sk_test_bidon"
