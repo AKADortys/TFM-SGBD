@@ -18,7 +18,7 @@ app.use(
 app.use(
   express.json({
     verify: (req, res, buf) => {
-      // On ne stocke le rawBody que si l'URL contient "webhook"
+      // On ne stocke le rawBody que pour "webhook"
       if (req.originalUrl.includes("/webhook")) {
         req.rawBody = buf;
       }
