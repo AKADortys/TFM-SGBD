@@ -21,8 +21,10 @@ Ce projet sert de backend pour l'application web, gérant l'authentification, le
 
 - **Utilisateurs :** CRUD complet. Les clients gèrent leurs propres données, les admins ont une vue globale. Chiffrement des données sensibles (ex: téléphone).
 - **Produits :** Gestion du catalogue (Ajout, modification, archivage de plats).
-- **Commandes :**
-  - Prise de commande client.
+- **Commandes & Paiements :**
+  - Prise de commande client avec vérification de disponibilité (Anti-Spoofing).
+  - Paiement sécurisé via **Stripe Checkout**.
+  - Validation asynchrone des commandes par **Webhooks Stripe** (gestion robuste des stocks).
   - Suivi des statuts (En attente, Confirmée, Prête, etc.).
   - Historique des commandes.
 
@@ -95,6 +97,10 @@ EMAIL_SENDER=no-reply@auptitvivo.com
 ENCRYPTION_KEY=votre_cle_32_caracteres_hex
 IV_LENGTH=16
 
+# Paiements (Stripe)
+STRIPE_SECRET_KEY=votre_cle_secrete_stripe
+STRIPE_WEBHOOK_SECRET=votre_webhook_secret_stripe
+FRONTEND_URL=http://localhost:5173
 ```
 
 ### 4. Peupler la base de données (Seeding)
