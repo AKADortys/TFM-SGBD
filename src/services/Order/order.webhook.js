@@ -53,7 +53,6 @@ const handleWebhook = async (rawBody, signature) => {
       );
       return { success: true }; // Évite la double décrémentation des stocks
     }
-
     // ==========================================
     // 2. TRANSACTION MONGODB (Propriétés ACID)
     // ==========================================
@@ -61,14 +60,13 @@ const handleWebhook = async (rawBody, signature) => {
     dbSession.startTransaction();
 
     try {
-      // Mise à jour du statut
-      order.status = "Confirmée";
-      await order.save({ session: dbSession });
-
-      // Mise à jour atomique des stocks avec un pipeline d'agrégation (MongoDB 4.2+)
-      const stockUpdatePromises = order.products.map((item) => {
-        return Product.updateOne(
-          { _id: item.productId },
+      // Mise à jour atomique des stocks avec vérification préalable
+      for (const item of order.products) {
+        const result = await Product.updateOne(
+          {
+            _id: item.productId,
+            stock: { $gte: item.quantity }, // CONDITION CLÉ : Le stock DOIT être supérieur ou égal à la quantité demandée
+          },
           [
             // Étape 1 : Décrémenter le stock
             { $set: { stock: { $subtract: ["$stock", item.quantity] } } },
@@ -77,9 +75,18 @@ const handleWebhook = async (rawBody, signature) => {
           ],
           { session: dbSession },
         );
-      });
 
-      await Promise.all(stockUpdatePromises);
+        // Si modifiedCount est 0, le produit n'existe plus OU le stock est devenu insuffisant entre-temps
+        if (result.modifiedCount === 0) {
+          throw new Error(
+            `OversellingError: Stock insuffisant pour le produit ${item.productId}`,
+          );
+        }
+      }
+
+      // Si toutes les vérifications passent, on confirme la commande
+      order.status = "Confirmée";
+      await order.save({ session: dbSession });
 
       // Validation de la transaction
       await dbSession.commitTransaction();
@@ -87,14 +94,42 @@ const handleWebhook = async (rawBody, signature) => {
         `Commande ${orderId} validée et stocks mis à jour (Transaction OK).`,
       );
     } catch (dbError) {
-      // Annulation en cas d'erreur
+      // Annulation de TOUTE la transaction (les stocks ne sont pas touchés)
       await dbSession.abortTransaction();
+
+      // Gestion spécifique de l'erreur de survente
+      if (dbError.message.includes("OversellingError")) {
+        logger.error(
+          `Survente détectée pour la commande ${orderId}. Lancement de la procédure d'annulation.`,
+        );
+
+        // 1. Mettre la commande en statut "Annulée" hors transaction
+        order.status = "Annulée";
+        await order.save(); // On sauvegarde hors de la session annulée
+
+        // 2. Rembourser automatiquement le client via Stripe
+        if (session.payment_intent) {
+          await stripe.refunds.create({
+            payment_intent: session.payment_intent,
+            reason: "requested_by_customer", // ou laisser vide
+          });
+          logger.info(
+            `Remboursement Stripe effectué pour la commande ${orderId}`,
+          );
+        }
+
+        // 3. (Optionnel) Envoyer un mail au client pour s'excuser de la rupture de stock
+        // await mailService.stockError(order, user);
+
+        return { success: true }; // On dit à Stripe que c'est OK pour qu'il ne renvoie pas le webhook
+      }
+
+      // Si c'est une autre erreur DB critique, on propage
       logger.error(
         `Erreur DB (Transaction annulée) pour la commande ${orderId}: ${dbError.message}`,
       );
       throw new Error(`Erreur critique de base de données: ${dbError.message}`);
     } finally {
-      // On ferme toujours la session
       dbSession.endSession();
     }
 
