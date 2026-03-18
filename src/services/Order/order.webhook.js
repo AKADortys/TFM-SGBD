@@ -38,6 +38,13 @@ const handleWebhook = async (rawBody, signature) => {
       return { success: true }; // On retourne true pour que Stripe arrête d'essayer
     }
 
+    if (session.payment_status !== "paid") {
+      logger.info(
+        `Session ${sessionId} terminée mais paiement non validé (statut: ${session.payment_status}).`
+      );
+      return { success: true }; 
+    }
+
     // ==========================================
     // 1. VÉRIFICATION D'IDEMPOTENCE
     // ==========================================
@@ -149,6 +156,23 @@ const handleWebhook = async (rawBody, signature) => {
       logger.error(
         `Échec de l'envoi de l'email pour la commande ${orderId}: ${mailError.message}`,
       );
+    }
+  } else if (event.type === "checkout.session.expired") {
+    const session = event.data.object;
+    const orderId = session.metadata?.orderId;
+    if (orderId) {
+      try {
+        const order = await Order.findById(orderId);
+        if (order && order.status === "En attente") {
+          order.status = "Annulée";
+          await order.save();
+          logger.info(
+            `Session Stripe expirée (checkout.session.expired). La commande ${orderId} en attente a été annulée.`
+          );
+        }
+      } catch (err) {
+        logger.error(`Erreur lors de l'annulation de la commande expirée ${orderId}: ${err.message}`);
+      }
     }
   } else {
     logger.info(`Événement Stripe non géré ignoré: ${event.type}`);

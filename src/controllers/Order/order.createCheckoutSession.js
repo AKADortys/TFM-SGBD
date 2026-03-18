@@ -26,8 +26,19 @@ const createCheckoutSession = async (req, res) => {
       );
     }
 
+    // Regrouper les produits identiques pour éviter le contournement des stocks
+    const aggregatedProducts = {};
+    for (const p of products) {
+      if (aggregatedProducts[p.productId]) {
+        aggregatedProducts[p.productId].quantity += p.quantity;
+      } else {
+        aggregatedProducts[p.productId] = { ...p };
+      }
+    }
+    const groupedProducts = Object.values(aggregatedProducts);
+
     // 2. Vérification des produits et des stocks en Base de données (Optimisation N+1)
-    const productIds = products.map((p) => p.productId);
+    const productIds = groupedProducts.map((p) => p.productId);
 
     for (const id of productIds) {
       if (isObjectId(id)) {
@@ -37,7 +48,7 @@ const createCheckoutSession = async (req, res) => {
 
     const existingProducts = await getByIds(productIds);
 
-    for (const element of products) {
+    for (const element of groupedProducts) {
       const exist = existingProducts.find((p) => p._id.toString() === element.productId);
 
       if (!exist) {
@@ -58,7 +69,7 @@ const createCheckoutSession = async (req, res) => {
     }
 
     // 3. Appel au service pour générer la session avec les vraies données
-    const url = await orderServices.createCheckoutSession(products, deliveryAddress, userId, userEmail);
+    const url = await orderServices.createCheckoutSession(groupedProducts, deliveryAddress, userId, userEmail);
 
     // 4. On renvoie l'URL au front-end Angular
     return handleResponse(res, 200, "Session de paiement créée", { url });
