@@ -23,15 +23,6 @@ module.exports = async (orderId) => {
       { $unwind: "$user" },
       { $unwind: "$products" },
       {
-        $lookup: {
-          from: "products",
-          localField: "products.productId",
-          foreignField: "_id",
-          as: "productDetails",
-        },
-      },
-      { $unwind: "$productDetails" },
-      {
         $group: {
           _id: "$_id",
           user: { $first: "$user" },
@@ -42,8 +33,10 @@ module.exports = async (orderId) => {
           updatedAt: { $first: "$updatedAt" },
           products: {
             $push: {
+              productId: "$products.productId",
+              productName: "$products.productName",
               quantity: "$products.quantity",
-              productDetails: "$productDetails",
+              price: "$products.price",
             },
           },
         },

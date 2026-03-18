@@ -8,7 +8,6 @@ const createCheckoutSession = async (req, res) => {
     // 1. Validation du body avec le DTO (allowUnknown pour accepter "name" du front-end sans bloquer)
     const { error, value } = createOrderSchema.validate(req.body, {
       abortEarly: false,
-      allowUnknown: true,
     });
 
     if (error) {
@@ -55,7 +54,7 @@ const createCheckoutSession = async (req, res) => {
 
       // SÉCURITÉ : on écrase le prix et le nom envoyés par le front par la réalité de la base de données
       element.price = exist.price;
-      element.name = exist.label;
+      element.productName = exist.label;
     }
 
     // 3. Appel au service pour générer la session avec les vraies données

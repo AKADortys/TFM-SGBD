@@ -9,6 +9,7 @@ const createCheckoutSession = async (products, deliveryAddress, userId, userEmai
     userId,
     products: products.map(item => ({
       productId: item.productId,
+      productName: item.productName,
       quantity: item.quantity,
       price: item.price
     })),
@@ -26,7 +27,7 @@ const createCheckoutSession = async (products, deliveryAddress, userId, userEmai
       price_data: {
         currency: "eur",
         product_data: {
-          name: item.name,
+          name: item.productName,
         },
         unit_amount: Math.round(item.price * 100), // Stripe exige des centimes entiers
       },

@@ -16,6 +16,11 @@ const productSchema = Joi.object({
       "any.invalid": "L'ID du produit est invalide.",
     }),
 
+  productName: Joi.string().required().messages({
+    "string.base": "Le nom du produit doit être une chaîne de caractères.",
+    "any.required": "Le nom du produit est requis.",
+  }),
+
   quantity: Joi.number().integer().positive().required().messages({
     "number.base": "La quantité doit être un nombre.",
     "number.positive": "La quantité doit être un nombre positif.",
