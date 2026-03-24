@@ -3,6 +3,9 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+const { apiLimiter } = require("./middlewares/rate-limiter.middleware");
 const { swaggerUi, specs } = require("./config/swagger");
 const logger = require("./utils/logger.util");
 
@@ -15,6 +18,15 @@ app.use(
     credentials: true,
   }),
 );
+
+// Sécurité
+app.use(helmet({
+  contentSecurityPolicy: false, // souvent nécessaire pour swagger ou dev
+  crossOriginEmbedderPolicy: false
+}));
+app.use(mongoSanitize());
+app.use(apiLimiter);
+
 app.use(
   express.json({
     verify: (req, res, buf) => {

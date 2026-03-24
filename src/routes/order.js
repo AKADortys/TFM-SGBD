@@ -2,12 +2,8 @@ const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/order.index");
 const tokenMdw = require("../middlewares/jwt.middleware");
-const mongoSanitize = require("express-mongo-sanitize");
 const permissionsMdw = require("../middlewares/permissions.middleware");
-const {
-  apiLimiter,
-  authLimiter,
-} = require("../middlewares/rate-limiter.middleware");
+const { authLimiter } = require("../middlewares/rate-limiter.middleware");
 const checkStoreStatus = require("../middlewares/checkStoreStatus");
 
 // Endpoint Stripe (Doit être avant le middleware d'authentification)
@@ -15,8 +11,6 @@ router.post("/webhook", controller.handleWebhook);
 
 // Middleware d'authentification global
 router.use(tokenMdw);
-router.use(mongoSanitize());
-router.use(apiLimiter);
 
 // Routes protégées par permissionsMdw
 router.get("/", permissionsMdw, controller.getOrders);
@@ -29,6 +23,6 @@ router.put("/:id", controller.update);
 router.delete("/:id", permissionsMdw, controller.remove);
 router.get("/stats/general", permissionsMdw, controller.generalStats);
 router.get("/stats/by-date", permissionsMdw, controller.statsByDate);
-router.post("/checkout-session", controller.createCheckoutSession);
+router.post("/checkout-session", checkStoreStatus, controller.createCheckoutSession);
 
 module.exports = router;

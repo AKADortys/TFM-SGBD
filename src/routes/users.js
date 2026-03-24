@@ -3,13 +3,8 @@ const router = express.Router();
 const controller = require("../controllers/user.index");
 const tokenMdw = require("../middlewares/jwt.middleware");
 const permissionsMdw = require("../middlewares/permissions.middleware");
-const {
-  apiLimiter,
-  authLimiter,
-} = require("../middlewares/rate-limiter.middleware");
-const mongoSanitize = require("express-mongo-sanitize");
-router.use(mongoSanitize());
-router.use(apiLimiter);
+const { authLimiter } = require("../middlewares/rate-limiter.middleware");
+
 router.get("/", tokenMdw, permissionsMdw, controller.getUsers);
 router.post("/", authLimiter, controller.create);
 router.get("/me", tokenMdw, controller.me);
