@@ -17,6 +17,7 @@ router.get("/", permissionsMdw, controller.getOrders);
 router.get("/detail/:id", permissionsMdw, controller.detailOrder);
 router.get("/user/:id", permissionsMdw, controller.getByUser);
 router.get("/history", controller.getUserHist);
+router.get("/checkout-session/:sessionId/verify", controller.verifyCheckoutSession); // Added endpoint
 router.get("/:id", controller.getById);
 router.post("/", authLimiter, checkStoreStatus, controller.create);
 router.put("/:id", controller.update);

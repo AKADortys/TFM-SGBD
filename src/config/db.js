@@ -4,12 +4,12 @@ const logger = require("../utils/logger.util");
 const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
-      authSource: "admin", // Vérifie si nécessaire
+      authSource: "admin",
     });
     logger.info("✅ Connected to MongoDB");
   } catch (error) {
     logger.error("❌ Failed to connect to MongoDB:", error);
-    process.exit(1); // Quitter l'application en cas d'échec
+    process.exit(1);
   }
 };
 

@@ -45,8 +45,6 @@ const updateConfigSchema = Joi.object({
         twitter: Joi.string().allow('').optional(),
         _id: Joi.any().strip()
     }).optional(),
-
-    // Allow and strip Mongoose specific fields at root level
     _id: Joi.any().strip(),
     createdAt: Joi.any().strip(),
     updatedAt: Joi.any().strip(),

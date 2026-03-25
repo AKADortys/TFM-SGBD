@@ -8,10 +8,10 @@ const { authLimiter } = require("../middlewares/rate-limiter.middleware");
 router.get("/", tokenMdw, permissionsMdw, controller.getUsers);
 router.post("/", authLimiter, controller.create);
 router.get("/me", tokenMdw, controller.me);
+router.get("/stats/general", tokenMdw, permissionsMdw, controller.generalStats);
 router.get("/:id", tokenMdw, permissionsMdw, controller.getById);
 router.put("/:id", tokenMdw, permissionsMdw, controller.update);
 router.delete("/:id", tokenMdw, permissionsMdw, controller.remove);
-router.get("/stats/general", tokenMdw, permissionsMdw, controller.generalStats);
 
 
 module.exports = router;
