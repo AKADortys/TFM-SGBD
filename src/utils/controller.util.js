@@ -49,7 +49,7 @@ module.exports = {
   },
   // Gestion des réponses standardisées
   handleResponse: (res, status, message, data = null) => {
-    const payload = { message };
+    const payload = { success: status >= 200 && status < 300, message };
     if (data !== null) payload.data = data;
     logger.info(`Response ${status}: ${message}`);
     return res.status(status).json(payload);
