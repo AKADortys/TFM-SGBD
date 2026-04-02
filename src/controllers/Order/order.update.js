@@ -121,7 +121,8 @@ module.exports = async (req, res) => {
       totalPrice,
     };
 
-    const updatedOrder = await orderService.update(id, updatedFields);
+    const io = req.app.get("io");
+    const updatedOrder = await orderService.update(id, updatedFields, io);
 
     if (!updatedOrder) {
       return handleResponse(res, 404, "Commande non trouvée");

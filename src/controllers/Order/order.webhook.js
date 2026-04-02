@@ -21,7 +21,8 @@ const handleWebhook = async (req, res) => {
     }
 
     // Appel au service
-    await webhookService(rawBody, signature);
+    const io = req.app.get("io");
+    await webhookService(rawBody, signature, io);
 
     // Stripe attend une réponse 200 OK pour confirmer la réception
     return handleResponse(res, 200, "Webhook received", {});

@@ -1,8 +1,11 @@
 const { Server } = require("socket.io");
 const http = require("http");
+const logger = require("../utils/logger.util");
+
 module.exports = (app) => {
   // Création du serveur HTTP à partir de l'app Express
   const server = http.createServer(app);
+
   const io = new Server(server, {
     cors: {
       origin: process.env.CORS_ORIGIN,
@@ -10,6 +13,7 @@ module.exports = (app) => {
       credentials: true,
     },
   });
+
   // Partager l'instance 'io' avec toute l'application Express
   app.set("io", io);
 
@@ -26,4 +30,6 @@ module.exports = (app) => {
       logger.info(`Client déconnecté: ${socket.id}`);
     });
   });
+
+  return server;
 };

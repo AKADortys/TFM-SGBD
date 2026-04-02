@@ -9,7 +9,7 @@ const { getUserById } = require("../user.index");
 /**
  * Service pour gérer les Webhooks Stripe (Sécurisé & Idempotent)
  */
-const handleWebhook = async (rawBody, signature) => {
+const handleWebhook = async (rawBody, signature, io) => {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
   if (!webhookSecret) {
@@ -100,6 +100,12 @@ const handleWebhook = async (rawBody, signature) => {
       logger.info(
         `Commande ${orderId} validée et stocks mis à jour (Transaction OK).`,
       );
+
+      // Notification WebSockets via Socket.io
+      if (io) {
+        io.emit('admin_new_order', { orderId: order._id, status: order.status });
+        io.to(`user_${order.userId}`).emit('order_status_updated', { orderId: order._id, status: order.status });
+      }
     } catch (dbError) {
       // Annulation de TOUTE la transaction (les stocks ne sont pas touchés)
       await dbSession.abortTransaction();
