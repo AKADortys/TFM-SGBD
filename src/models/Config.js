@@ -40,6 +40,13 @@ const configSchema = new mongoose.Schema(
       description: { type: String, default: "" }, // Pour le "À propos" court
       aboutUsContent: { type: String, default: "" }, // Contenu long (texte ou HTML)
     },
+    deliveryArea: {
+      center: {
+        lat: { type: Number, default: 50.7436 },
+        lng: { type: Number, default: 3.2241 },
+      },
+      radiusInMeters: { type: Number, default: 2000 },
+    },
     socials: {
       facebook: { type: String, default: "" },
       instagram: { type: String, default: "" },

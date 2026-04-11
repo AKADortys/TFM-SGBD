@@ -45,6 +45,15 @@ const updateConfigSchema = Joi.object({
         twitter: Joi.string().allow('').optional(),
         _id: Joi.any().strip()
     }).optional(),
+    deliveryArea: Joi.object({
+        center: Joi.object({
+            lat: Joi.number().required(),
+            lng: Joi.number().required(),
+            _id: Joi.any().strip()
+        }).optional(),
+        radiusInMeters: Joi.number().min(0).optional(),
+        _id: Joi.any().strip()
+    }).optional(),
     _id: Joi.any().strip(),
     createdAt: Joi.any().strip(),
     updatedAt: Joi.any().strip(),

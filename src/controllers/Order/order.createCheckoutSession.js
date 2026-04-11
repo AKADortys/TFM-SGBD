@@ -1,7 +1,8 @@
 const orderServices = require("../../services/orders.index");
 const { getById, getByIds } = require("../../services/product.index");
 const { createOrderSchema } = require("../../dto/order.dto");
-const { handleResponse, isObjectId } = require("../../utils/controller.util");
+const { handleResponse, isObjectId, calculateDistance } = require("../../utils/controller.util");
+const configService = require("../../services/Config/config.service");
 
 const createCheckoutSession = async (req, res) => {
   try {
@@ -17,6 +18,27 @@ const createCheckoutSession = async (req, res) => {
     const { products, deliveryAddress } = value;
     const userEmail = req.user.mail;
     const userId = req.user._id || req.user.id;
+
+    // Optional: Validation de la distance géographique si une adresse est fournie
+    if (deliveryAddress && deliveryAddress.coordinates) {
+      const config = await configService.getConfig();
+      if (config && config.deliveryArea && config.deliveryArea.center) {
+        const distance = calculateDistance(
+          config.deliveryArea.center.lat,
+          config.deliveryArea.center.lng,
+          deliveryAddress.coordinates.lat,
+          deliveryAddress.coordinates.lng
+        );
+        const radius = config.deliveryArea.radiusInMeters || 2000;
+        if (distance > radius) {
+          return handleResponse(
+            res,
+            400,
+            `L'adresse de livraison est en dehors de notre zone d'intervention.`
+          );
+        }
+      }
+    }
 
     if (!products || products.length === 0) {
       return handleResponse(

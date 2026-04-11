@@ -55,11 +55,33 @@ const createOrderSchema = Joi.object({
     "any.required": "Le tableau des produits est requis.",
   }),
 
-  deliveryAddress: Joi.string().min(10).optional().messages({
-    "string.base": "L'adresse de livraison doit être une chaîne de caractères.",
-    "string.min":
-      "L'adresse de livraison doit contenir au moins 10 caractères.",
-    "any.required": "L'adresse de livraison est requise.",
+  deliveryAddress: Joi.object({
+    street: Joi.string().required().messages({
+      "any.required": "La rue de livraison est requise.",
+      "string.base": "La rue doit être une chaîne de caractères.",
+    }),
+    city: Joi.string().required().messages({
+      "any.required": "La ville de livraison est requise.",
+      "string.base": "La ville doit être une chaîne de caractères.",
+    }),
+    zipCode: Joi.string().required().messages({
+      "any.required": "Le code postal est requis.",
+      "string.base": "Le code postal doit être une chaîne de caractères.",
+    }),
+    coordinates: Joi.object({
+      lat: Joi.number().required().messages({
+        "any.required": "La latitude est requise.",
+        "number.base": "La latitude doit être un nombre.",
+      }),
+      lng: Joi.number().required().messages({
+        "any.required": "La longitude est requise.",
+        "number.base": "La longitude doit être un nombre.",
+      }),
+    }).required().messages({
+      "any.required": "Les coordonnées de livraison sont requises.",
+    }),
+  }).optional().messages({
+    "object.base": "L'adresse de livraison doit être un objet complet.",
   }),
   status: Joi.string()
     .valid(
@@ -96,10 +118,26 @@ const updateOrderSchema = Joi.object({
     "array.min": "Le tableau des produits doit contenir au moins un produit.",
   }),
 
-  deliveryAddress: Joi.string().min(10).optional().messages({
-    "string.base": "L'adresse de livraison doit être une chaîne de caractères.",
-    "string.min":
-      "L'adresse de livraison doit contenir au moins 10 caractères.",
+  deliveryAddress: Joi.object({
+    street: Joi.string().optional().messages({
+      "string.base": "La rue doit être une chaîne de caractères.",
+    }),
+    city: Joi.string().optional().messages({
+      "string.base": "La ville doit être une chaîne de caractères.",
+    }),
+    zipCode: Joi.string().optional().messages({
+      "string.base": "Le code postal doit être une chaîne de caractères.",
+    }),
+    coordinates: Joi.object({
+      lat: Joi.number().optional().messages({
+        "number.base": "La latitude doit être un nombre.",
+      }),
+      lng: Joi.number().optional().messages({
+        "number.base": "La longitude doit être un nombre.",
+      }),
+    }).optional(),
+  }).optional().messages({
+    "object.base": "L'adresse de livraison doit être un objet complet.",
   }),
   status: Joi.string()
     .valid(

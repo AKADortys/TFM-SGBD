@@ -110,4 +110,18 @@ module.exports = {
 
     return { isOpen: true };
   },
+  // Calcul de la distance via la formule Haversine
+  calculateDistance: (lat1, lon1, lat2, lon2) => {
+    const R = 6371e3; // Rayon de la terre en mètres
+    const P = Math.PI / 180;
+    const a =
+      0.5 -
+      Math.cos((lat2 - lat1) * P) / 2 +
+      (Math.cos(lat1 * P) *
+        Math.cos(lat2 * P) *
+        (1 - Math.cos((lon2 - lon1) * P))) /
+        2;
+    return R * 2 * Math.asin(Math.sqrt(a));
+  },
 };
+
