@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
       return handleResponse(res, 403, "Accès refusé");
     }
 
-    const modifiableStatuses = ["En attente", "Confirmée"];
+    const modifiableStatuses = ["En attente", "Payée"];
     if (!modifiableStatuses.includes(existingOrder.status)) {
       return handleResponse(
         res,
@@ -133,7 +133,7 @@ module.exports = async (req, res) => {
     // Notifications mail
     const user = await userService.getUserById(updatedOrder.userId);
     if (user) {
-      if (updatedFields.status === "Accepté") {
+      if (updatedFields.status === "En préparation") {
         await mailService.confirmedOrder(updatedOrder, user);
       }
       if (updatedFields.status === "Refusée") {

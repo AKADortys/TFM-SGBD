@@ -76,7 +76,7 @@ module.exports = {
         url_profil: process.env.FRONT_BASE_URL + "/profile",
       });
       if (process.env.MAIL_SANDBOX === "true") {
-        logger.info("[MAILBOX] mail simulé ! commande client\n" + order);
+        logger.info("[MAILBOX] mail simulé ! commande client\n" + order._id);
       } else {
         await brevoApi.send({
           sender: { email: process.env.ADMIN_MAIL, name: "Au Ptit Vivo" },
@@ -114,7 +114,6 @@ module.exports = {
   },
 
   confirmedOrder: async (order, user) => {
-    console.log(order, user);
     try {
       const html = await renderHtml(templatePath("order-confirmed.ejs"), {
         title: "Votre commande a été confirmée !",
@@ -123,7 +122,7 @@ module.exports = {
         url_profil: process.env.FRONT_BASE_URL + "/profile",
       });
       if (process.env.MAIL_SANDBOX === "true") {
-        logger.info("[MAILBOX] mail simulé ! commande acceptée\n" + order);
+        logger.info("[MAILBOX] mail simulé ! commande acceptée\n" + order._id);
         return;
       }
       await brevoApi.send({
@@ -149,7 +148,7 @@ module.exports = {
         url_profil: process.env.FRONT_BASE_URL + "/profile",
       });
       if (process.env.MAIL_SANDBOX === "true") {
-        logger.info("[MAILBOX] mail simulé ! commande refusée\n" + order);
+        logger.info("[MAILBOX] mail simulé ! commande refusée\n" + order._id);
         return;
       }
       await brevoApi.send({

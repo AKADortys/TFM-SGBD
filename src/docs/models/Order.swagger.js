@@ -34,8 +34,8 @@
  *           description: Adresse de livraison
  *         status:
  *           type: string
- *           enum: ["En attente", "Confirmée", "Accepté", "Refusée", "Annulée", "Complétée"]
- *           default: "Confirmée"
+ *           enum: ["En attente", "Payée", "En préparation", "Refusée", "Annulée", "Terminée"]
+ *           default: "Payée"
  *           description: Statut de la commande
  *         totalPrice:
  *           type: number

@@ -64,7 +64,7 @@ mongoose
             { productId: createdProducts[4]._id, productName: createdProducts[4].label, quantity: 2, price: createdProducts[4].price }
           ],
           deliveryAddress: "Rue de la Faim 12, Bruxelles",
-          status: "Confirmée",
+          status: "Payée",
           totalPrice: (createdProducts[0].price * 2) + (createdProducts[4].price * 2)
         },
         {
@@ -83,7 +83,7 @@ mongoose
             { productId: createdProducts[2]._id, productName: createdProducts[2].label, quantity: 3, price: createdProducts[2].price }
           ],
           deliveryAddress: "En magasin",
-          status: "Complétée",
+          status: "Terminée",
           totalPrice: createdProducts[2].price * 3
         }
       ];

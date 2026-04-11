@@ -29,7 +29,7 @@
  *         name: status
  *         schema:
  *           type: string
- *           enum: ["En attente", "Confirmée", "Accepté", "Refusée", "Annulée", "Complétée"]
+ *           enum: ["En attente", "Payée", "En préparation", "Refusée", "Annulée", "Terminée"]
  *         description: Filtrer par statut de commande
  *       - in: query
  *         name: productId
@@ -206,7 +206,7 @@
  *         name: status
  *         schema:
  *           type: string
- *           enum: ["En attente", "Confirmée", "Accepté", "Refusée", "Annulée", "Complétée"]
+ *           enum: ["En attente", "Payée", "En préparation", "Refusée", "Annulée", "Terminée"]
  *         description: Filtrer par statut de commande
  *       - in: query
  *         name: productId
@@ -271,7 +271,7 @@
  *         name: status
  *         schema:
  *           type: string
- *           enum: ["En attente", "Confirmée", "Accepté", "Refusée", "Annulée", "Complétée"]
+ *           enum: ["En attente", "Payée", "En préparation", "Refusée", "Annulée", "Terminée"]
  *         description: Filtrer par statut de commande
  *       - in: query
  *         name: productId
@@ -333,7 +333,7 @@
  * @swagger
  * /orders/{id}:
  *   put:
- *     summary: Met à jour une commande (envoier un email si le statut change à "Confirmée", "Accepté", "Refusée", "Annulée")
+ *     summary: Met à jour une commande (envoier un email si le statut change à "Payée", "En préparation", "Refusée", "Annulée")
  *     tags: [Commandes]
  *     security:
  *       - cookieAuth: []

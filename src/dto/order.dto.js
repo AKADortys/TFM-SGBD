@@ -64,16 +64,16 @@ const createOrderSchema = Joi.object({
   status: Joi.string()
     .valid(
       "En attente",
-      "Confirmée",
-      "Accepté",
+      "Payée",
+      "En préparation",
       "Refusée",
       "Annulée",
-      "Complétée"
+      "Terminée"
     )
     .messages({
       "string.base": "Le statut doit être une chaîne de caractères valide.",
       "string.pattern.base":
-        "Le statut doit être 'En attente', 'Confirmée', 'Accepté', 'Refusée', 'Annulée' ou 'Complétée'.",
+        "Le statut doit être 'En attente', 'Payée', 'En préparation', 'Refusée', 'Annulée' ou 'Terminée'.",
     }),
 });
 
@@ -104,17 +104,17 @@ const updateOrderSchema = Joi.object({
   status: Joi.string()
     .valid(
       "En attente",
-      "Confirmée",
-      "Accepté",
+      "Payée",
+      "En préparation",
       "Refusée",
       "Annulée",
-      "Complétée"
+      "Terminée"
     )
     .optional()
     .messages({
       "string.base": "Le statut doit être une chaîne de caractères valide.",
       "string.pattern.base":
-        "Le statut doit être 'En attente', 'Confirmée', 'Accepté', 'Refusée', 'Annulée' ou 'Complétée'.",
+        "Le statut doit être 'En attente', 'Payée', 'En préparation', 'Refusée', 'Annulée' ou 'Terminée'.",
     }),
 })
   .min(1)

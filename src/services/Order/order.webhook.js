@@ -54,7 +54,7 @@ const handleWebhook = async (rawBody, signature, io) => {
       return { success: true };
     }
 
-    if (order.status === "Confirmée") {
+    if (order.status === "Payée") {
       logger.info(
         `Idempotence: La commande ${orderId} a déjà été traitée avec succès.`,
       );
@@ -92,7 +92,7 @@ const handleWebhook = async (rawBody, signature, io) => {
       }
 
       // Si toutes les vérifications passent, on confirme la commande
-      order.status = "Confirmée";
+      order.status = "Payée";
       await order.save({ session: dbSession });
 
       // Validation de la transaction

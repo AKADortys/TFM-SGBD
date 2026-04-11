@@ -39,7 +39,7 @@ describe("Routes /orders", () => {
         _id: "order1",
         ...newOrder,
         totalToken: 10,
-        status: "Confirmée",
+        status: "Payée",
       };
       orderController.create.mockImplementation((req, res) =>
         res.status(201).json(createdOrder),
