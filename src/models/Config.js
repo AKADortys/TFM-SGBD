@@ -4,7 +4,7 @@ const configSchema = new mongoose.Schema(
   {
     isStoreOpen: {
       type: Boolean,
-      default: true, // Master switch
+      default: true, // Master switch.
     },
     openingHours: {
       type: [
