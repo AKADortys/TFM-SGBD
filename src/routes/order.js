@@ -25,5 +25,6 @@ router.delete("/:id", permissionsMdw, controller.remove);
 router.get("/stats/general", permissionsMdw, controller.generalStats);
 router.get("/stats/by-date", permissionsMdw, controller.statsByDate);
 router.post("/checkout-session", checkStoreStatus, controller.createCheckoutSession);
+router.post("/checkout-session/:id/resume", checkStoreStatus, controller.resumeCheckoutSession);
 
 module.exports = router;
