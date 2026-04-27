@@ -68,6 +68,7 @@ app.use(helmet({
     directives: {
       "default-src": ["'self'"],
       "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      "script-src-attr": ["'unsafe-inline'"],
       "style-src": ["'self'", "'unsafe-inline'"],
       "img-src": ["'self'", "data:", "validator.swagger.io", "https:"],
       "connect-src": ["'self'", "https:", "http:"],
