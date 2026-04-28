@@ -67,6 +67,42 @@
  *         reason:
  *           type: string
  *           description: Raison de la fermeture (déprécié, utilisez plannedClosures)
+ *         siteInfo:
+ *           type: object
+ *           properties:
+ *             address:
+ *               type: string
+ *             phone:
+ *               type: string
+ *             email:
+ *               type: string
+ *             description:
+ *               type: string
+ *               description: Pour le "À propos" court
+ *             aboutUsContent:
+ *               type: string
+ *               description: Contenu long (texte ou HTML)
+ *         deliveryArea:
+ *           type: object
+ *           properties:
+ *             center:
+ *               type: object
+ *               properties:
+ *                 lat:
+ *                   type: number
+ *                 lng:
+ *                   type: number
+ *             radiusInMeters:
+ *               type: number
+ *         socials:
+ *           type: object
+ *           properties:
+ *             facebook:
+ *               type: string
+ *             instagram:
+ *               type: string
+ *             twitter:
+ *               type: string
  */
 
 /**

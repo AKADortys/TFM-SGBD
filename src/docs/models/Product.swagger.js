@@ -29,6 +29,10 @@
  *           enum: ["Plat principal", "Dessert", "Boisson", "Divers"]
  *           default: "Divers"
  *           description: Catégorie du produit
+ *         stock:
+ *           type: number
+ *           description: Quantité en stock
+ *           example: 10
  *         available:
  *           type: boolean
  *           default: true

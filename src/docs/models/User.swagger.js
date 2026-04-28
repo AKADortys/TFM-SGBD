@@ -49,6 +49,10 @@
  *           type: boolean
  *           default: false
  *           description: Indique si le compte est activé
+ *         expireAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date d'expiration du compte
  *         createdAt:
  *           type: string
  *           format: date-time

@@ -23,6 +23,9 @@
  *               productId:
  *                 type: string
  *                 description: ID du produit
+ *               productName:
+ *                 type: string
+ *                 description: Nom du produit
  *               quantity:
  *                 type: number
  *                 description: Quantité commandée
@@ -30,8 +33,22 @@
  *                 type: number
  *                 description: Prix unitaire
  *         deliveryAddress:
- *           type: string
+ *           type: object
  *           description: Adresse de livraison
+ *           properties:
+ *             street:
+ *               type: string
+ *             city:
+ *               type: string
+ *             zipCode:
+ *               type: string
+ *             coordinates:
+ *               type: object
+ *               properties:
+ *                 lat:
+ *                   type: number
+ *                 lng:
+ *                   type: number
  *         status:
  *           type: string
  *           enum: ["En attente", "Payée", "En préparation", "Refusée", "Annulée", "Terminée"]

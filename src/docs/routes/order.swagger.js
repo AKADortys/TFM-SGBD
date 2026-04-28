@@ -512,6 +512,96 @@
 
 /**
  * @swagger
+ * /orders/checkout-session/{sessionId}/verify:
+ *   get:
+ *     summary: Vérifie le statut d'une session Stripe Checkout
+ *     description: Récupère la session depuis Stripe, vérifie la commande associée et retourne le statut consolidé.
+ *     tags: [Commandes]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: sessionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la session Stripe
+ *     responses:
+ *       200:
+ *         description: Statut de la commande récupéré avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     status:
+ *                       type: string
+ *                       description: Statut de la commande en base de données
+ *                     payment_status:
+ *                       type: string
+ *                       description: Statut du paiement Stripe
+ *                     orderId:
+ *                       type: string
+ *                       description: ID de la commande
+ *       400:
+ *         description: Session ID manquant ou aucune commande associée
+ *       403:
+ *         description: Accès refusé
+ *       404:
+ *         description: Session ou commande introuvable
+ *       500:
+ *         description: Erreur serveur
+ */
+
+/**
+ * @swagger
+ * /orders/checkout-session/{id}/resume:
+ *   post:
+ *     summary: Reprend une session de paiement Stripe
+ *     description: Régénère une URL Stripe Checkout pour une commande existante "En attente" de paiement.
+ *     tags: [Commandes]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la commande
+ *     responses:
+ *       200:
+ *         description: Session de paiement reprise avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     url:
+ *                       type: string
+ *                       description: Nouvelle URL Stripe Checkout vers laquelle rediriger le client
+ *       400:
+ *         description: ID invalide, commande non en attente, produit inexistant ou stock insuffisant
+ *       403:
+ *         description: Vous n'êtes pas autorisé à reprendre cette commande
+ *       404:
+ *         description: Commande introuvable
+ *       500:
+ *         description: Erreur serveur
+ */
+
+/**
+ * @swagger
  * /orders/webhook:
  *   post:
  *     summary: Réceptionne des événements Stripe (Webhook)
