@@ -78,7 +78,24 @@ module.exports = {
 
     // 3. Heures d'ouvertures
     if (config.openingHours && config.openingHours.length > 0) {
-      const currentDay = now.getDay(); // 0 (Dimanche) - 6 (Samedi)
+      const timeZone = 'Europe/Paris'; // Fuseau horaire du restaurant
+      
+      const daysMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
+      const currentDayStr = new Intl.DateTimeFormat('en-US', { timeZone, weekday: 'short' }).format(now);
+      const currentDay = daysMap[currentDayStr];
+
+      const formatter = new Intl.DateTimeFormat('en-GB', {
+        timeZone,
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false
+      });
+      
+      const parts = formatter.formatToParts(now);
+      const partsObj = {};
+      parts.forEach(({ type, value }) => { partsObj[type] = value; });
+      const currentTimeMinutes = parseInt(partsObj.hour, 10) * 60 + parseInt(partsObj.minute, 10);
+
       const todayConfig = config.openingHours.find(
         (day) => day.dayOfWeek === currentDay,
       );
@@ -87,21 +104,19 @@ module.exports = {
         return { isOpen: false, reason: "Le magasin est fermé aujourd'hui." };
       }
 
-      // helper formatage date
-      const parseTime = (timeStr) => {
+      // helper formatage date en minutes
+      const timeToMinutes = (timeStr) => {
         const [hours, minutes] = timeStr.split(":").map(Number);
-        const date = new Date(now);
-        date.setHours(hours, minutes, 0, 0);
-        return date;
+        return hours * 60 + minutes;
       };
 
-      const morningStart = parseTime(todayConfig.morning.start);
-      const morningEnd = parseTime(todayConfig.morning.end);
-      const afternoonStart = parseTime(todayConfig.afternoon.start);
-      const afternoonEnd = parseTime(todayConfig.afternoon.end);
+      const morningStart = timeToMinutes(todayConfig.morning.start);
+      const morningEnd = timeToMinutes(todayConfig.morning.end);
+      const afternoonStart = timeToMinutes(todayConfig.afternoon.start);
+      const afternoonEnd = timeToMinutes(todayConfig.afternoon.end);
 
-      const isMorningOpen = now >= morningStart && now <= morningEnd;
-      const isAfternoonOpen = now >= afternoonStart && now <= afternoonEnd;
+      const isMorningOpen = currentTimeMinutes >= morningStart && currentTimeMinutes <= morningEnd;
+      const isAfternoonOpen = currentTimeMinutes >= afternoonStart && currentTimeMinutes <= afternoonEnd;
 
       if (!isMorningOpen && !isAfternoonOpen) {
         return { isOpen: false, reason: "Le magasin est fermé à cette heure-ci." };
