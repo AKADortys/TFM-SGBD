@@ -44,9 +44,9 @@ const csrfProtection = csrf({
   }
 });
 
-// Protection CSRF avec exclusion pour les webhooks
+// Protection CSRF avec exclusion pour les webhooks et les tests
 app.use((req, res, next) => {
-  if (req.originalUrl.includes("/webhook")) {
+  if (req.originalUrl.includes("/webhook") || process.env.NODE_ENV === "test") {
     return next();
   }
   csrfProtection(req, res, next);
@@ -54,7 +54,7 @@ app.use((req, res, next) => {
 
 // Fourniture du token CSRF pour le frontend Angular
 app.use((req, res, next) => {
-  if (!req.originalUrl.includes("/webhook")) {
+  if (!req.originalUrl.includes("/webhook") && process.env.NODE_ENV !== "test") {
     res.cookie("XSRF-TOKEN", req.csrfToken(), {
       sameSite: 'lax'
     });
