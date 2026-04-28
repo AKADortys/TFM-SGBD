@@ -15,6 +15,13 @@ module.exports = async (req, res) => {
     }
 
     const newProduct = await create(value);
+    
+    // Emit event to all connected clients
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("product:created", newProduct);
+    }
+
     return handleResponse(res, 201, "Produit créé avec succès", newProduct);
   } catch (error) {
     if (error.message.includes("E11000"))

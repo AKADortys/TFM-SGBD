@@ -14,6 +14,13 @@ module.exports = async (req, res) => {
       return handleResponse(res, 404, "Produit non trouvé");
     }
     await remove(id);
+
+    // Emit event to all connected clients
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("product:deleted", product);
+    }
+
     return handleResponse(res, 200, "Produit supprimé avec succès");
   } catch (error) {
     console.error("Erreur lors de la suppression du produit:", error);

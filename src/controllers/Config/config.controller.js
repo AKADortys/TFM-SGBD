@@ -28,6 +28,13 @@ module.exports = {
       }
 
       const config = await configService.updateConfig(value);
+
+      // Emit event to all connected clients
+      const io = req.app.get("io");
+      if (io) {
+        io.emit("config:updated", config);
+      }
+
       return handleResponse(
         res,
         200,

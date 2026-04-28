@@ -24,6 +24,13 @@ module.exports = async (req, res) => {
     if (!updatedProduct) {
       return handleResponse(res, 404, "Produit non trouvé");
     }
+
+    // Emit event to all connected clients
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("product:updated", updatedProduct);
+    }
+
     return handleResponse(
       res,
       200,
