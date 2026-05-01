@@ -31,6 +31,15 @@ module.exports = getGeneralStats = async () => {
               },
             },
           ],
+          revenueByDate: [
+            {
+              $group: {
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                total: { $sum: "$totalPrice" },
+              },
+            },
+            { $sort: { _id: 1 } },
+          ],
         },
       },
       {
@@ -46,6 +55,7 @@ module.exports = getGeneralStats = async () => {
           averageBasket: {
             $ifNull: [{ $arrayElemAt: ["$averageBasket.avg", 0] }, 0],
           },
+          revenueByDate: 1,
         },
       },
     ]);

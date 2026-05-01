@@ -136,23 +136,27 @@ module.exports = async (req, res) => {
       if (updatedFields.status === "En préparation") {
         await mailService.confirmedOrder(updatedOrder, user);
       }
-      if (updatedFields.status === "Refusée") {
-        const productsToRestock =
-          updatedFields.products || existingOrder.products;
+      if (updatedFields.status === "Refusée" || updatedFields.status === "Annulée") {
+        if (existingOrder.status === "Payée") {
+          const productsToRestock =
+            updatedFields.products || existingOrder.products;
 
-        for (const item of productsToRestock) {
-          const productInDb = await productService.getById(item.productId);
-          if (
-            productInDb.stock + item.quantity > 0 &&
-            !productInDb.isAvailable
-          ) {
-            await productService.update(item.productId, { available: true });
+          for (const item of productsToRestock) {
+            const productInDb = await productService.getById(item.productId);
+            if (
+              productInDb.stock + item.quantity > 0 &&
+              !productInDb.isAvailable
+            ) {
+              await productService.update(item.productId, { available: true });
+            }
+            await Product.findByIdAndUpdate(item.productId, {
+              $inc: { stock: item.quantity }, // On AJOUTE la quantité au stock
+            });
           }
-          await Product.findByIdAndUpdate(item.productId, {
-            $inc: { stock: item.quantity }, // On AJOUTE la quantité au stock
-          });
         }
-        await mailService.refusedOrder(updatedOrder, user);
+        if (updatedFields.status === "Refusée") {
+          await mailService.refusedOrder(updatedOrder, user);
+        }
       }
     }
 
