@@ -1,20 +1,12 @@
-# Utiliser une image Node.js officielle
 FROM node:20
-
-# Définir le répertoire de travail dans le container
 WORKDIR /app
-
-# Copier package.json et package-lock.json
 COPY package*.json ./
-
-# Installer les dépendances
-RUN npm install
-
-# Copier tout le reste du projet
+RUN npm install --only=production
 COPY . .
 
-# Exposer le port que ton app utilise
-EXPOSE 3000
+# On s'assure que NODE_ENV est en production
+ENV NODE_ENV=production
 
-# Commande par défaut : lancer seed puis démarrer l'app
+EXPOSE 3000
+# Commande pour lancer l'API
 CMD ["npm", "run", "start"]

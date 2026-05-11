@@ -1,27 +1,57 @@
-version: "3.9"
-
 services:
+  front:
+    image: akadortys/vivo-front
+    container_name: Vivo-Front
+    ports:
+      - "80:80"
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - vivo-net
+
   app:
-    build: .
+    image: akadortys/vivo-back
     container_name: Vivo-Back
     ports:
       - "3000:3000"
     depends_on:
-      - mongo
-    environment:
-      MONGO_URI: "mongodb://root:root@mongo:27017/test"
+      mongo:
+        condition: service_healthy
+    env_file:
+      - .env.docker
+    restart: unless-stopped
+    networks:
+      - vivo-net
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   mongo:
     image: mongo:7
     container_name: mongodb
-    ports:
-      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-      MONGO_INITDB_DATABASE: test
     volumes:
       - mongo_data:/data/db
+    restart: unless-stopped
+    networks:
+      - vivo-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 volumes:
   mongo_data:
+
+networks:
+  vivo-net:
+    driver: bridge
