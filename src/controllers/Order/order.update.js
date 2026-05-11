@@ -5,6 +5,7 @@ const userService = require("../../services/user.index");
 const Product = require("../../models/Product");
 const { updateOrderSchema } = require("../../dto/order.dto");
 const { isObjectId, handleResponse } = require("../../utils/controller.util");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 module.exports = async (req, res) => {
   try {
@@ -156,6 +157,30 @@ module.exports = async (req, res) => {
         }
         if (updatedFields.status === "Refusée") {
           await mailService.refusedOrder(updatedOrder, user);
+        }
+
+        // Remboursement automatique Stripe
+        if (existingOrder.stripePaymentIntentId) {
+          try {
+            await stripe.refunds.create({
+              payment_intent: existingOrder.stripePaymentIntentId,
+              reason: "requested_by_customer",
+            });
+            console.log(`Remboursement Stripe effectué pour la commande ${id}`);
+          } catch (stripeError) {
+            console.error(`Erreur Stripe lors du remboursement pour la commande ${id}:`, stripeError.message);
+            
+            // Notification WebSockets pour l'administrateur
+            if (io) {
+              io.emit('admin_refund_failed', { 
+                orderId: updatedOrder._id, 
+                error: stripeError.message 
+              });
+            }
+            
+            // Notification email pour l'administrateur
+            await mailService.adminRefundFailed(updatedOrder, user, stripeError.message);
+          }
         }
       }
     }
