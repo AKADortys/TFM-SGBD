@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <%-include('./layout/head')%>
+  <body>
+    <%-include('./layout/header')%>
+    <div class="container">
+      <p class="muted">Bonjour,</p>
+
+      <p>
+        Une erreur est survenue lors du remboursement automatique Stripe pour la commande <strong>#<%= order._id%></strong> du client <strong><%= user.fullname%></strong>.
+      </p>
+
+      <p>
+        La commande a bien été passée en statut <strong><%= order.status%></strong> et les stocks ont été recrédités, mais le remboursement automatique n'a pas pu aboutir.
+      </p>
+
+      <p>
+        <strong>Détails de l'erreur Stripe :</strong><br>
+        <code style="color: red;"><%= errorMessage %></code>
+      </p>
+
+      <p>
+        Veuillez effectuer le remboursement manuellement depuis votre tableau de bord Stripe. Le Payment Intent de la commande est : <strong><%= order.stripePaymentIntentId || "Non trouvé" %></strong>.
+      </p>
+
+      <p style="margin-top: 16px">
+        <a
+          class="button btn-primary"
+          href="https://dashboard.stripe.com/"
+          target="_blank"
+          rel="noopener"
+          >Accéder à Stripe</a
+        >
+      </p>
+    </div>
+    <%-include('./layout/footer')%>
+  </body>
+</html>

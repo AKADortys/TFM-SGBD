@@ -41,6 +41,7 @@ const orderSchema = new mongoose.Schema(
       default: "Payée",
     },
     totalPrice: { type: Number, required: true, min: 0 },
+    stripePaymentIntentId: { type: String, required: false },
   },
   { timestamps: true }
 );

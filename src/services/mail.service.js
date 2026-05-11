@@ -165,4 +165,30 @@ module.exports = {
       );
     }
   },
+  adminRefundFailed: async (order, user, errorMessage) => {
+    try {
+      const html = await renderHtml(templatePath("admin-refund-failed.ejs"), {
+        title: "Échec du remboursement Stripe",
+        order,
+        user,
+        errorMessage,
+      });
+      if (process.env.MAIL_SANDBOX === "true") {
+        logger.info("[MAILBOX] mail simulé ! échec remboursement\n" + order._id);
+        return;
+      }
+      await brevoApi.send({
+        sender: { email: process.env.ADMIN_MAIL, name: "Au Ptit Vivo" },
+        to: [{ email: process.env.ADMIN_MAIL }],
+        subject: `⚠️ Échec du remboursement Stripe - Commande #${order._id}`,
+        htmlContent: html,
+      });
+    } catch (error) {
+      handleServiceError(
+        error,
+        "Erreur lors de l'envoi du mail d'échec de remboursement",
+        { service: "mailService", operation: "adminRefundFailed" },
+      );
+    }
+  },
 };

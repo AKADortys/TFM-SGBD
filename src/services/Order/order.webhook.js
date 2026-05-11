@@ -93,6 +93,9 @@ const handleWebhook = async (rawBody, signature, io) => {
 
       // Si toutes les vérifications passent, on confirme la commande
       order.status = "Payée";
+      if (session.payment_intent) {
+        order.stripePaymentIntentId = session.payment_intent;
+      }
       await order.save({ session: dbSession });
 
       // Validation de la transaction
